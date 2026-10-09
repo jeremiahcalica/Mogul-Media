@@ -165,7 +165,7 @@ Follow `references/longform-doc.md`. In short:
      - per-client habits.
    - If `problems` isn't empty, still write the doc, but put each problem at the top of that client's summary.
 4. **Edit the copy in one guarded batch.**
-   - Call `read_doc` on the NEW copy; the result is saved to a file.
+   - Call `read_doc` on the NEW copy. A large result is saved to a file; a small one comes back inline, so write it to a scratchpad file yourself.
    - Run `scripts/longform_batch.py <saved read> "auto:<Mon>:<N>" lines.json`. The `auto:` form changes only the week number and month in last week's header, so each client's own wording survives (Loom 2, 1:24).
    - Send the printed `requests` and `writeControl` with `update_doc`.
    - The batch sets the header, empties the Media Folder link (keeping the "Media Folder:" label), deletes everything under LONGFORMS (post bodies, images, old entries), then writes each line as a bold heading with one blank line after it.
@@ -173,7 +173,7 @@ Follow `references/longform-doc.md`. In short:
    - the header text;
    - no chip or link left on the Media Folder line;
    - nothing under LONGFORMS except the new lines;
-   - each line bold, with a blank paragraph after it.
+   - each line bold (the run's bold, or its Heading 2 style's), with a blank paragraph after it.
 6. **Star it.** "So it should appear on my Starred" (Loom 2, 3:14). The Drive connector can't star a file. On his Mac with Claude in Chrome, star it (`references/chrome-mode.md` § Star). Otherwise put it under "Star these" in the summary with its link.
 
 **Notes and comments.**

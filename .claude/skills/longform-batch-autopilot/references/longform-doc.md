@@ -75,7 +75,7 @@ LONGFORMS                                   (H1, bold)
 5. **Splits** give one number with n.1 (X) / n.2 (LI), in the order written:
    - per-platform vehicles separated by `/`, `,`, `;` or `·` after a tag (`Thread (X), Long-form listicle (LinkedIn)`), written as prefixes (`X article + Doc SS QT / LI Longform`), or as bullets (`•X: … •LinkedIn: …`);
    - a bare `Thread`, or a thread inside brackets, for an X + LinkedIn client: X `Thread`, LI `Long-form` (Abdul: `Long-form listicle`);
-   - `X article, then quote tweet` is a different case: two numbers, `(X) … (Article)` then `(X) … (Article wrapper)` (Keval T6).
+   - `X article, then quote tweet` is a different case: two numbers, `(X) … (Article)` then `(X) … (Article wrapper)` (Keval T6). The same goes for the X half of a split that quote-tweets its own article (`X article + Doc SS QT / LI Longform` gives n.1 X Article, n.2 LI Long-form, then n+1 X Article wrapper). It is flagged to confirm.
 6. **Post counts.** "2 POSTS" in the header, or ", x2" / "two posts" in VEHICLE, gives consecutive numbers with identical lines.
 7. **Vehicle wording.**
    - Longform / Long form → `Long-form`; Medium form → `Medium-form`. Inside a phrase they stay lowercase ("Opinion-led long-form post").
@@ -123,7 +123,7 @@ LONGFORMS                                   (H1, bold)
    - If two docs share a title (Ben K has two "Oct - Week 1"), take the newer one.
 2. **Copy.** Call `copy_file` with `{"fileId": <last week>, "title": "<Name> - <Mon> - Week <N>", "parentId": <My Drive root id>}`. Then call `get_file_metadata` on the new ID and check the parent and the title.
    - Comments and sharing don't carry over, which is what the Copy dialog does with its boxes unticked.
-3. **Read the copy.** Call `read_doc` on the NEW id. A result over about 50K characters is saved as `{"content": {...}}`; the script unwraps it.
+3. **Read the copy.** Call `read_doc` on the NEW id. A result over about 50K characters is saved as `{"content": {...}}`; the script unwraps it. A smaller one (a new skeleton, a short doc) comes back inline: write it to a file in the scratchpad yourself before running the script.
 4. **Build the batch.** Run `python3 -I scripts/longform_batch.py <saved read> "<Name> - Week <N> - <Mon>" lines.json`. It:
    - finds the header, the Media Folder line and the LONGFORMS heading itself, and stops if the doc doesn't have exactly one of each or has more than one tab;
    - deletes everything after LONGFORMS except the body's final newline;
@@ -138,6 +138,7 @@ LONGFORMS                                   (H1, bold)
    - the Media Folder paragraph has no richLink or link;
    - the body holds no `inlineObjectElement`;
    - the lines match `lines.json` exactly, each Heading 2 and bold, each followed by an empty normal paragraph.
+   - "Bold" means effective bold: the run's `bold`, or else the bold of the paragraph's named style. The API can read a line back with `textStyle {}` when its Heading 2 style is already bold; that is fine, it renders bold.
 
 ### Exceptions
 

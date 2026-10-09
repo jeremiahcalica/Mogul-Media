@@ -116,16 +116,34 @@ def norm_vehicle(v, cfg, notes):
     return curl_double(lower_fmt(v))
 
 
+QT_AFTER = re.compile(r"(?:\bthen\b|\+|\band\b),?\s+(?:a\s+)?(?:[\w-]+\s+){0,4}?(quote[\s-]?tweet|QT)\b", re.I)
+
+
+def article_pieces(plat, text, notes):
+    """An X article plus a quote tweet of it is two numbers in his doc: (Article) and (Article wrapper),
+    as in Keval Oct Wk2. Returns None when `text` is not an X article."""
+    t = text.strip()
+    if plat in ("X", "X/LI") and re.match(r"^(X\s+)?article\b", t, re.I) and (plat == "X" or t[:1] in "Xx"):
+        if QT_AFTER.search(t):
+            notes.append("X article + QT %r: wrapper given its own number, as in Keval's doc: confirm" % t)
+            return [("X", "Article"), "WRAPPER"]
+        return [("X", "Article")]
+    return None
+
+
 def split_pieces(vehicle, plat_default, cfg, notes):
     """-> (pieces, count). pieces = [(platform, vehicle)]; a "WRAPPER" item adds an X article wrapper number."""
     parts = [p for p in SEP.split(vehicle) if p.strip() and p.strip() not in ("•", "-", "*")]
+
+    def piece(plat, text):
+        return article_pieces(plat, text, notes) or [(plat, norm_vehicle(text, cfg, notes))]
     tagged = [(TAG.search(p), p) for p in parts]
     if len(parts) > 1 and all(m for m, _ in tagged):
-        return [(tag_norm(m.group(1)), norm_vehicle(TAG.sub(" ", p), cfg, notes)) for m, p in tagged], None
+        return [x for m, p in tagged for x in piece(tag_norm(m.group(1)), TAG.sub(" ", p))], None
     prefixed = [PREFIX.match(p) for p in parts]
     if len(parts) > 1 and all(prefixed):
-        return [(tag_norm(m.group(1)), norm_vehicle(p[m.end():].split(". ")[0], cfg, notes))
-                for m, p in zip(prefixed, parts)], None
+        return [x for m, p in zip(prefixed, parts)
+                for x in piece(tag_norm(m.group(1)), p[m.end():].split(". ")[0])], None
     v, plat, count = vehicle, None, None
     v = ASSET_TAG.sub("", v)                     # "(LI)" glued to an image request is not the platform
     if PLAT_PHRASE.search(v):
@@ -140,9 +158,7 @@ def split_pieces(vehicle, plat_default, cfg, notes):
     plat = plat or plat_default
     base = v.strip()
     if re.match(r"^X\s+article\b", base, re.I):
-        if re.search(r"\b(then|\+|and)\s+(a\s+)?(quote[\s-]?tweet|QT)\b", base, re.I):
-            return [("X", "Article"), "WRAPPER"], count
-        return [("X", "Article")], count
+        return article_pieces("X", base, notes), count
     if plat == "X/LI":
         if re.fullmatch(r"(an?\s+)?thread", base, re.I) or re.search(r"\([^()]*\bthread\b[^()]*\)", base, re.I):
             return [("X", "Thread"), ("LI", cfg.get("thread_li", "Long-form"))], count

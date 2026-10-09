@@ -59,7 +59,8 @@ Every rule below was checked frame by frame against both Looms and three transcr
 | # | Rule | Evidence | Skill |
 |---|---|---|---|
 | 4.1 | Start once the pivots and topics are known: "after you check out the pivots and what the topics are". | Opening line. | Step 5 runs after Step 4, or straight away when there's no transcript (his instruction of Oct 9). |
-| 4.2 | Go to MASTER FILE › POD › client › Content › 2026 and open the most recent batch: "go to the most recent batch, I think it is October Week 1". | 0:20–0:50. | Step 5.1, newest by createdTime in the Content folder. |
+| 4.2 | Go to Drive › Shared with me › MASTER FILE › the pod folder ("POD 2 (Kyle M Team)"), find the client's folder ("Mason Littlejohn", he searches the page for "mason"), then "Mason Content" › "2026". | 0:00–0:35 "click on Master File, click on Kyle M, and then search for Mason Littlejohn… go into Mason Content 2026". | `references/clients.md` holds each client's Content folder id. |
+| 4.2b | Open the most recent batch by its month and week: "go to the most recent batch, I think it is October Week 1". It is the shared copy owned by writing@. Siblings like "(Snipes)" and "GDS - June - Week 4 - 2026" aren't batches. | 0:38–0:50; he selects "Mason L. - Oct - Week 1" (owner writing, 92 KB) over "Sept - Week 5". | Step 5.1 and `references/longform-doc.md` step 1. |
 | 4.3 | Never edit last week's doc; make a copy: "Make a copy. Very important." | 0:51–0:57. | Step 5.2. |
 | 4.4 | Name the copy `<Name> - <Mon> - Week <N>`: delete "Copy of ", change only the number. No year, no "Longforms". | 0:52–1:06. | Step 5.2. |
 | 4.5 | The week comes from the topic sheet's name, not last week plus one: "This is October Week 2 Topics. This is going to be October Week 2 Long Form batch." | 0:59–1:04, hovering the sheet's tab. | Step 2.1. |

@@ -118,7 +118,7 @@ LONGFORMS                                   (H1, bold)
 1. **Last week's doc.**
    - Search the client's Content folder: `search_files` with `parentId = '<content folder id>' and title contains ' - Week '`. Mason's is the `2026` subfolder; most clients have no year folder.
    - Keep docs titled exactly `<Name> - <Mon> - Week <n>`, trimming a trailing space. Drop suffixed siblings: (Snipes), (Snipe), (Design Request), (Design Requests), (Quick Response), (Quick response posts), (Topic N), (Ad Hoc Post), Longforms.
-   - Take the newest by createdTime.
+   - Take the latest batch by the month and week in its title ("Oct - Week 1" beats "Sept - Week 5"; never last week's number plus one). Use createdTime only to break a tie or to tell years apart across a December → January change. In Loom 2 (0:38–0:50) he picks "Mason L. - Oct - Week 1" this way: "go to the most recent batch, I think it is October Week 1".
    - The shared copy there usually belongs to writing@mogulmedia.ca; Jeremiah's own draft of the same week sits in his My Drive. Either works as the source, since everything under LONGFORMS is deleted. Prefer the Content-folder copy, as in the Loom.
    - If two docs share a title (Ben K has two "Oct - Week 1"), take the newer one.
 2. **Copy.** Call `copy_file` with `{"fileId": <last week>, "title": "<Name> - <Mon> - Week <N>", "parentId": <My Drive root id>}`. Then call `get_file_metadata` on the new ID and check the parent and the title.

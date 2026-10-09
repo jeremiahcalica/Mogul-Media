@@ -29,7 +29,8 @@ Rules that come from your messages rather than the Looms:
 | `.claude/skills/longform-batch-autopilot/scripts/` | `schedule_rows.py` (schedule doc table), `entries.py` (LONGFORMS lines), `longform_batch.py` (the Google Docs edit batch) |
 | `.claude/skills/longform-batch-autopilot/tests/` | Mason Oct Wk2 fixtures; `entries.py` reproduces the real Week 2 lines exactly |
 | `routines/longform-batch-autopilot.md` | The scheduled routine's prompt and settings |
-| `sops/loom-nuances.md` | Every rule in the two Looms, with timestamps |
+| `sops/loom-nuances.md` | Every nuance in the two Looms (151), frame by frame, with evidence and what each segment left open |
+| `sops/loom-timelines.md` | Second-by-second timeline of both Looms: clicks, on-screen text, narration |
 | `sops/source/` | Mini-SOPs, Loom transcripts and SRTs |
 | `dist/longform-batch-autopilot.skill` | The packaged skill to install on your Claude account |
 

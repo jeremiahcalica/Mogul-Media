@@ -154,7 +154,7 @@ Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jarg
 
 Follow `references/longform-doc.md`. In short:
 
-1. **Find last week's doc.** Look in the client's Content folder (Mason's is `Mason Content › 2026`) for the newest doc titled `<Name> - <Mon> - Week <n>` with no suffix. Pick by createdTime, not by arithmetic: Oct Week 1 follows Sept Week 5. "Go to the most recent batch" (Loom 2, 0:37). If it isn't there, use Jeremiah's own My Drive copy of the latest week.
+1. **Find last week's doc.** Look in the client's Content folder (Mason's is `Mason Content › 2026`) for the newest doc titled `<Name> - <Mon> - Week <n>` with no suffix. Pick the latest by the month and week in the title, not by arithmetic (Oct Week 1 follows Sept Week 5); use createdTime only to break ties or across a year change. "Go to the most recent batch" (Loom 2, 0:37). If it isn't there, use Jeremiah's own My Drive copy of the latest week.
 2. **Copy it into My Drive.** Call `copy_file` with the title `<Name> - <Mon> - Week <N>` (e.g. "Mason L. - Oct - Week 2") and `parentId` = his My Drive root. Get the root ID from `get_file_metadata` with `fileId "root"`; it was `0APF3ebrWaXbcUk9PVA`. Never leave `parentId` empty: the copy would land in the client's shared folder. "Instead of duplicating it inside this folder… copy it to My Drive" (Loom 2, 1:09).
 3. **Work out the lines.**
    - Write `topics.json` (schema in `references/longform-doc.md`). Set `"client"` to the doc name. For each topic give its number, type, label, title, post count, ✅/❌ or strikethrough, VEHICLE and PERSPECTIVE, copied exactly from the sheet. Add its status from the brief.

@@ -3,7 +3,8 @@
 The expected lines are the real LONGFORMS lines Jeremiah wrote for that week. Shared-copy split
 fixes are applied; hand edits that no rule can predict are excluded. Exception: nathan_oct_wk2 is a
 provisional snapshot of the script's own output (his first batch had no real doc yet); replace it with
-his real lines once he writes that week.
+his real lines once he writes that week. type_a_rule is a synthetic case for Jeremiah's Oct 9 rule: a
+Type A topic gets a line only if the call answered it (not discussed, killed or unanswered = no line).
 Run: python3 -I tests/run_tests.py"""
 import glob, json, os, subprocess, sys
 

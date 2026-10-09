@@ -13,6 +13,8 @@ This skill does what Jeremiah showed in two Looms on Oct 9 2026 ("Updating Topic
 4. Set up the **longform doc**: last week's doc copied into his My Drive as this week's, emptied, with one bold line per post: `N - (X/LI) - (<perspective>) - (<vehicle>)`.
 5. Tell him what was done and what still needs him.
 
+**Top rule for the doc (Jeremiah, Oct 9): a Type A topic gets a line only if the call answered it.** A Type A topic that was not discussed, was killed, or came up but went unanswered (deferred, "I'll think about it", no take given) stays out of the doc: it was already skipped on the call. Type B topics need no answers, so they stay in unless killed.
+
 Every client follows the same setup, so the pipeline below works for all of them. `references/clients.md` lists each client's names, pod and folders. Where the Looms set a rule, it is quoted with its timestamp in `references/loom-rules.md`. Follow those rules exactly; they are what Jeremiah checks.
 
 ## Modes
@@ -187,7 +189,7 @@ Follow `references/longform-doc.md`. In short:
 ## Step 6: A transcript that arrives later
 
 The doc may already exist with no brief, because there was no transcript when it was made. If this run finds a transcript, write the brief (Step 4), then compare it with the doc's lines:
-- topics that are now NOT DISCUSSED Type A or KILLED;
+- topics that are now NOT DISCUSSED, NOT ANSWERED (Type A) or KILLED;
 - vehicles the call changed.
 
 List the differences in the summary as suggestions. Never edit a doc that already exists; Jeremiah may be working in it.

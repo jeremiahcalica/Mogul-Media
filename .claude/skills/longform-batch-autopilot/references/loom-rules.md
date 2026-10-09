@@ -94,4 +94,5 @@ From Jeremiah, Oct 9 2026:
 - Kyle's clients' calls are on Fireflies; Devin's are on Krisp, exported with "Export as transcript".
 - With no transcript, don't make a brief: "it doesn't make sense to push the topic brief PDF to Claude and ask for pivots since there's no transcript". Make the longform doc straight away with every topic: "don't wait for the transcript, go straight to making the doc".
 - Each week's brief is a new chat, with last week's prompt copied verbatim along with the new transcript.
+- **A Type A topic gets a line only if the call answered it:** "if something is not discussed in the call (type A topic), or a type A topic was killed/wasn't answered, it shouldn't be in the document, since it's already skipped in the call itself". Status NOT ANSWERED covers a Type A topic that came up but got no answer (deferred, no take given), even when something else is pending too.
 - A new client (Nathan C.) has no earlier doc to copy, so the doc is built from scratch (`references/longform-doc.md` § Exceptions).

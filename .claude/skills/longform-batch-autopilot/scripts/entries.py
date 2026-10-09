@@ -197,6 +197,7 @@ def status_norm(s):
         (r"^(KILLED|SKIPPED|NOT PICKED|DROPPED)\b", "KILLED"),
         (r"^(PARKED|REVISIT)", "PARKED"),
         (r"^ON HOLD", "ON HOLD"),
+        (r"^(NOT ANSWERED|UNANSWERED|NO ANSWER|DEFERRED)\b|^BLOCKED\b.*\b(ANSWER|DEFER|ASYNC)", "NOT ANSWERED"),
         (r"^PIVOT|^KEPT\b.*\bPIVOT|^GO\b.*\bPIVOT", "PIVOT"),
         (r"^RESOLVED", "RESOLVED"),
         (r"^BLOCKED", "BLOCKED"),
@@ -237,6 +238,11 @@ def included(t, call, notes, problems):
     if s == "ON HOLD":
         notes.append("T%s on hold: left out, include?" % tn)
         return False, "on hold"
+    if s == "NOT ANSWERED":
+        # Jeremiah, Oct 9: a Type A topic the call didn't answer was skipped on the call, so no line
+        if typ.startswith("B"):
+            return True, "came up unanswered, but Type B needs no answers"
+        return False, "Type A, not answered on the call"
     if s == "NOT DISCUSSED":
         if typ.startswith("B"):
             return True, "not discussed, but Type B needs no answers"

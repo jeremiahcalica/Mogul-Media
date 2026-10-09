@@ -81,10 +81,11 @@ What each clause means here:
 | `KEPT` | The call confirmed the topic or answered its questions as briefed. Add `(gaps flagged)` only when a missing answer leaves part of the post with nothing to write from. One unanswered question that the rest of the call covers stays plain `KEPT`, with the gap in Flags (the real Mason Oct Wk2 brief: T1 and T3 plain KEPT, T4 KEPT (gaps flagged)). | Yes |
 | `PIVOT (<what changed>)` | The call changed angle, scope, source, vehicle or post count. | Yes. The line keeps the sheet's perspective. The vehicle changes only if the call set a new one. |
 | `NOT DISCUSSED` | The call never reached it. Write "Status is open, not killed." Type B topics: "It's Type B, so {Strategist}'s draft direction is the spine." | Type B yes, Type A no ("topic six is type A, which means we are not going to include this … Type B, no answer needed, which is included", Loom 1, 3:35). |
+| `NOT ANSWERED` | Type A only: the topic came up, but its questions got no answer on the call (the client deferred it, said he'd think about it, gave no take, or the call ran out). Use it even when something else is pending too (assets from a teammate, a written answer promised later): what decides it is that the call didn't answer it. An answer written on the sheet after the call doesn't change it; flag that text for Jeremiah. | **No** (Jeremiah, Oct 9: "if something is not discussed in the call (type A topic), or a type A topic was killed/wasn't answered, it shouldn't be in the document") |
 | `KILLED` | The strategist or client dropped it on the call. | No |
 | `KILLED and REPLACED` | Dropped, with a new subject put in its slot. | Yes. The slot keeps the sheet's vehicle and perspective. |
 | `COVERED` | Skipped because it was "already touched on" earlier in the call; the material exists. | Yes |
-| `BLOCKED (<what>)` | Still this batch, but waiting on an asset or a sign-off. | Yes, with the blocker flagged |
+| `BLOCKED (<what>)` | The call answered it (or it is Type B) and it is still this batch, but it waits on an asset or a sign-off. A Type A topic whose questions went unanswered is NOT ANSWERED, never BLOCKED. | Yes, with the blocker flagged |
 | `PARKED` | Moved to a later batch on the call. | No (unless it's a screenshot topic the client will send screenshots for) |
 | `ON HOLD` | Taken out of this batch for now. | No, flagged |
 | `NEW` | A new post agreed on the call, outside the sheet. Give it its own section after the sheet's topics. | Only if the call set its vehicle. Otherwise flag it for Jeremiah. |

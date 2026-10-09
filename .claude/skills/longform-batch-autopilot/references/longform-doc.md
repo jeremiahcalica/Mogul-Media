@@ -48,9 +48,11 @@ LONGFORMS                                   (H1, bold)
    | Struck through, or ❌ on the sheet | No |
    | Folded into another topic (`merged_into`, only when the brief says so) | No, flagged |
    | **No transcript** | **Yes, every other topic** |
-   | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (still this batch), RESOLVED | Yes |
+   | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (answers given, still this batch, waiting on an asset or sign-off), RESOLVED | Yes |
    | NOT DISCUSSED, Type B | Yes |
    | NOT DISCUSSED, Type A | No |
+   | NOT ANSWERED, Type A: it came up on the call but its questions got no answer (deferred, "I'll think about it", no take given), even if something else is also pending | **No.** "If it's not discussed in the call, or a Type A topic was killed or wasn't answered, it shouldn't be in the document" (Jeremiah, Oct 9) |
+   | NOT ANSWERED, Type B | Yes (Type B needs no answers) |
    | KILLED / skipped / dropped | No |
    | PARKED | No. Exception: a screenshot topic where the client sends the screenshots (Keval T4). That one is yes, flagged. |
    | ON HOLD | No, flagged |

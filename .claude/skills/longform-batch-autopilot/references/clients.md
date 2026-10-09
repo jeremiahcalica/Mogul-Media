@@ -40,7 +40,7 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
 ## Per-client notes
 
 - **Mason:** Content and Topics each have a `2026` year folder, so search those, not the parent. Calls are titled "MASON L X KYLE". The client wants no $ numbers in copy (Shift Brief), and must never be cross-referenced with Jason.
-- **Josh C:** OCT WK2's call is on Granola, not Fireflies. The ClickUp comment links the Granola notes, and the transcript is pasted into a **TRANSCRIPT tab of his Topics doc**. Use that tab as the transcript.
+- **Josh C:** OCT WK2's call is on Granola, not Fireflies. The ClickUp comment links the Granola notes, and the transcript is pasted into **the third tab of his Topics doc** (after Client strategy and Strategy; Jeremiah, Oct 9). Use that tab as the transcript, whatever its name.
   - His Topics doc title has no pipes ("Josh OCT Wk2 Topics").
   - A freeform "Topic 0 - <promo>" can sit above the topic tables.
   - Platform tags are written "(X and LI)".

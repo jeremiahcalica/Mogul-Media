@@ -115,8 +115,8 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
   2. **Krisp connector.** If Krisp tools are loaded, find the meeting by title and date and read its transcript.
   3. **Drop folder.** He may have dropped the exported file into the My Drive folder "Autopilot Transcripts". Look for a file whose title has the client's name or the Krisp slug and that was modified after the task went in progress. Read it with `read_file_content`.
   4. If none of these works, the client has no transcript this run (flag "Krisp transcript not available").
-- **Granola (Josh C):** the call's transcript is pasted into a **TRANSCRIPT tab of the Topics doc**. Use that tab. Any Topics doc with a TRANSCRIPT tab counts as having a transcript.
-- **No call link and no TRANSCRIPT tab:** no transcript.
+- **Granola (Josh C):** the call's transcript is pasted into **the third tab of the Topics doc**, after "Client strategy" and "Strategy" (Jeremiah, Oct 9). Use that tab whatever it is named. `read_file_content` flattens tabs, so read the doc with `read_doc` and take the tab by position, then check it really holds a transcript (speaker names, timestamps or dialogue). Any Topics doc with such a tab counts as having a transcript.
+- **No call link and no transcript tab:** no transcript.
 - **Kyle's PDF:** Kyle also attaches the transcript as a PDF (`<TITLE>-<hash>.pdf`). Jeremiah skips it and goes to the Fireflies link (Loom 1, 1:48–1:55), so don't use it.
 - **Fallback:** if the Fireflies fetch fails, use the transcript text Kyle sometimes pastes into the task's "Google Drive / Google Docs" field. It starts `<Speaker> - 00:00` and ends "Transcribed by https://fireflies.ai/". Flag that you did.
 
@@ -132,7 +132,7 @@ Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jarg
      - then one box per topic. The header reads `TOPIC N | TYPE A` (or `TYPE B`, sometimes `TYPE A  2 POSTS`; separators `|` or `│`). A third part can be a label like Snipe or Quick Response, and ✅ / ❌ marks can appear.
      - each box has the title, ANGLE & DESCRIPTION, FOR <CLIENT> (questions) or INITIAL DRAFT DIRECTION (Type B), VEHICLE, VEHICLE INSPIRATION, OBJECTIVE and PERSPECTIVE.
      - Devin's sheets put per-platform vehicles in bullets.
-   - **The other tab** ("Strategy"): the Loom link, the performance tables, the full hypothesis and the strategist's raw topic list. A TRANSCRIPT tab holds Granola transcripts.
+   - **The other tab** ("Strategy"): the Loom link, the performance tables, the full hypothesis and the strategist's raw topic list. A third tab, when there is one, holds a pasted call transcript (Josh C's Granola calls).
    - **Freeform topics.** A "Topic 0 - …" or bare "Topic N" note outside the tables is a topic too.
    - **Comment threads come back too.**
      - **Open** comments are the strategist's live notes and count: e.g. Kyle's "Make a pivot to long-form for this week" on Mason's Topic 2, or "Make a 2nd post on Boxing and chad mentality".

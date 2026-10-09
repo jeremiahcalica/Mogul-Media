@@ -2,9 +2,9 @@
 
 ## The prompt (Jeremiah's own, used verbatim)
 
-Each week he opens last week's brief chat in the client's project, copies this prompt, and pastes it into a new chat with the new transcript (.md) and the topic sheet (PDF). "Please, in verbatim, please prompt it like this" (Loom 1, 2:55). Treat every clause as a requirement. Swap in only `{Client}` (the name he uses for the client's project, e.g. "Mason L") and `{Strategist}` (Kyle or Devin):
+Each week he opens last week's brief chat in the client's project, copies this prompt, and pastes it into a new chat with the new transcript (.md) and the topic sheet (PDF). "Please, in verbatim, please prompt it like this" (Loom 1, 2:55). Treat every clause as a requirement. The apostrophes and quotes are the curly ones his Mac typed (Loom 1, 2:47). Swap in only `{Client}` (the name he uses for the client's project, e.g. "Mason L") and `{Strategist}` (Kyle or Devin):
 
-> Can you give me a detailed brief for the topics for {Client} based on this meeting with {Strategist}, where they talked about what to do per topic? Pay attention to detail. I also attached the topic sheet, I want you to name the brief according to its correct vehicle in the chat, make sure that you're paying attention to detail of the meeting so I don't miss details or instructions (include the pivots on the call, if any). Do not invent anything. Make sure you include the original brief in the topic sheet, and just write a "note" saying "pivot" (if there's any), so I know what was kept and what was changed or what was kept and what was killed.
+> Can you give me a detailed brief for the topics for {Client} based on this meeting with {Strategist}, where they talked about what to do per topic? Pay attention to detail. I also attached the topic sheet, I want you to name the brief according to its correct vehicle in the chat, make sure that you’re paying attention to detail of the meeting so I don’t miss details or instructions (include the pivots on the call, if any). Do not invent anything. Make sure you include the original brief in the topic sheet, and just write a “note” saying “pivot” (if there’s any), so I know what was kept and what was changed or what was kept and what was killed.
 > In a claude doc pls
 
 What each clause means here:
@@ -57,6 +57,7 @@ What each clause means here:
       - **Objective:**
       - **Perspective:**
       - Type B: then `**Initial draft direction (verbatim from sheet):**` and the whole draft in a ```markdown code block. The words are verbatim, one line per sheet paragraph; the sheet's empty paragraphs are dropped, as in his real briefs. `read_file_content` flattens a cell's line breaks into runs of spaces, so take the draft's line structure from `read_doc` on the Topics doc.
+        - Bracketed writer placeholders in the draft (`[Time] later`, `[current result, writer to fill from Mason]`, `[2 photos: ecom brand era + now]`) stay as they are. List each one under "Asks for {Client first name}" unless the call filled it, and never fill one yourself.
    3. `### From the call`: paragraphs that open with a bold label and a timestamp range, e.g. `**The stupid (Q1) [09:16–10:51]:**`, followed by bullets of near-verbatim quotes.
       - Timestamps are `[MM:SS]` or `[MM:SS–MM:SS]` (en dash), taken from the transcript. A range starts at the start time of its first quoted sentence. One range per paragraph covers the exchange; quotes under it are condensed with ellipses ("Everyone likes to... flex. …") rather than one timestamp per sentence.
       - Garbled words are marked like `[likely "TAM", reading]`. A garbled line that adds nothing to the topic is left out, above all one that could read as offensive.

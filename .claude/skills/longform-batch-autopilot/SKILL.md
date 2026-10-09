@@ -72,6 +72,7 @@ The Loom starts in the pinned chat "Client topic batch and long-form schedule". 
    - Run `scripts/schedule_rows.py <saved file>`. It prints the rows of the "Content batches (long-forms)" table: due, client, pod note, checked, status, ClickUp task id, link label and notes.
 3. **Check it is current.** The title carries the week's dates, e.g. "(Oct 12–16)". If today (Asia/Manila) is after the last date, the doc is stale. Say so in the summary, then build the queue from ClickUp instead: `clickup_filter_tasks` over space `90152587982`, tasks named `… | Longforms`, status `in progress`, assigned to Jeremiah (306644176), due within the next 10 days.
 4. **Pick the rows.**
+   - Work the rows in Due order, earliest first. The Due column is already the earliest of the team-calendar day, the ClickUp date and any date Kyle set in Slack (Mason: Due Oct 12, ClickUp Oct 13), so use it rather than the ClickUp date.
    - Skip ticked rows (`checked: true`). He ticks a row once the batch is handed in.
    - Key rows by ClickUp task id, never by client name. Jason can have two rows: last week's carryover and this week's.
    - For each remaining row, get the **live** ClickUp task (Step 2). Process it only if the live status is `in progress`. Rows in `to do` haven't had their call yet. Rows in `internal qa` or later are past this step. List both kinds in the summary as "not started" or "already past this step".
@@ -107,7 +108,8 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
 
 "It is imperative to download the meeting transcript in MD file. Very, very, very, very important" (Loom 1, 2:05). The point is that Claude reads the real, full transcript with speaker names and timestamps, not a PDF. Use the first route that works:
 
-- **Fireflies (Kyle's clients):** call `fireflies_fetch` with the ID (or `fireflies_get_transcript`). It returns every sentence as `[MM:SS - MM:SS] Speaker: text`, the same content as the MD download. Fetching by ID works even though Fireflies search can't find these calls; they live on Kyle's account.
+- **Fireflies (Kyle's clients):** call `fireflies_fetch` with the ID (or `fireflies_get_transcript`). It returns every sentence as `[MM:SS - MM:SS] Speaker: text`, the same content as the MD download (with timestamps and speaker names, no Fireflies branding). Fetching by ID works even though Fireflies search can't find these calls; they live on Kyle's account.
+  - Check it is the right call: the title reads `<FIRST> <LAST INITIAL> X <STRATEGIST>` ("MASON L X KYLE"), and the date falls in the days before the task went in progress. If the title names another client or the transcript is empty, treat it as no transcript and flag it.
 - **Krisp (Devin's clients):** Jeremiah exports these as a transcript ("Export as transcript"), the same way he downloads the Fireflies MD. Try in this order:
   1. **His browser.** If Claude in Chrome tools are available (a run on his Mac), follow `references/chrome-mode.md` § Krisp: open the link and export the transcript.
   2. **Krisp connector.** If Krisp tools are loaded, find the meeting by title and date and read its transcript.

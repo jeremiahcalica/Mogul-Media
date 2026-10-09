@@ -1,0 +1,10 @@
+[00:00] Okay to Claude, what we're going to do here is you're going to go into the client, topic batch, schedule, topic batch, and the long farm schedule. You're going to go into this conversation and then you're going to
+[00:25] type in Claude can you give me the updated topic and content that I know there are already new topics or next to be submitted next week to be submitted next
+[00:50] and long form and content batch batch as well organize them like last time so you don't have to take this by by verbatim what I need you to do is to write
+[01:15] something like this, then prompt, clod. Okay, so let us assume that this is already done loading. So let's take Mason for an example. He is in progress. He is due by October 13, which is next Monday.
+[01:40] what you're going to do is open this then open this the topic sheet and then open this the call now what you're going to do is now
+[02:05] download the meeting transcript. It is imperative to download the meeting transcript in MD file. Very, very, very, very important. Once downloaded, open another quad tab. And then what you're going to do is go to
+[02:30] mason here masonl upload the md file download the topic sheet and pdf upload it here and then what you're going to do is prompt it like this something like that
+[02:55] please in verbatim please comment like this now after you comment it will it will show you something like this topic number one topic vehicle status as you can see it is kept topic three is kept kept kept six and seven
+[03:20] is not this cost this is because I think it is a topic B a no answer needed I believe no answer needed oh yeah okay so in this topic six is type A which means we are not going to include this topic B no answer needed
+[03:45] which is included.

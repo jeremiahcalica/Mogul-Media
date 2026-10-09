@@ -18,7 +18,7 @@ Run the longform batch autopilot for everyone due. This is an unattended schedul
 Jeremiah authorizes these writes for this run, and only these:
 - send the weekly update request to his schedule chat "Client topic batch and long-form schedule" (session cse_01VT4cAcAw8Wrd4LPaCmyNiQ), as he does in his Loom, unless that chat is busy;
 - create one post-call topic brief Claude Doc per client per week (skip any client-week that already has one);
-- copy last week's longform Google Doc into his My Drive as this week's doc (skip any week that already has one), and edit only that new copy: header, empty Media Folder, clear everything under LONGFORMS, add the entry lines;
+- copy last week's longform Google Doc into his My Drive as this week's doc (skip any week that already has one), and edit only that new copy: header, empty Media Folder, clear everything under LONGFORMS, add the entry lines. For a new client with no earlier doc, create the blank doc in his My Drive from the skill's skeleton instead and edit only that;
 - create or append to the Claude Doc "Longform Autopilot — Run Log".
 
 Everything else is read-only. Never edit, tick or comment on the schedule doc, ClickUp, the Topics docs, last week's docs, Fireflies or Krisp. Never message anyone, share, move or trash a file.

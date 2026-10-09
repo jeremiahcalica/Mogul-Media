@@ -31,7 +31,7 @@ Every client follows the same setup, so the pipeline below works for all of them
 Jeremiah authorizes these writes, and only these:
 - Send the weekly update request to his schedule chat (Step 1.0), as he does in Loom 1.
 - Create **one** brief Claude Doc per client per week.
-- **Copy** last week's longform doc into **his My Drive**, and edit **only that new copy**.
+- **Copy** last week's longform doc into **his My Drive**, and edit **only that new copy**. For a new client with no earlier doc, create the blank skeleton doc in his My Drive instead (`references/longform-doc.md` § Exceptions) and edit only that.
 - Create and append to the run log Claude Doc, "Longform Autopilot — Run Log".
 
 Never do any of these:

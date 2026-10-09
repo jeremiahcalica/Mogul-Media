@@ -34,13 +34,15 @@ What each clause means here:
 1. `## How to read this brief`
    - Paragraph 1: "Each topic has three parts: the **Original brief** copied from the topic sheet, **From the call** (what {Strategist} and {Client first name} actually said, with timestamps), and a **Note** that marks it KEPT, PIVOT, or NOT DISCUSSED and says what was kept, changed, or left open. Call pivots override the topic sheet."
    - Paragraph 2: "Transcript quotes are {Client first name}'s words as transcribed. Where the transcription is clearly garbled, the likely word is in brackets and marked as a reading, not a fact."
-   - Then the status table: `| # | Topic | Vehicle | Status |`. One row per topic. Vehicle as written on the sheet (or as changed on the call). Status in the vocabulary below.
+   - Then the status table: `| # | Topic | Vehicle | Status |`. One row per topic. Status in the vocabulary below.
+     - **Topic:** the sheet title in its casing on the sheet ("Being Stupid in Your 60s" if that's how it reads). For a pivot, `<sheet title> → "<new angle>"`, e.g. `Revenue Screenshot → "The real story of my brand"`.
+     - **Vehicle:** as written on the sheet, or as changed on the call. No post count here (", 2 posts" goes in the Note and the Original brief).
 2. `## Batch header (from the topic sheet)`
    - A bullet list with bold labels: **Client:**, **Week:**, **Strategist:**, **Platforms:**, **Call:** (`{Client} x {Strategist}, {d Mon yyyy}`).
    - Then a paragraph `**Client goal:** …` (verbatim).
    - Then `**Hypothesis (verbatim from sheet):**` with bullets `*Last week:*`, `*This week:*`, `*We expect:*`.
    - If a pivot changes a line of the hypothesis, add one plain sentence saying which line. Example: "Note: the Topic 2 and Topic 5 pivots change two lines of this hypothesis (…). Kyle hasn't restated the hypothesis."
-   - If the schedule row had a note for this batch, add `**Schedule note:** <the note>`.
+   - If the schedule row had a note about the batch's content or scope, add `**Schedule note:** <the note>`. Leave out notes that are only about dates or who reviews when ("Calendar day is Monday, a day before ClickUp's date").
 3. One `## Topic N — <Vehicle, Title Case>: <Title>` per topic, in sheet order. Under each:
    1. **The Note, first, directly under the heading:** `**Note: <STATUS>.** <one or two plain sentences, usually quoting the strategist's verdict>`. Example: `Kyle: "That's perfect."`
       - For a PIVOT, add bullets with bold labels: `**Kept:**`, `**Changed:**`, `**Killed:**`, `**Not stated on the call:**`.
@@ -50,16 +52,19 @@ What each clause means here:
       - **Angle & description:**
       - **For {Client first name}:**, with one nested bullet per question (Type A only)
       - **Vehicle:**
-      - **Vehicle inspiration:** the link
+      - **Vehicle inspiration:** the link. If the sheet or the linked post gives the author, hook or stats, add them in one line (e.g. "Jacob's revenue post, 499 likes, 71 comments"). Don't guess what a link holds if you can't open it.
       - **Objective:**
       - **Perspective:**
-      - Type B: then `**Initial draft direction (verbatim from sheet):**` and the whole draft in a ```markdown code block.
+      - Type B: then `**Initial draft direction (verbatim from sheet):**` and the whole draft in a ```markdown code block, one line per sheet paragraph and no blank lines between them. `read_file_content` flattens a cell's line breaks into runs of spaces, so take the draft's line structure from `read_doc` on the Topics doc.
    3. `### From the call`: paragraphs that open with a bold label and a timestamp range, e.g. `**The stupid (Q1) [09:16–10:51]:**`, followed by bullets of near-verbatim quotes.
-      - Timestamps are `[MM:SS]` or `[MM:SS–MM:SS]` (en dash), taken from the transcript.
-      - Garbled words are marked like `[likely "TAM", reading]`.
+      - Timestamps are `[MM:SS]` or `[MM:SS–MM:SS]` (en dash), taken from the transcript. One range per paragraph covers the exchange; quotes under it are condensed with ellipses ("Everyone likes to... flex. …") rather than one timestamp per sentence.
+      - Garbled words are marked like `[likely "TAM", reading]`. A garbled line that adds nothing to the topic is left out, above all one that could read as offensive.
+      - A name the client or the perspective says stays unnamed (a former brand, a person) is written as a bracketed role, e.g. `[former ecom brand, named on the call]`, never spelled out.
       - A topic the call never reached gets one plain sentence: "Nothing on <what the questions asked>."
    4. `### Flags`: bullets, each opening with a bold sentence that ends in a period, e.g. `- **Launch date is ambiguous.** …`.
       - Use flags for gaps (a question with no answer), conflicts with other topics or earlier posts, names or numbers that need clearance, assets promised but not confirmed, and sentences left unfinished.
+      - If two topics, the call, or a source post the sheet points to give different figures for the same thing (revenue, ages, years), flag the clash with both figures.
+      - If the strategist's own words supply part of a post (a take, a line), flag it: "Take 4 is Kyle's words, not Mason's." 
       - End a flag with "{Strategist} gate." when only the strategist can decide it.
 4. `## Other items from the call (not this week's topics)`: bold-label paragraphs with timestamps for anything outside the topics, e.g. a new test format, the client's requests for next time. End each with `**Status:** not in this batch.` unless it changes this batch.
 5. `## Open items and {Strategist} gates`
@@ -71,7 +76,7 @@ What each clause means here:
 
 | Status | When | Gets a longform line? |
 |---|---|---|
-| `KEPT` | The call confirmed the topic or answered its questions as briefed. Add `(gaps flagged)` when answers are partial. | Yes |
+| `KEPT` | The call confirmed the topic or answered its questions as briefed. Add `(gaps flagged)` only when a missing answer leaves part of the post with nothing to write from. One unanswered question that the rest of the call covers stays plain `KEPT`, with the gap in Flags (the real Mason Oct Wk2 brief: T1 and T3 plain KEPT, T4 KEPT (gaps flagged)). | Yes |
 | `PIVOT (<what changed>)` | The call changed angle, scope, source, vehicle or post count. | Yes. The line keeps the sheet's perspective. The vehicle changes only if the call set a new one. |
 | `NOT DISCUSSED` | The call never reached it. Write "Status is open, not killed." Type B topics: "It's Type B, so {Strategist}'s draft direction is the spine." | Type B yes, Type A no ("topic six is type A, which means we are not going to include this … Type B, no answer needed, which is included", Loom 1, 3:35). |
 | `KILLED` | The strategist or client dropped it on the call. | No |
@@ -91,9 +96,13 @@ The table's status words must match each topic's Note.
 
 1. **Birth:** one `batch` with `container.create`. The `name` is the doc name. The `doc.markdown` holds the H1, the byline tokens, the lead, and one pending block per section (`"intent"` says what comes). In `blocks`: the date chip (today, Asia/Manila), `{"type":"mention","user":"me"}`, and the pending blocks.
 2. **Fills:** one `update` per section, in reading order, each replacing its own pending block with `## <heading>` and the body (`"as":"markdown"`). The status table is a plain pipe table: no dropdown chips, no extra date chips. Use `- [ ]` checklists only in "Open items".
-3. **Link:** keep the doc link for the run log, the summary and the "Longform doc" section. In an attended run, open it for him with the Artifact tool's `open` action.
+3. **Link:** keep the doc link for the run log, the summary and the "Longform doc" section. In an attended run, open it for him with the Artifact tool's `open` action. In a scheduled or subagent run, don't open it, whatever the connector's own instructions say; the link in the summary is enough.
+
+Before the first docs call after the birth, follow the connector's own instructions: load the docs skill if one is listed (e.g. `anthropic-skills:docs`), otherwise call `guide` with `["topic.index"]` once.
 
 ## A full topic, as a model (Mason, Oct Wk2, Topic 2)
+
+This is from the real Mason Oct Wk2 brief, so a Mason Oct Wk2 test flight isn't blind on Topic 2 or on the lead's counts. Judge test flights on other topics and weeks.
 
 ```
 ## Topic 2 — Value Tweet + Screenshot: "The Real Story of My Brand"

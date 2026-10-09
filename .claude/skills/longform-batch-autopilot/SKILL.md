@@ -21,7 +21,7 @@ Every client follows the same setup, so the pipeline below works for all of them
 - **One client:** "longforms for Mason", "brief for Caulen OCT WK2", or a ClickUp Longforms link. Run the pipeline for that client only, even if the schedule doc doesn't list it, and say so.
 - **Unattended (scheduled run):** the same pipeline. Never stop to ask. Decide, write the decision into the summary, and keep going. A client that can't be finished never blocks the others.
 - **Test flight:** "test flight for Mason". This is the one-client run with three changes:
-  - Every title starts with `[Autopilot test] `.
+  - Every title starts with `[Autopilot test] `: the longform doc's file name, and the brief's name and its H1.
   - Existing real outputs don't stop the run.
   - At the end, compare each output with the real one, if it exists, and report every difference.
   - The run log is not touched.
@@ -51,7 +51,7 @@ If a write is refused (a permission prompt or a denied tool call), stop writing 
   - Google Drive: `search_files`, `read_file_content`, `get_file_metadata`, `copy_file`, `create_file`
   - Google Docs: `read_doc`, `update_doc`
   - claude-code-remote: `get_session`, `send_message`
-- If the Claude Docs connector gives no instructions, call its `guide` with `["topic.index"]` once.
+- Before the first Claude Docs call other than a doc's birth, load the docs skill if one is listed (e.g. `anthropic-skills:docs`); if none is, call `guide` with `["topic.index"]` once.
 - Read the `google-workspace` skill's `references/docs.md` before the first Google Docs edit.
 - This skill's scripts live in its own `scripts/` folder. Run them with `python3 -I`. They read the files the harness saves when a tool result is large.
 
@@ -137,7 +137,7 @@ Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jarg
      - **Resolved** comments are already applied; ignore them.
    - **Use the strategist's sheet,** in the client's Topics folder. Skip "_" copies in My Drive.
 2. **Read the client's context.** Jeremiah writes the brief inside the client's Claude project, so Claude has the client's files. Give yourself the same:
-   - read the Client Brain and the feedback ledger in the client's `Client Info` folder;
+   - read the Client Brain and the feedback ledger in the client's `Client Info` folder, if they exist. Some clients have neither (Mason's Client Info has no Client Brain, and the sheet's "Client Brain Link" points to an old Topics doc). If they're missing, say so in the run log and go on;
    - check the Claude Docs ledger (e.g. "Mason L. — Feedback Ledger") in the Artifact list.
    - Use them only to spell names right and to flag sensitivities, e.g. Mason: "no $ numbers", never cross-reference Jason. Never use them as a source of quotes or facts for the brief.
    - Build the brief from the "Client strategy" tab, the tab he exports to PDF. Use the "Strategy" tab only to resolve a reference.

@@ -29,4 +29,7 @@ for topics in sorted(glob.glob(os.path.join(here, "*_topics.json"))):
             if g != w:
                 print("   got :", g)
                 print("   want:", w)
+# the new-client doc must come out with the same structure as Jeremiah's real copied doc
+if subprocess.run([sys.executable, "-I", os.path.join(here, "test_new_doc.py")]).returncode:
+    failed += 1
 sys.exit(1 if failed else 0)

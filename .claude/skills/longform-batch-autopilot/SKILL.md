@@ -22,22 +22,26 @@ Every client follows the same setup, so the pipeline below works for all of them
 - **Everyone due** (default, and every scheduled run): "run longforms", "prep the batches", no client named. Process every queued client, earliest Due first.
 - **One client:** "longforms for Mason", "brief for Caulen OCT WK2", or a ClickUp Longforms link. Run the pipeline for that client only, even if the schedule doc doesn't list it, and say so.
 - **Unattended (scheduled run):** the same pipeline. Never stop to ask. Decide, write the decision into the summary, and keep going. A client that can't be finished never blocks the others.
-- **Test flight:** "test flight for Mason". This is the one-client run with three changes:
+- **Test flight:** "test flight for Mason". This is the one-client run with four changes:
   - Every title starts with `[Autopilot test] ` (or the label the request gives, e.g. `[Autopilot test v2] `): the longform doc's file name, and the brief's name and its H1. Never the header line inside the doc.
-  - Existing real outputs don't stop the run.
+  - Existing real outputs don't stop the run: its `[Autopilot test]` copies are allowed even when the real brief and doc exist (the routine prompt authorizes this).
   - At the end, compare each output with the real one, if it exists, and report every difference.
   - The run log is not touched.
-- **Brief only / doc only:** "brief only for Keval", "doc only for Nathan C". The one-client run, stopping after Step 4 (no doc) or skipping Step 4 (no brief). A doc-only run takes the statuses from an existing brief for that client-week; with none, it works as with no transcript (Type B in, Type A out and listed) and says so.
-- **Dry run:** "dry run for everyone due", "dry run for Caulen". Do the reads (Steps 1–3, and `entries.py` on the sheet when there is one) and report what each client would get: brief or not and why, the lines, what is left out, every problem and gate. Write nothing at all: no schedule chat message, no brief, no doc, no run log entry.
+- **Brief only / doc only:** "brief only for Keval", "doc only for Nathan C". The one-client run, stopping after Step 4 (no doc; Step 5.7 still fills the brief's Longform doc section) or skipping Step 4 (no brief). A doc-only run takes the statuses from an existing brief for that client-week; with none, it works as with no transcript (Type B in, Type A out and listed) and says so.
+- **Dry run:** "dry run for everyone due", "dry run for Caulen". Do the reads (Steps 1–3, and `entries.py` on the sheet when there is one) and report what each client would get: brief or not and why, the lines, what is left out, every problem and gate.
+  - Statuses for `entries.py`: an existing brief's (Step 5.3). With a transcript and no brief, judge each topic's status as Step 4 would, from the transcript, without writing a brief, and mark the lines "provisional". With no transcript, `"call": false`.
+  - Write nothing at all: no schedule chat message, no brief, no doc, no run log entry.
 - **Dashboard run:** the routine's prompt ends with a section that starts with the line `[dashboard-run]`. Jeremiah typed or clicked that instruction on his dashboard, and for that run it replaces "everyone due". Read it as if he had typed it here; it picks one of the modes above, or asks a question about the queue (answer it from the reads; write nothing).
+  - The dashboard stamps its section with a line `Valid until: <ISO time>`, 10 minutes after it wrote it. If that time has passed when the run starts, or the section has no such line, ignore the section, run everyone due, and say in the summary that a stale dashboard instruction was ignored (audit, Oct 10).
 
 ## What you may and may not change
 
 Jeremiah authorizes these writes, and only these:
-- Send the weekly update request to his schedule chat (Step 1.0), as he does in Loom 1.
+- Send the weekly update request to his schedule chat (Step 1.0), as he does in Loom 1, only when Step 1.0 says to.
 - Create **one** brief Claude Doc per client per week.
 - **Copy** last week's longform doc into **his My Drive**, and edit **only that new copy**. For a new client with no earlier doc, create an empty Google Doc in his My Drive instead and fill only that (`references/longform-doc.md` § Exceptions; never an HTML import).
 - Create and append to the run log Claude Doc, "Longform Autopilot — Run Log".
+- In a test flight, the same brief and doc as `[Autopilot test]` copies, even when the real ones exist (§ Modes).
 
 Never do any of these:
 - Edit, tick or comment on the schedule doc. He ticks rows himself.
@@ -68,23 +72,24 @@ If a write is refused (a permission prompt or a denied tool call), stop writing 
 
 The Loom starts in the pinned chat "Client topic batch and long-form schedule". That chat is a Cowork session (`cse_01VT4cAcAw8Wrd4LPaCmyNiQ`) that keeps the schedule in a Claude Doc, refreshed from Slack and ClickUp. Do what Jeremiah does: ask it for the update, then read the doc.
 
-0. **Ask the schedule chat for the update** (skip in a test flight).
+0. **Ask the schedule chat for the update** (everyone-due runs only).
+   - Send it only in an everyone-due run, and only when the doc is stale (step 3) or was last updated more than 24 hours ago (its time in the Artifact list, step 1). So find the doc and check its dates first. Never send it in a one-client, brief-only, doc-only, test-flight, dry-run or question run. Each message starts an ~8-minute refresh in his pinned chat; sent on every run, that was about 14 a week (audit, Oct 10).
    - Call `get_session` on `cse_01VT4cAcAw8Wrd4LPaCmyNiQ`. If it is running, Jeremiah is probably using it: don't send, and note "schedule not refreshed, chat busy".
    - Otherwise call `send_message` to that session with `priority: "later"` and this text (his own words, Loom 1, 0:27–1:04; it needn't be verbatim, so a fixed copy is fine): "Claude, can you give me the updated topic and content batch? By now, there are already new topics (to be submitted next week) and content batch as well, organize them like last time."
-   - The refresh takes about 8 minutes and 20+ tool steps (Loom 1, 1:21–1:42). Don't wait idle: carry on with Steps 1–5 using the doc as it stands, unless it is stale (step 3).
-   - Before Step 7, call `get_session` again. Once it is idle and its summary is newer than your message, re-read the doc (step 2 below) and process any row that only now shows up as in progress.
-   - If it hasn't finished, note "schedule refresh still running" and stop there.
-1. **Find the doc.** The schedule chat updates its Claude Doc every week, and the dates in the title change: `Next Week: Topics and Content Batches (<dates>)`. "It is updated weekly so keep that in mind" (Jeremiah, Oct 9).
+   - The refresh takes about 8 minutes and 20+ tool steps (Loom 1, 1:21–1:42). Don't wait idle: carry on with the rest of Step 1 and Steps 2–5 using the doc as it stands, or the ClickUp queue if it is stale (step 3).
+   - Before Step 7, call `get_session` again. Once it is idle and its summary is newer than your message, find and re-read the doc (steps 1 and 2 below) and process any row that only now shows up as in progress. This is for everyone-due runs only: a one-client run never takes on other clients.
+   - If it hasn't finished, note "schedule refresh still running", don't re-read the doc, and go on to Step 7. A run always reaches Step 7.
+1. **Find the doc.** The schedule chat writes the schedule to a Claude Doc every week, and the dates in the title change: `Next Week: Topics and Content Batches (<dates>)`. "It is updated weekly so keep that in mind" (Jeremiah, Oct 9).
    - Open the known doc first: artifact `5dSKyoafmKQJ93gw67JPi2` (`https://claude.ai/artifact/5dSKyoafmKQJ93gw67JPi2`, also `https://claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b`; "(Oct 12–16)" on Oct 9).
-   - Also use the Artifact tool's `list` (limit 50) for titles starting `Next Week: Topics and Content Batches`. If another one was updated more recently, use it, and say in the summary that the known ID here and in `references/clients.md` needs updating.
+   - Also use the Artifact tool's `list` (limit 50) for titles starting `Next Week: Topics and Content Batches`. It shows one doc per week: "(Oct 5–9)" is `WhJtVnjwL4ztCovnEGmGX8`, "(Oct 12–16)" is `5dSKyoafmKQJ93gw67JPi2`. Use the one whose title dates are latest. Use the update time only to break a tie: a tick on last week's doc makes it the most recently updated (audit, Oct 10). If a later week than the known doc's exists, use it, and say in the summary that the known ID here and in `references/clients.md` needs updating.
    - Always read it fresh. Never reuse rows from an earlier run.
 2. **Read it.**
    - `read` with `ref {"object":"project","id":"<artifact id>"}` gives the body node id (`files[0].content.id`).
    - `read` again with `ref {"object":"node","id":"<body id>"}`, `engine "prose"`, `container {"kind":"project","id":"<artifact id>"}` and no payload. The result is large and gets saved to a file.
    - Run `scripts/schedule_rows.py <saved file>`. It prints the rows of the "Content batches (long-forms)" table: due, client, pod note, checked, status, ClickUp task id, link label and notes.
 3. **Check it is current.** The title carries the week's dates, e.g. "(Oct 12–16)". If today (Asia/Manila) is after the last date, the doc is stale.
-   - If step 0 sent a refresh, wait for it (`get_session`; it took about 8 minutes in Loom 1), then find and read the doc again (steps 1 and 2) before falling back.
-   - If it is still stale, or no refresh was sent or finished, say so in the summary, then build the queue from ClickUp instead: `clickup_filter_tasks` over space `90152587982`, tasks named `… | Longforms`, status `in progress`, due within the next 10 days, either assigned to Jeremiah (306644176) or belonging to a client in `references/clients.md` (Keval's task is assigned to Ymarie and Kyle, not him). Flag every assignee mismatch except Keval's, which the schedule doc settles (`references/clients.md`).
+   - If it is stale, don't wait for a refresh: a cloud session can't sleep in the foreground (audit, Oct 10). Say so in the summary, then build the queue from ClickUp now: `clickup_filter_tasks` over space `90152587982`, tasks named `… | Longforms`, status `in progress`, due within the next 10 days, either assigned to Jeremiah (306644176) or belonging to a client in `references/clients.md` (Keval's task is assigned to Ymarie and Kyle, not him). Flag every assignee mismatch except Keval's, which the schedule doc settles (`references/clients.md`).
+   - If step 0 sent a refresh, re-read the doc before Step 7 (step 0) and process any in-progress row the ClickUp queue missed (everyone-due runs).
 4. **Pick the rows.**
    - Work the rows in Due order, earliest first. The Due column is already the earliest of the team-calendar day, the ClickUp date and any date Kyle set in Slack (Mason: Due Oct 12, ClickUp Oct 13), so use it rather than the ClickUp date.
    - Skip ticked rows (`checked: true`). He ticks a row once the batch is handed in.
@@ -115,9 +120,10 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
      - Keep a doc owned by either pod's strategist account (mistymeng2000@ or manaallmalikk@): Ben's sheet is owned by mistymeng2000@ though he is Devin's. If there are several, prefer the one in the client's Topics folder.
      - Skip "_" copies in My Drive; those are Jeremiah's imports, not the strategist's doc.
 3. **What already exists.** This keeps re-runs safe. Check both outputs before you make anything.
-   - **Brief:** search the Artifact `list` for a title that has the client's brief name (Mason L, Josh Chin, Ben K., …), the week and "Brief". Match case-insensitively, the month short or long (`Oct|October`) and the week as `W(ee)?k\s*N`: Jeremiah's own Teddy brief is "October WK1 Post-Call Brief". If one exists, don't make another. Mason Oct Wk2 already has one.
+   - **Brief:** search the Artifact `list` (limit 200) for a title that has the client's brief name (Mason L, Josh Chin, Ben K., …), the week and "Brief". Match case-insensitively, the month short or long (`Oct|October`) and the week as `W(ee)?k\s*N`: Jeremiah's own Teddy brief is "October WK1 Post-Call Brief". Also accept a title with the client's brief name, "Brief" and a call date inside this batch's call week (the days before the task went in progress): his real Shane brief is "Shane H. — Topic Briefs from 9/30 Call (Wiz x Shane)" (audit, Oct 10). If one exists, don't make another. Mason Oct Wk2 already has one.
    - **Longform doc:** `search_files` with `title contains '<Name> - <Mon> - Week <N>' and mimeType = 'application/vnd.google-apps.document'`, then keep only results whose title, trimmed, is **exactly** `<Name> - <Mon> - Week <N>`. Drive matches words, not the string: the search for "Lior P. - Oct - Week 2" also returns the media FOLDER "Lior P. - Oct - Week 1 - 2026" ('2' matches '2026'), and taking that as the doc would skip the client (test flight, Oct 9). Suffixed siblings ((Snipes), (Design Request), (Quick Response)…) don't count. If an exact match exists anywhere (his My Drive or the client's Content folder), don't make another.
    - If both exist, the client is done. Say so in one line.
+   - If the doc exists and no brief does, still look for a transcript (Step 3). If there is still none, the client gets one run-log line, "<client>: doc made <date>, waiting for transcript" (the doc's created date), and nothing in the push. Don't list its comments, gates or `would_be` lines again; the run that made the doc did. Go to Step 6 only when a transcript appears (audit, Oct 10). A test flight runs in full either way (§ Modes).
    - Ignore anything whose title starts with `[Autopilot test` in both checks. Test copies never count as the real output.
    - Record every raw hit of both checks in `state.json`, with why each was dropped (folder, suffix, other week, test copy; Lior Oct Wk2).
 
@@ -184,6 +190,7 @@ Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jarg
 Follow `references/longform-doc.md`. In short:
 
 1. **Find last week's doc.** Look in the client's Content folder (Mason's is `Mason Content › 2026`) for the newest doc titled `<Name> - <Mon> - Week <n>` with no suffix. Pick the latest by the month and week in the title, not by arithmetic (Oct Week 1 follows Sept Week 5); use createdTime only to break ties or across a year change. "Go to the most recent batch" (Loom 2, 0:37). If it isn't there, use Jeremiah's own My Drive copy of the latest week.
+   - **No earlier doc at all** (a new client's first batch, Nathan C Oct Wk2): there is nothing to copy, so skip steps 2 and 4. Work out the lines (step 3), then follow `references/longform-doc.md` § Exceptions: Drive `create_file` of an empty native doc in his My Drive, `scripts/new_doc_batch.py`, then `verify_doc.py` (step 5), which also checks that Heading 2 is not bold and the doc is pageless. Say "first batch: built as a new doc" in the summary.
 2. **Copy it into My Drive.** Call `copy_file` with the title `<Name> - <Mon> - Week <N>` (e.g. "Mason L. - Oct - Week 2") and `parentId` = his My Drive root. Get the root ID from `get_file_metadata` with `fileId "root"`; it was `0APF3ebrWaXbcUk9PVA`. Never leave `parentId` empty: the copy would land in the client's shared folder. "Instead of duplicating it inside this folder… copy it to My Drive" (Loom 2, 1:09).
    - Record the source doc's `modifiedTime` in `state.json` before copying, and check it again after. If it changed, say so in the summary: someone else was editing it (Josh D's Oct Wk1 doc was touched at 23:08, mid-flight).
 3. **Work out the lines.**
@@ -204,11 +211,11 @@ Follow `references/longform-doc.md`. In short:
      - per-client habits.
    - If `problems` isn't empty, still write the doc, but put each problem at the top of that client's summary.
 4. **Edit the copy in one guarded batch.**
-   - Call `read_doc` on the NEW copy. A large result (over about 50K characters) is saved to a file. A smaller one comes back inline: if it's short, write it to a scratchpad file; if it's too long to copy faithfully, write the cut-down `subset` form `longform_batch.py` accepts (its docstring: documentId, revisionId, tabId, bodyEnd, and the header, Media Folder and LONGFORMS paragraphs copied exactly), after checking with `read_file_content` that the doc has one Media Folder line and one LONGFORMS.
+   - Call `read_doc` on the NEW copy. A large result (over about 50K characters) is saved to a file. A smaller one comes back inline: if it's short, write it to a scratchpad file; if it's too long to copy faithfully, write the cut-down `subset` form `longform_batch.py` accepts, as its module docstring describes it: `"subset": true`, documentId, revisionId, tabId, bodyEnd, and the header, Media Folder, anything between, and LONGFORMS paragraphs, each with startIndex, endIndex, namedStyleType and elements, copied exactly. First check with `read_file_content` that the doc has one Media Folder line and one LONGFORMS.
    - Run `scripts/longform_batch.py <saved read> "auto:<Mon>:<N>" lines.json`. The `auto:` form changes only the week number and month in last week's header, so each client's own wording survives (Loom 2, 1:24).
    - Send the printed `requests` and `writeControl` with `update_doc`.
    - The batch sets the header, empties the Media Folder link (keeping the "Media Folder:" label), deletes everything under LONGFORMS (post bodies, images, old entries), then writes each line as a bold heading with one blank line after it.
-5. **Verify** with `scripts/verify_doc.py <read_doc after the edit> lines.json --header "<header>"`. It checks:
+5. **Verify** with `scripts/verify_doc.py <read_doc after the edit> lines.json --header "<header>"`. With the `auto:` form, `<header>` is the header the batch writes: the `replaceText` of the `replaceAllText` request, the last item of the `requests` that `longform_batch.py` printed (e.g. "Mason L. - Week 2 - Oct"). For a new doc, it is the header you gave `new_doc_batch.py`. It checks:
    - the header text;
    - no chip or link left on the Media Folder line;
    - nothing under LONGFORMS except the new lines, each followed by one blank paragraph;
@@ -217,6 +224,11 @@ Follow `references/longform-doc.md`. In short:
    - the doc's Heading 1 and Heading 2 named styles are there (it fails if they are missing, and warns on non-default sizes).
    Always also run `verify_doc.py --md` on `read_file_content` of the doc (Mason and Josh D Oct Wk2 flights); it drops an unbolded first H1 that is only the tab title ("# Content", Josh C). If the `read_doc` result comes back inline and too long to save, write `verify_doc.py`'s minimal form instead (its docstring lists the fields) and run the read check on that. Never skip the style checks.
 6. **Star it.** "So it should appear on my Starred" (Loom 2, 3:14). The Drive connector can't star a file. On his Mac with Claude in Chrome, star it (`references/chrome-mode.md` § Star). Otherwise put it under "Star these" in the summary with its link.
+7. **Fill the brief's "Longform doc" section** (`references/brief.md` § Sections, 6) once the doc is made. The brief is born in Step 4, before the doc exists, so nothing else fills it (audit, Oct 10). Fill it only in a brief this run made, with one `update` that replaces its pending block:
+   - Doc made: the doc link, every line as plain `-` bullets, then what was left out and why.
+   - Brief-only run: "Doc not made (brief only)".
+   - Doc already existed: its link, plus Step 6's suggested changes (fill it after Step 6).
+   - Doc not made, or its check failed: "Doc not made: <why>".
 
 ### Comments, notes and snipes
 
@@ -233,9 +245,11 @@ Follow `references/longform-doc.md`. In short:
 ## Step 6: A transcript that arrives later
 
 The doc may already exist with no brief, because there was no transcript when it was made. If this run finds a transcript, write the brief (Step 4), then compare it with the doc's lines:
-- topics that are now NOT DISCUSSED, NOT ANSWERED (Type A) or KILLED (lines to remove);
+- Type A topics now NOT DISCUSSED or NOT ANSWERED, and any KILLED topic (lines to remove). Type B lines stay unless killed;
 - Type A topics the call did answer, which a no-transcript doc left out (lines to add);
 - vehicles the call changed.
+
+Best: run `entries.py` again with `"call": true` and the brief's statuses, and diff its lines against the doc's. Then fill the brief's "Longform doc" section with the doc's link and these suggestions (Step 5.7).
 
 List the differences in the summary as suggestions. Never edit a doc that already exists; Jeremiah may be working in it.
 
@@ -244,14 +258,16 @@ List the differences in the summary as suggestions. Never edit a doc that alread
 1. **Run log.** Find "Longform Autopilot — Run Log" in the Artifact list. Create it on the first run: title, byline, then the sections.
    - Insert one section at the top per run: `## <date, time> Manila`, then one bullet per client with its brief link, doc link, transcript route, lines added, and flags: every `problems` item, open-comment to-dos, tab disagreements and gates, and assignment doubts (a client the schedule gives him but ClickUp or Slack gives someone else, except where `references/clients.md` says the schedule settles it, as for Keval; with the source: "Teddy: confirm he's still yours (Arooba, Oct 7: moving to Ymarie)").
    - In each client's bullet, under "Type A left out": every `would_be` line from `entries.py`, as printed, so Jeremiah can paste it if the call did answer it. A topic with the client's written answer on the sheet adds "answered in writing? add line?" (`references/longform-doc.md`).
-   - Then one bullet each for the clients skipped and why.
+   - Then one bullet each for the clients skipped and why. A client whose doc is waiting for its transcript gets only its one line (Step 2.3).
 2. **Final message.** In a scheduled run it becomes his push notification. Keep it to 8 lines or fewer:
    - `<n> briefs, <n> docs made.`
-   - One line per client that needs him, e.g.:
-     - "Mason: star doc"
+   - One line naming every new doc to star: "Star these: Mason, Caulen, …". Every new doc needs starring, so a line per doc overflowed 8 lines with 9 clients (audit, Oct 10).
+   - A separate line only for a client with a problem or a doubt, e.g.:
      - "Josh D: doc made without brief (Krisp)"
      - "Teddy: confirm he's still yours (Arooba, Oct 7)". An assignment doubt keeps its source, as in the run log.
      - "Caulen: add the extra post from the schedule note?"
    - The run log link.
+   - If that runs over 8 lines, keep the client lines that fit and end with "+N more in the run log".
+   A test flight or dry run may go past 8 lines: print its difference report, `would_be` lines and problems first, then the short summary.
 
 Only report what actually happened. A doc counts as made only after the read-back check in Step 5 passed. A star counts only if the Chrome step confirmed it.

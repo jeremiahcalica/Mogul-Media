@@ -44,30 +44,32 @@ LONGFORMS                                   (H1, bold)
 
    | Topic | Line? |
    |---|---|
-   | Header label or VEHICLE says **Snipe** or **Quick Response** | **No.** These go in their own doc, "<Name> - <Mon> - Week <N> (Snipes)" / "(Quick response posts)", named with last week's exact suffix (SKILL.md Step 5). A plain "quote tweet" is not a snipe. |
+   | Header label, VEHICLE or the call's new vehicle says **Snipe** or **Quick Response** ("Snipe (QT)", "Quote tweet snipe", "Quick Response post"), or the brief marks the status "(snipe)" / "(quick response)". The same goes for an extra post whose vehicle says snipe. | **No.** These go in their own doc, "<Name> - <Mon> - Week <N> (Snipes)" / "(Quick response posts)", named with last week's exact suffix (SKILL.md Step 5). A plain "quote tweet" is not a snipe. |
    | Struck through, or ❌ on the sheet | No |
    | Folded into another topic (`merged_into`, only when the brief says so) | No, flagged |
    | **No transcript and no brief**, Type B | **Yes** (Type B needs no answers, call or no call) |
    | **No transcript and no brief**, Type A | **No**, listed in the summary: nothing shows the call answered it (Jeremiah, Oct 9) |
+   | Type A, KEPT / PIVOT / COVERED / RESOLVED / BLOCKED whose status also says the call never reached or answered it ("KEPT as written. Not discussed on the call", Ben K Oct Wk2 T1's wording; "PIVOT — unanswered"). A gap inside it ("Question 2 was not asked") doesn't count. | No, flagged in `problems`, listed with its would-be line (audit, Oct 10) |
    | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (answers given, still this batch, waiting on an asset or sign-off), RESOLVED | Yes |
-   | NOT DISCUSSED, Type B | Yes |
-   | NOT DISCUSSED, Type A | No |
-   | NOT ANSWERED, Type A: it came up on the call but its questions got no answer (deferred, "I'll think about it", no take given), even if something else is also pending. An answer the client wrote on the sheet after the call doesn't change it (Keval Oct Wk3; see below). | **No.** "If it's not discussed in the call, or a Type A topic was killed or wasn't answered, it shouldn't be in the document" (Jeremiah, Oct 9) |
+   | NOT DISCUSSED, Type B. "Skipped on call" counts here: it means not reached ("it's already skipped in the call itself", Jeremiah, Oct 9, 22:51) | Yes |
+   | NOT DISCUSSED (or "Skipped on call"), Type A | No, listed with its would-be line |
+   | NOT ANSWERED, Type A: it came up on the call but its questions got no answer (deferred, "I'll think about it", no take given), even if something else is also pending. An answer the client wrote on the sheet after the call doesn't change it (Keval Oct Wk3; see below). A BLOCKED status that waits on the answer ("BLOCKED (not answered …)", "deferred", "async", "Keval's answer", "waiting on answers", "to be answered", "his take") counts here; "answered" or "answers given" stays BLOCKED. | **No**, listed with its would-be line. "If it's not discussed in the call, or a Type A topic was killed or wasn't answered, it shouldn't be in the document" (Jeremiah, Oct 9) |
    | NOT ANSWERED, Type B | Yes (Type B needs no answers) |
-   | KILLED / skipped / dropped | No |
-   | PARKED | No. Exception: a screenshot topic where the client sends the screenshots (Keval T4). That one is yes, flagged. |
-   | ON HOLD | No, flagged |
+   | KILLED / dropped (a "Skipped" status that also says killed or dropped counts here, "kill it" too; "Status is open, not killed" doesn't) | No |
+   | PARKED | No, for either type, flagged "include?". Exception: a screenshot topic where the client sends the screenshots (Keval T4). That one is yes, flagged. |
+   | ON HOLD: the strategist took it out of this batch, kept for later. Waiting on someone else's assets with no take from the client is NOT ANSWERED instead (Josh C Oct Wk2 T6, his "On hold"). | No, for either type, flagged "include?" |
    | NEW, with a vehicle set on the call | Yes |
    | NEW, no vehicle | No, flagged "decide" |
-   | A status the script doesn't recognise | Yes, flagged |
+   | A status the script doesn't recognise, Type B | Yes, flagged in `problems` |
+   | A status the script doesn't recognise, Type A | No, flagged in `problems`, listed with its would-be line |
 
-   Briefs word statuses freely ("Go, with gaps", "Draftable", "No pivot called", "Skipped on call"); `status_norm()` maps them. Put the brief's status in `status` as written.
+   Briefs word statuses freely ("Go, with gaps", "Draftable", "No pivot called", "Skipped on call"); `status_norm()` maps them. Put the brief's status in `status` as written. The first words decide: "KILLED (already covered in last week's post)" is KILLED, and only a status that starts COVERED or "Already touched on" is COVERED (audit, Oct 10).
 
-   Every Type A topic left out (no transcript, NOT ANSWERED, NOT DISCUSSED) comes back in `would_be` with the line(s) it would get, numbered "?". They go in the summary under "Type A left out", so Jeremiah can paste one if the call did answer it. A left-out topic with the client's own written answer on the sheet (`written_answer`, Josh D's "RECENT WINS JOSH SENT", Oct Wk2) stays out too; its summary entry adds "answered in writing? add line?".
+   Every Type A topic left out (no transcript, NOT ANSWERED, NOT DISCUSSED, a status the script doesn't recognise or that also says not discussed) comes back in `would_be` with the line(s) it would get, numbered "?". They go in the summary under "Type A left out", so Jeremiah can paste one if the call did answer it. A left-out topic with the client's own written answer on the sheet (`written_answer`, Josh D's "RECENT WINS JOSH SENT", Oct Wk2) stays out too; its summary entry adds "answered in writing? add line?".
 2. **Extra posts the strategist asked for.** A comment on the topic sheet like "Make a 2nd post on Boxing and chad mentality" (Mason Wk1), or "3 posts / 1/ … 2/ … 3/ …" (Abdul), adds lines right after the parent topic's own lines.
-   - Not when the header already counts them: Caulen T2 "(3 post)" with Kyle's comment naming posts 2 and 3 gives three identical "(Founder milestones) - (Short-form listicle)" lines in his real doc. The subjects go in the brief. `entries.py` flags a header count combined with extra posts as possible double counting.
+   - Not when the header already counts them: Caulen T2 "(3 post)" with Kyle's comment naming posts 2 and 3 gives three identical "(Founder milestones) - (Short-form listicle)" lines in his real doc. The subjects go in the brief. `entries.py` flags a header or VEHICLE count (", x2") combined with extra posts as possible double counting.
    - Put each one in the parent's `extra_posts`, with a short perspective label taken from the comment ("Chad mentality").
-   - The vehicle defaults to the parent's.
+   - The vehicle defaults to the parent's, without its count: each extra post is one post ("Thread, x2" gives one Thread; audit, Oct 10).
    - These are always flagged.
    - They follow their parent: if the parent topic is left out (a Type A topic with no answer, killed, struck), so are its extra posts, and a would-be parent's `would_be` lines include them.
    - A comment that isn't on any topic but asks for a post (Devin's "EXRA … turn it into an article with Doc SS QT", Josh D) is not an extra post: it becomes a freeform topic (`"freeform": true`) numbered with the next integer after the last sheet topic. Its `perspective_override` is a short 1–3 word subject, like Jeremiah's "Trybe" for Josh D's newsletter (his Oct Wk1 doc), and its vehicle is the comment's format. Flagged.
@@ -122,6 +124,8 @@ LONGFORMS                                   (H1, bold)
 ```
 
 - Copy `vehicle`, `perspective` and `label` exactly as the sheet has them, including bullets and line breaks. The script does all the cleaning.
+- `type` is the header's A or B. "Type B" and "TYPE A  2 POSTS" read the same as "B" and "A" (the sheet header reads "TOPIC N | TYPE B"). A sheet topic with no type, or one the script can't read, goes in `problems`: none counts as B, an unreadable one as A. A freeform topic or a NEW post has `type` null, which counts as B.
+- Always set `call`. Without it the script assumes the call happened and says so in `problems`.
 - Read the VEHICLE field, not the italic vehicle in the topic's header row.
 - Use `vehicle_override` and `posts_override` only when the call (or, for a post count, a strategist's sheet comment, with `posts_override_source`) clearly settled a new vehicle or post count, not when it was only floated (Josh T4 "listable format"). The script lists every override in `notes`.
 - The optional keys `inferred`, `other_tab_type`, `client_question`, `posts_override_source`, `written_answer` and `freeform` are described in SKILL.md Step 5.3.
@@ -138,7 +142,7 @@ LONGFORMS                                   (H1, bold)
 2. **Copy.** Call `copy_file` with `{"fileId": <last week>, "title": "<Name> - <Mon> - Week <N>", "parentId": <My Drive root id>}`. Then call `get_file_metadata` on the new ID and check the parent and the title.
    - Comments and sharing don't carry over, which is what the Copy dialog does with its boxes unticked.
 3. **Read the copy.** Call `read_doc` on the NEW id. A result over about 50K characters is saved as `{"content": {...}}`; the script unwraps it. A smaller one comes back inline: if it's short, write it to a scratchpad file; if it's too long to copy faithfully (a filled 40K doc, Caulen), write the cut-down `subset` form instead (see `longform_batch.py`'s docstring: documentId, revisionId, tabId, bodyEnd and the header, Media Folder, anything between, and LONGFORMS paragraphs exactly as read), after checking with `read_file_content` that there is one Media Folder line and one LONGFORMS. The subset gives the identical batch (`tests/test_copy_batch.py`).
-4. **Build the batch.** Run `python3 -I scripts/longform_batch.py <saved read> "<Name> - Week <N> - <Mon>" lines.json`. It:
+4. **Build the batch.** Run `python3 -I scripts/longform_batch.py <saved read> "auto:<Mon>:<N>" lines.json` (e.g. `"auto:Oct:2"`), as SKILL.md Step 5.4 does. The `auto:` form changes only the week number and the month in last week's header, so each client's own wording survives (Loom 2, 1:24; `loom-rules.md` 5.1). The new header is the `replaceText` of the last request it prints; step 6 checks it. Pass the full header (`"<Name> - Week <N> - <Mon>"`) only when the auto form can't parse last week's header (it stops with "could not find 'Week N' in the old header"). It:
    - finds the header, the Media Folder line and the LONGFORMS heading itself, and stops if the doc doesn't have exactly one of each or has more than one tab;
    - deletes everything after LONGFORMS except the body's final newline;
    - inserts `line\n\n` for each line, resets styles to normal, then makes each line Heading 2 + bold;

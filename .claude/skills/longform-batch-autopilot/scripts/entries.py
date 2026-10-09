@@ -6,11 +6,21 @@ Prints {"entries": [{"topic", "line"}], "left_out": [{"topic", "why"}],
         "would_be": [{"topic", "lines", "why"}], "notes": [...], "problems": [...]}.
 Write the doc with the lines; put every note, problem and would-be line in the run summary.
 
-would_be: each Type A topic left out for want of answers (no transcript, NOT ANSWERED, NOT DISCUSSED;
-never a killed, struck, ❌, snipe, merged, parked or on-hold one) with the line(s) it would get if Jeremiah
-adds it, worked out as if the call happened and it was KEPT. They are numbered "?" ("?.1" / "?.2" for an
-X/LI split) and never use up a real number: {"topic": 3, "lines": ["? - (X/LI) - (...) - (...)"], "why": "..."}.
+would_be: each Type A topic left out for want of answers (no transcript, NOT ANSWERED, NOT DISCUSSED, a
+status it can't read or that also says not discussed; never a killed, struck, ❌, snipe, merged, parked or
+on-hold one) with the line(s) it would get if Jeremiah adds it, worked out as if the call happened and it was
+KEPT. They are numbered "?" ("?.1" / "?.2" for an X/LI split) and never use up a real number:
+{"topic": 3, "lines": ["? - (X/LI) - (...) - (...)"], "why": "..."}.
 Its extra_posts' lines come after its own; a left-out topic's extra posts are left out with it ("3+").
+
+Statuses (status_norm): the first words decide. "KILLED (already covered ...)" is KILLED and "NOT ANSWERED,
+covered above" is NOT ANSWERED; only a status that starts COVERED / ALREADY TOUCHED / ALREADY COVERED is
+COVERED. "Skipped on call" means not reached, so NOT DISCUSSED, unless it also says killed or dropped ("kill
+it" counts, "not killed" doesn't). BLOCKED waiting on an answer ("not answered", "deferred", "async", "Keval's
+answer", "waiting on answers", "to be answered", "his take") is NOT ANSWERED; "answered" or "answers given"
+stays BLOCKED (in). A status it can't read: Type A out with a would-be line, Type B in; both are problems. On a
+Type A topic, an answered status that also says the call never reached or answered it ("KEPT as written. Not
+discussed on the call") is out with a would-be line, as a problem (audit, Oct 10).
 
 The rules come from Jeremiah's real docs (Mason Oct Wk1 + Wk2, Keval, Josh C, Ben K, Teddy, Abdul, Lior,
 Jason; see references/longform-doc.md). TOPICS.json:
@@ -19,11 +29,16 @@ Jason; see references/longform-doc.md). TOPICS.json:
   "client": "Mason L.",                  # longform doc name; loads the per-client settings in CLIENTS
   "strategist": "Kyle",                  # named in the type-clash gate; "the strategist" if missing
   "platforms": "X, LinkedIn",            # the topic sheet's PLATFORMS row
-  "call": true,                          # false with no transcript and no brief: Type B in, Type A out
+  "call": true,                          # false with no transcript and no brief: Type B in, Type A out;
+                                         #   missing is a problem (treated as true)
   "expected_posts": null,                # the brief's total post count, if it states one (checked)
   "topics": [                            # sheet order; a freeform "Topic 0" first if the sheet has one
-    {"n": 1, "type": "A",                # "A" / "B"; null for a freeform topic (treated as B)
+    {"n": 1, "type": "A",                # "A" / "B" ("Type B", "TYPE A  2 POSTS" read the same); null for a
+                                         #   freeform topic or a NEW post (treated as B). On a sheet topic, a
+                                         #   missing type (treated as B) or one it can't read (treated as A) is a problem
      "label": null,                      # 3rd header segment or TYPE suffix: "Snipe", "Quick Response", ...
+                                         #   (a snipe also shows in the vehicle or the call's vehicle, "Quote tweet
+                                         #   snipe", or the status, "KEPT (snipe)": all left out)
      "title": "Being Stupid In Your 60s",
      "posts": 1,                         # 2 when the header says "2 POSTS" (counts inside VEHICLE are read too)
      "vehicle": "Longform (X/LI)",       # VEHICLE field, verbatim (all lines, bullets included)
@@ -54,7 +69,9 @@ Jason; see references/longform-doc.md). TOPICS.json:
      "extra_posts": []}                  # posts the strategist asked for in a sheet comment or on the call:
                                          #   {"perspective": "Chad mentality", "vehicle": null, "same_material": false,
                                          #    "source": "Kyle comment: Make a 2nd post on Boxing and chad mentality"}
-                                         #   they follow their parent in or out
+                                         #   they follow their parent in or out; each is one post: a null vehicle
+                                         #   takes the parent's without its count ("Thread, x2" gives one Thread);
+                                         #   one whose vehicle says snipe is left out (Snipes doc)
   ]
 }
 """
@@ -248,11 +265,24 @@ def status_norm(s):
     s = re.sub(r"^(NOTE|STATUS)\s*:\s*", "", s, flags=re.I).upper()
     table = [
         (r"^KILLED\b.*\bREPLAC", "PIVOT"),
-        (r"\bALREADY (TOUCHED|COVERED)\b|\bCOVERED (ABOVE|EARLIER|ELSEWHERE|IN)\b|^COVERED\b", "COVERED"),
+        # anchored: "KILLED (already covered in last week's post)" is KILLED, not COVERED (audit, Oct 10)
+        (r"^(COVERED|ALREADY (TOUCHED|COVERED))\b", "COVERED"),
+        # "skipped" means not reached: "it's already skipped in the call itself" (Jeremiah, Oct 9, 22:51).
+        # "not killed" doesn't kill it: brief.md's Note says "Status is open, not killed." (audit, Oct 10)
+        (r"^SKIPPED\b(?!.*(?<!NOT )\b(KILL(ED|S)?|DROP(PED|S)?)\b)", "NOT DISCUSSED"),
         (r"^(KILLED|SKIPPED|NOT PICKED|DROPPED)\b", "KILLED"),
         (r"^(PARKED|REVISIT)", "PARKED"),
         (r"^ON HOLD", "ON HOLD"),
-        (r"^(NOT ANSWERED|UNANSWERED|NO ANSWER|DEFERRED)\b|^BLOCKED\b.*\b(ANSWER|DEFER|ASYNC)", "NOT ANSWERED"),
+        # BLOCKED waiting on an answer is NOT ANSWERED ("waiting on answers", "to be answered", "his take");
+        # "answered" / "answers given" stays BLOCKED (audit, Oct 10)
+        (r"^(NOT ANSWERED|UNANSWERED|NO ANSWER|DEFERRED)\b"
+         r"|^BLOCKED\b.*\b(NOT (YET )?ANSWERED|UNANSWERED|NO ANSWERS?|DEFER(RED)?|ASYNC|ANSWERING"
+         r"|(TO BE|WILL BE|BEING) ANSWERED)\b"
+         r"|^BLOCKED\b.*\b(ANSWERS?|TAKE)\b(?!\s+(GIVEN|RECEIVED|IN|DONE|A)\b)"
+         r"|^BLOCKED\b.*\b(AWAITING|WAITING (ON|FOR)) (HIS |HER |THEIR |THE CLIENT'?S |CLIENT'?S )?(REPLY|RESPONSE)\b"
+         r"|^BLOCKED\b.*\bTO THINK (ABOUT|IT OVER)\b"
+         # an answer written on the sheet after the call doesn't count (Keval Oct Wk3 T5; longform-doc.md)
+         r"|^ANSWERED\b.*\b(IN WRITING|AFTER THE CALL|ON THE SHEET)\b", "NOT ANSWERED"),
         (r"^PIVOT|^KEPT\b.*\bPIVOT|^GO\b.*\bPIVOT", "PIVOT"),
         (r"^RESOLVED", "RESOLVED"),
         (r"^BLOCKED", "BLOCKED"),
@@ -270,20 +300,52 @@ def status_norm(s):
 NO_CALL_A = "Type A, no transcript to show the call answered it"
 NOT_ANSWERED_A = "Type A, not answered on the call"
 NOT_DISCUSSED_A = "Type A, not discussed on the call (no answers to write from)"
+UNKNOWN_A = "Type A, status not recognised (nothing shows the call answered it)"
+MIXED_A = "Type A, status also says not discussed / not answered (nothing shows the call answered it)"
+# a whole-topic "not discussed" after an answered status word: "KEPT as written. Not discussed on the call"
+# (Ben K Oct Wk2 T1, a Type B). "Question 2 was not asked" is a gap inside a KEPT, so it doesn't count.
+NOT_ON_CALL = re.compile(r"(^|[.;:,(\[—–]|\s-)\s*(NOT DISCUSSED|NEVER DISCUSSED|NOT REACHED|NOT ANSWERED|UNANSWERED)\b")
+SNIPE = re.compile(r"\b(snip(e|es|ing)|quick[\s-]*responses?)\b", re.I)
+SNIPE_LABEL = re.compile(r"^\s*QRs?\b", re.I)                       # "QR" as a header label
+SNIPE_STATUS = re.compile(r"(^|\(|,|\s[-–—])\s*(snip(e|es)|quick[\s-]*responses?)\b", re.I)   # "KEPT (snipe)", "KEPT - snipe", "SNIPE"
+SNIPE_WHY = "snipe/quick response: goes in its own (Snipes) / (Quick response posts) doc"
+
+
+def type_letter(raw):
+    """"A" / "B" from the type as written ("B", "Type B", "TYPE A  2 POSTS", "B, 2 posts"); None if unreadable."""
+    s = re.sub(r"^TYPE\s*[:\-–]?\s*", "", (raw or "").strip().upper())          # "TypeB" too
+    m = re.match(r"([AB])(?![A-Z0-9/])", s)
+    return m.group(1) if m else None
+
+
+def topic_type(t, problems=None):
+    """The type that decides in or out. Missing: B (today's default; a freeform topic or a NEW post from the
+    call has none). Unreadable: A. A sheet topic with either is a problem (audit, Oct 10: "TYPE B" was read
+    as Type A)."""
+    raw = t.get("type")
+    typ = type_letter(raw)
+    if typ:
+        return typ
+    typ = "A" if (raw or "").strip() else "B"
+    if problems is not None and not t.get("freeform") and status_norm(t.get("status")) != "NEW":
+        problems.append("T%s type missing/unreadable (%r, treated as Type %s): check" % (t.get("n"), raw, typ))
+    return typ
 
 
 def included(t, call, notes, problems):
     label, veh = t.get("label") or "", t.get("vehicle") or ""
     tn = t.get("n")
-    if re.search(r"\b(snipe|quick\s*response)\b", label, re.I) or re.match(r"\s*snipe", veh, re.I) \
-            or t.get("quick_response"):
-        return False, "snipe/quick response: goes in its own (Snipes) / (Quick response posts) doc"
+    # a snipe can show in the label, the sheet's or the call's vehicle ("Snipe (QT)", "Quote tweet snipe",
+    # "Quick Response post"), or the brief's status ("KEPT (snipe)", brief.md) (audit, Oct 10)
+    if SNIPE.search(label) or SNIPE_LABEL.search(label) or SNIPE.search(t.get("vehicle_override") or veh) \
+            or t.get("quick_response") or SNIPE_STATUS.search(t.get("status") or ""):
+        return False, SNIPE_WHY
     if t.get("struck") or t.get("check") == "❌":
         return False, "struck through / ❌ on the sheet"
     if t.get("merged_into") is not None:
         notes.append("T%s folded into T%s: confirm" % (tn, t["merged_into"]))
         return False, "merged into T%s" % t["merged_into"]
-    typ = (t.get("type") or "B").strip().upper()
+    typ = topic_type(t, problems)
     if not call:
         # Jeremiah, Oct 9: Type B stays regardless of the call; a Type A topic needs the call's answers
         if typ.startswith("B"):
@@ -291,6 +353,17 @@ def included(t, call, notes, problems):
         notes.append("T%s is Type A and there is no transcript: left out; add its line if the call answered it" % tn)
         return False, NO_CALL_A
     s = status_norm(t.get("status"))
+    if not typ.startswith("B") and s in ("KEPT", "PIVOT", "COVERED", "RESOLVED", "BLOCKED") \
+            and NOT_ON_CALL.search(re.sub(r"\*", "", t.get("status") or "").upper()):
+        # top rule: a Type A status that also says the call didn't reach or answer it gets no line (audit, Oct 10)
+        problems.append("T%s status %r reads %s but also says not discussed/answered: left out, check"
+                        % (tn, t.get("status"), s))
+        return False, MIXED_A
+    if not typ.startswith("B") and s in ("KEPT", "PIVOT", "BLOCKED") and re.search(
+            r"\b(UNANSWERED|NO ANSWERS?|NOT ANSWERED|NO TAKE|DIDN'?T ANSWER|NEVER ANSWERED)\b",
+            re.sub(r"\*", "", t.get("status") or "").upper()):
+        problems.append("T%s status %r reads %s but mentions something unanswered: line kept, check the call "
+                        "answered the topic" % (tn, t.get("status"), s))
     if s == "KILLED":
         return False, "killed on the call"
     if s == "PARKED":
@@ -322,6 +395,10 @@ def included(t, call, notes, problems):
     if s == "RESOLVED" and not t.get("vehicle_override"):
         notes.append("T%s resolved on the call but no vehicle given: check" % tn)
     if s == "UNKNOWN":
+        # top rule: a Type A topic needs a status that shows the call answered it (audit, Oct 10)
+        if not typ.startswith("B"):
+            problems.append("T%s status %r not recognised: left out, check" % (tn, t.get("status")))
+            return False, UNKNOWN_A
         problems.append("T%s status %r not recognised: included, check" % (tn, t.get("status")))
     return True, s.lower()
 
@@ -329,9 +406,10 @@ def included(t, call, notes, problems):
 def type_clash(t, who, strategist):
     """A strategist gate: the type decides in or out, so a doubt over it is a problem (Lior Oct Wk2 T1: Type B
     in Client strategy, Type A with a question for Reut in the Strategy tab's raw list)."""
-    typ = re.sub(r"^TYPE\s*", "", (t.get("type") or "B").strip().upper())
+    typ = topic_type(t)
     why = []
-    other = re.sub(r"^TYPE\s*", "", (t.get("other_tab_type") or "").strip().upper())
+    other_raw = (t.get("other_tab_type") or "").strip()
+    other = type_letter(other_raw) or re.sub(r"^TYPE\s*", "", other_raw.upper())
     if other and other != typ:
         why.append("Strategy tab says Type %s" % other)
     if t.get("client_question") and typ.startswith("B"):
@@ -348,6 +426,8 @@ def build(data):
     who = (data.get("client") or "").split(" ")[0] or "the client"
     strategist = data.get("strategist") or "the strategist"
     entries, left_out, would_be, notes, problems = [], [], [], [], []
+    if "call" not in data:
+        problems.append('no "call" key: assumed the call happened; set it')
     numbers_from = itertools.count(1)
 
     def shape(tn, persp, vehicle, posts, t, notes):
@@ -405,9 +485,13 @@ def build(data):
             src = t.get("posts_override_source")
             notes.append("T%s post count %s from %s: confirm" % (tn, t["posts_override"], src) if src
                          else "T%s post count set on the call: %s" % (tn, t["posts_override"]))
-        if int(t.get("posts") or 1) > 1 and t.get("extra_posts"):
-            problems.append("T%s has a header count (%s posts) and extra posts too: a comment naming each post's "
-                            "subject is not extra posts, check for double counting" % (tn, t.get("posts")))
+        header_n = int(t.get("posts") or 1)
+        vehicle_n = (split_pieces(vehicle, plat_default, cfg, [])[1] or 1) if vehicle.strip() else 1   # ", x2"
+        if max(header_n, vehicle_n) > 1 and t.get("extra_posts"):
+            where = " and ".join(w for w, n in (("header", header_n), ("VEHICLE", vehicle_n)) if n > 1)
+            problems.append("T%s has a %s count (%s posts) and extra posts too: a comment naming each post's "
+                            "subject is not extra posts, check for double counting"
+                            % (tn, where, max(header_n, vehicle_n)))
         snipe_hint = " ".join(str(t.get(k) or "") for k in ("objective", "other_tab_label"))
         if re.search(r"\b(snipe|quick\s*response)\b", snipe_hint, re.I):
             problems.append("T%s may be a snipe/quick response (%s): kept in LONGFORMS, confirm or move it to "
@@ -439,12 +523,15 @@ def build(data):
         persp = perspective_text(raw_p, cfg, notes) if raw_p else "TBD"
         vehicle = x.get("vehicle") or t.get("vehicle_override") or t.get("vehicle") or "Long-form"
         notes.append("T%s extra post added (%s): confirm" % (tn, x.get("source") or "strategist request"))
-        return write(nums, persp, *shape("%s+" % tn, persp, vehicle, 1, {}, notes))
+        pieces, posts = shape("%s+" % tn, persp, vehicle, 1, {}, notes)
+        if not x.get("vehicle"):
+            posts = 1    # the parent's ", x2" counts the parent's posts: an extra post is one post (audit, Oct 10)
+        return write(nums, persp, pieces, posts)
 
     for t in data["topics"]:
         tn = t.get("n")
         ok, why = included(t, call, notes, problems)
-        would = not ok and why in (NO_CALL_A, NOT_ANSWERED_A, NOT_DISCUSSED_A)
+        would = not ok and why in (NO_CALL_A, NOT_ANSWERED_A, NOT_DISCUSSED_A, UNKNOWN_A, MIXED_A)
         clash = (ok or would) and type_clash(t, who, strategist)
         if clash:
             problems.append(clash)
@@ -462,6 +549,9 @@ def build(data):
                 notes.append("T%s left out, but the sheet holds %s's written answer (%s): answered in writing? add its line?"
                              % (tn, who, t["written_answer"]))
         for x in t.get("extra_posts") or []:      # strategist-requested extra posts follow their parent, in or out
+            if SNIPE.search(x.get("vehicle") or ""):
+                left_out.append({"topic": "%s+" % tn, "why": SNIPE_WHY})   # an extra snipe goes in the Snipes doc too
+                continue
             if ok:
                 entries += [{"topic": "%s+" % tn, "line": l} for l in extra_lines(t, x, numbers_from, notes, problems)]
                 continue

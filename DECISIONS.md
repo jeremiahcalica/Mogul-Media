@@ -10,7 +10,7 @@ Start here before changing anything. This file holds every rule Jeremiah set, th
 | What actually runs | The skill installed on Jeremiah's claude.ai account, from `dist/longform-batch-autopilot.skill`. A change in the repo does nothing until it is repackaged and reinstalled |
 | The schedule | Routine "Longform Batch Autopilot" (`trig_01KHnmqSHRLJhaURiFFbgoyG`), 9:52 AM and 9:52 PM Manila, paused until Jeremiah turns it on. Its prompt is in `routines/longform-batch-autopilot.md` |
 | The dashboard | `dashboard/longform-autopilot.html`, published as the "Longform Autopilot Console" artifact. It runs the routine by hand and shows the run's output |
-| The queue | The Claude Doc "Next Week: Topics and Content Batches (…)", kept by the pinned chat "Client topic batch and long-form schedule" (Cowork session `cse_01VT4cAcAw8Wrd4LPaCmyNiQ`). The chat updates the same doc every week; its dates change. Known doc: https://claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b (also https://claude.ai/artifact/5dSKyoafmKQJ93gw67JPi2) |
+| The queue | The Claude Doc "Next Week: Topics and Content Batches (…)", kept by the pinned chat "Client topic batch and long-form schedule" (Cowork session `cse_01VT4cAcAw8Wrd4LPaCmyNiQ`). Jeremiah: "it is updated weekly". So far the chat has started a new doc each week ("(Oct 5–9)", then "(Oct 12–16)"); a run reads the one with the latest title dates, fresh every time. Known doc: https://claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b (also https://claude.ai/artifact/5dSKyoafmKQJ93gw67JPi2) |
 | What each run did | The Claude Doc "Longform Autopilot — Run Log", made on the first real run, plus the push notification |
 | Where the rules came from | `sops/loom-nuances.md` (every nuance in the two Looms, with evidence), `sops/loom-timelines.md`, `sops/source/` (his mini-SOPs and the Loom transcripts) |
 
@@ -63,7 +63,7 @@ All on Oct 9 2026, Manila time, unless the row says otherwise. His words are ver
 | 23:46 | "remember that there may come a time where we'll need to iterate on this, so this conversation is important for us" | What this conversation established must survive later changes: this file and `CLAUDE.md`. | This file |
 | 23:49 | "Do you think building a dashboard where I can just click somewhere to run it (like a mini terminal) works too?" | A click-to-run dashboard with a typed-instruction box. | `dashboard/longform-autopilot.html`; `routines/longform-batch-autopilot.md` § Dashboard runs |
 | 23:56 | "the Claude Doc that I was pointing at earlier (where the content batches are due) is there right? this?" | Confirmed: the schedule chat's "Next Week: Topics and Content Batches" doc is the queue. | `SKILL.md` Step 1 |
-| Oct 10, 00:04 | "it is updated weekly so keep that in mind… Apply the queued fixes, and write the decision log… Point the existing routine at the skill and keep it paused. Build the dashboard. Send you the updated skill file to save." | The schedule doc is the same doc updated every week (dates in its title change): read it fresh every run. Skill + the existing routine (paused) + dashboard, in that order. | `SKILL.md` Step 1.1; `clients.md`; `loom-rules.md`; routine; dashboard |
+| Oct 10, 00:04 | "it is updated weekly so keep that in mind… Apply the queued fixes, and write the decision log… Point the existing routine at the skill and keep it paused. Build the dashboard. Send you the updated skill file to save." | The schedule doc changes every week (new dates in its title): read it fresh every run and take the latest week's doc. Skill + the existing routine (paused) + dashboard, in that order. | `SKILL.md` Step 1.1; `clients.md`; `loom-rules.md`; routine; dashboard |
 
 ## Design decisions and why
 
@@ -81,7 +81,7 @@ All on Oct 9 2026, Manila time, unless the row says otherwise. His words are ver
 12. **The existing "Longform prep autopilot" routine is repointed, not replaced.** It is the only routine with his connectors; a routine made from Claude Code gets none. Its old prompt called a skill that was never saved, and parked Krisp clients on a waiting list, which his "don't wait" rule forbids.
 13. **The routine stays paused** until he has checked a run.
 14. **The repo is the memory,** not the chat: chats get summarized and cloud workspaces cleared.
-15. **The dashboard starts cloud runs; it doesn't run the job.** A run takes 10–30 minutes per client. Text sent with a manual fire reaches a run only after its first turn (tested Oct 10, 00:11), so the dashboard writes the instruction into the routine's prompt under `[dashboard-run]`, fires, and restores the prompt.
+15. **The dashboard starts cloud runs; it doesn't run the job.** A run takes 10–30 minutes per client. Text sent with a manual fire reaches a run only after its first turn (tested Oct 10, 00:11), so the dashboard writes the instruction into the routine's prompt under a `[dashboard-run]` section, reads it back, fires, and always restores the prompt. The section carries "Valid until" (10 minutes), so a leftover one can never steer a scheduled run, and it is matched only on a line of its own (the Oct 10 audit caught a first draft that cut the prompt where its own text mentions the marker). The page refuses to run when the routine's prompt isn't the autopilot's.
 16. **The Type A rule's mechanics:** status NOT ANSWERED (Type A out, Type B in); BLOCKED means only "answered, waiting on an asset or sign-off"; an existing brief's statuses decide even without a transcript.
 17. **Line wording follows his real docs,** each flagged "confirm": a header count gives identical lines; "Short-form listicle"; descriptive brackets dropped; LF/MF expanded; a leading "A " dropped; "plus" becomes "+". The v2 Caulen doc matched his real doc line for line.
 18. **PIVOT vs KEPT follows his real briefs:** a client who answers a different question and has it accepted is PIVOT (angle) (Josh C T1, T2, T4; Caulen T2); a strategist who only rewords the question is KEPT (gaps flagged) (Caulen T5).
@@ -91,6 +91,9 @@ All on Oct 9 2026, Manila time, unless the row says otherwise. His words are ver
 22. **No third full re-run after v2;** the remaining fixes were wording polish, applied and tested directly (Oct 10).
 23. **Unattended runs never stop to ask:** decide, write it in the summary, keep going; one stuck client never blocks the others.
 24. **Mason's "No $ numbers" rule is one summary line** until he says what it covers.
+25. **The schedule chat is asked for a refresh only when it helps:** in an everyone-due run, when the doc is stale or over a day old, and the chat isn't busy. Asking on every run would put about 14 eight-minute refreshes a week into his pinned chat (Oct 10 audit). Each row's live ClickUp status is checked on every run anyway.
+26. **The push stays within 8 lines:** new docs share one "Star these: …" line, clients get their own line only for a problem or a doubt, and the rest is in the run log. A test flight or dry run may print its report above the summary.
+27. **A test flight is authorized to write `[Autopilot test]` copies even when the real brief and doc exist,** with no run log entry; the routine prompt says so, or the run's own write list would refuse it.
 
 ## Open questions for Jeremiah
 
@@ -110,7 +113,8 @@ Until he answers, each is handled as described and flagged in the run summary.
 | 10 | His Josh brief quotes each inspo post's hook from the sheet's screenshots. Should the autopilot read them too? | Josh C | "inspo screenshot not read" |
 | 11 | Confirm: with no transcript, Type A topics stay out (listed with their would-be line) rather than in with a "check" flag. His 22:52 message reached the chat seven seconds before that exact question was asked. | All no-transcript clients | Out and listed |
 | 12 | Confirm the schedule: 9:52 AM and 9:52 PM Manila, every day. | Routine | That schedule, paused |
-| 13 | Ben's long X vehicles ("Thread with headline image", "Quote tweet with 2 doc-screenshot images") vs his shorter "Thread", "GDS/quote tweet of article"; Lior's bracket qualifier next to "+ asset" (T4, T7). | Ben K, Lior | Sheet wording, flagged |
+| 13 | Ben's long X vehicles ("Thread with headline image", "Quote tweet with 2 doc-screenshot images") vs his shorter "Thread", "GDS/quote tweet of article"; Lior's bracket qualifier next to "+ asset" (T4, T7). | Ben K, Lior | Sheet wording, not flagged |
+| 14 | How often should a run ask the schedule chat for a refresh? In Loom 1 you ask each time you start; the routine runs twice a day. | Routine | Only in everyone-due runs, when the doc is stale or over a day old (design 25) |
 
 Settled without him, from his own real outputs (say if any is wrong): an off-angle answer that is accepted is PIVOT (angle); waiting on someone else's assets is NOT ANSWERED, so no line (his "On hold"); an answer the client wrote on the sheet after the call doesn't add a line (it is listed); Ben's value tweets stay one X/LI line.
 

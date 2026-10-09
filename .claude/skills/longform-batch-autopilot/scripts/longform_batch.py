@@ -9,6 +9,23 @@ NEW_HEADER: "auto:<Mon>:<N>" (e.g. "auto:Oct:2") changes only the week number an
             the way Jeremiah does it; or the full header text, e.g. "Mason L. - Week 2 - Oct".
 LINES.json: JSON list of entry lines, e.g. "1 - (X/LI) - (...) - (Long-form)".
 Prints {"documentId", "requests", "writeControl"} as JSON.
+
+Subset form (COPY_READ.json): for a read_doc result that came back inline and is too long to save whole.
+First check with Drive read_file_content that the doc has one Media Folder line and one LONGFORMS.
+Then write a JSON file with only what the batch needs, every value copied exactly as read_doc gave it:
+  {"subset": true,
+   "documentId": "...",         the read's documentId
+   "revisionId": "...",         the read's revisionId
+   "tabId": "t.0",              tabs[0].tabProperties.tabId
+   "bodyEnd": 90,               the endIndex of the last item of tabs[0].documentTab.body.content
+   "paragraphs": [              in order, from the body content: the header, the Media Folder line,
+                                anything between, and LONGFORMS; nothing after LONGFORMS. Paragraphs
+                                only: a table between them can be left out (that stretch is deleted by index)
+     {"startIndex": 1, "endIndex": 25,   that item's startIndex and endIndex
+      "namedStyleType": "HEADING_1",     its paragraph.paragraphStyle.namedStyleType
+      "elements": [...]},                its paragraph.elements, whole, exactly as read
+     ...]}
+It gives the same batch as the full read (tests/test_copy_batch.py, tests/copied_doc_subset.json).
 """
 import json, re, sys
 

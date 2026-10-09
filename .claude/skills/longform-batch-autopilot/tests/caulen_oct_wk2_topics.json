@@ -19,7 +19,8 @@
    "posts_override": null,
    "perspective_override": "Marketing problems",
    "merged_into": null,
-   "extra_posts": []
+   "extra_posts": [],
+   "freeform": true
   },
   {
    "n": 1,

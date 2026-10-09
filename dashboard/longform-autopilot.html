@@ -276,6 +276,9 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   const SERVER = "Claude Code Remote";
   const MARK = "[dashboard-run]";
   const SEP = "\n\n---\n" + MARK + "\n";
+  // the section this page appends; the normal prompt mentions the marker in a sentence, never on a line of its own
+  const SECTION_RE = /\n+(?:-{3}\n)?\[dashboard-run\][ \t]*\n/;
+  const VALID_MIN = 10;
   const RUNS_KEY = "lfa-runs";
   const $ = (id) => document.getElementById(id);
   const tz = "Asia/Manila";
@@ -287,6 +290,8 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   let pending = null;           // {cmd, label} awaiting confirmation
   let localLines = [];          // lines this page printed (help, errors, notices)
   let eventLines = [];          // lines from the watched run
+  let seen = new Map();         // event id -> its lines, kept across polls (each poll only sees the newest events)
+  let hasMore = false;
   let busy = false;
 
   // ---------- time ----------
@@ -354,6 +359,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
       case "not_in_manifest": return "Claude Code Remote is turned off for this page. Turn it on in the page's Permissions menu, then Refresh.";
       case "approval_required": return "This needs your OK. Try again and choose Allow when asked.";
       case "blocked_by_policy": return "Your organization's policy blocks this action for this page.";
+      case "page_check": return msg + ".";
       case "tool_error": return "The routine service refused it: " + msg;
       case "server_unavailable":
       case "rate_limited": return "The routine service didn't answer just now. Try Refresh in a moment.";
@@ -437,7 +443,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     if (unSess) unSess(); if (unEv) unEv();
     unSess = unEv = null;
     current = sessionId;
-    eventLines = [];
+    eventLines = []; seen = new Map(); hasMore = false;
     $("termSession").textContent = label ? "· " + label : "· " + sessionId;
     const url = "https://claude.ai/code/" + String(sessionId).replace(/^cse_/, "session_");
     $("openLink").href = url; $("openLink").hidden = false;
@@ -445,26 +451,38 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     $("stopBtn").hidden = false;
     renderLog();
     if (!mcp) return;
-    let finished = false;
+    let finished = false, lastErr = { s: "", e: "" };
+    const once = (key, e) => { const m = errText(e); if (lastErr[key] !== m) { lastErr[key] = m; say("err", "!", m); } };
     unSess = mcp.watchTool(SERVER, "get_session", { session_id: sessionId }, (ev) => {
       if (current !== sessionId) return;
-      if (ev.type === "error") { say("err", "!", errText(ev.error)); return; }
+      if (ev.type === "error") { once("s", ev.error); return; }
       const s = resultData(ev.result);
       const ses = s && (s.ccr || s);
       const [txt, cls] = bucketChip(ses);
       $("runChip").textContent = txt; $("runChip").className = "chip " + cls;
       $("stopBtn").hidden = !/live/.test(cls);
       if (ses && ses.title) $("termSession").textContent = "· " + ses.title.replace(/^⚡\s*/, "");
-      finished = !/live/.test(cls);
+      if (!/live/.test(cls) && !finished) {
+        finished = true;
+        // one last read of the output, then stop polling this run
+        mcp.invalidate(SERVER, "list_events").catch(() => {});
+        setTimeout(() => { if (current === sessionId) { if (unSess) unSess(); if (unEv) unEv(); unSess = unEv = null; } }, 8000);
+      }
     }, { refetchInterval: 30000, cache: { staleTime: 0, gcTime: 300000 } });
     unEv = mcp.watchTool(SERVER, "list_events", { session_id: sessionId, kinds: ["assistant", "result"], limit: 100 }, (ev) => {
       if (current !== sessionId) return;
-      if (ev.type === "error") { say("err", "!", errText(ev.error)); return; }
+      if (ev.type === "error") { once("e", ev.error); return; }
       const d = resultData(ev.result);
       const page = d && (d.ccr || d);
-      eventLines = eventsToLines(page && page.data);
-      if (page && page.has_more) eventLines.unshift(line("sys", " ", "Earlier output isn't shown here. Open the run in Claude for the full transcript.", eventLines.length ? eventLines[0].at : undefined));
-      if (!eventLines.length) eventLines = [line("sys", " ", "Waiting for the run to start…")];
+      for (const e of (page && page.data) || []) {
+        const body = e.assistant || e.result || {};
+        const id = body.uuid || e.created_at + ":" + Object.keys(e).join(",");
+        if (!seen.has(id)) seen.set(id, eventsToLines([e]));
+      }
+      if (page && page.has_more && seen.size === 0) hasMore = true;
+      eventLines = [].concat(...seen.values());
+      if (hasMore && eventLines.length) eventLines.unshift(line("sys", " ", "Earlier output isn't shown here. Open the run in Claude for the full transcript.", eventLines[0].at));
+      if (!eventLines.length) eventLines = [line("sys", " ", "Waiting for the run's first output…")];
       renderLog();
     }, { refetchInterval: 30000, cache: { staleTime: 0, gcTime: 300000 } });
   }
@@ -496,7 +514,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     const tb = $("toggleBtn");
     tb.disabled = busy;
     tb.textContent = t.enabled ? "Pause schedule" : "Resume schedule";
-    $("restoreBanner").hidden = !prompt.includes(MARK);
+    $("restoreBanner").hidden = !SECTION_RE.test(prompt);
     $("skillBanner").hidden = prompt.includes("longform-batch-autopilot");
     $("schedNote").textContent = t.enabled ? "" : "Paused: nothing runs on its own. Runs you start here still work.";
   }
@@ -516,9 +534,20 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   async function refreshAll() {
     if (!mcp) return;
     try { await mcp.invalidate(SERVER); } catch (e) { watchTrigger(); if (current) watchRun(current); }
+    // a watch never asks for approval; one direct call does, and fills the panel
+    call("get_trigger", { trigger_id: TRIGGER_ID }).then((d) => { if (d && d.trigger) renderTrigger(d.trigger); })
+      .catch((e) => { $("schedNote").textContent = errText(e); });
   }
 
-  const baseOf = (p) => { const i = p.indexOf(SEP); if (i >= 0) return p.slice(0, i); const j = p.indexOf(MARK); return j >= 0 ? p.slice(0, j).replace(/\s*-{3}\s*$/, "") : p; };
+  const baseOf = (p) => { const m = SECTION_RE.exec(p); return m ? p.slice(0, m.index) : p; };
+  // minutes left on a section's "Valid until" line (negative once it has expired); null when there is none
+  const sectionLeft = (p) => {
+    const m = SECTION_RE.exec(p);
+    const v = m ? /^Valid until:\s*(\S+)\s*$/m.exec(p.slice(m.index)) : null;
+    const t = v ? Date.parse(v[1]) : NaN;
+    return isNaN(t) ? null : (t - Date.now()) / 60000;
+  };
+  const runStillGoing = (t) => !!(t && t.last_run && t.last_run.fired_at && !t.last_run.finished_at);
   async function restorePrompt(base) {
     for (let attempt = 0; attempt < 2; attempt++) {
       try { await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: base }); return true; }
@@ -531,24 +560,24 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   // ---------- starting runs ----------
   function setBusy(b) {
     busy = b;
-    for (const id of ["runAll", "dryAll", "runClient", "confirmGo", "toggleBtn"]) $(id).disabled = b || (id === "toggleBtn" && !trig);
+    for (const id of ["runAll", "dryAll", "runClient", "confirmGo", "toggleBtn", "restoreBtn"]) $(id).disabled = b || (id === "toggleBtn" && !trig);
   }
-  function ask(cmd, label) {
-    pending = { cmd, label };
+  function ask(cmd, label, force) {
+    pending = { cmd, label, force: !!force };
     $("confirmQ").textContent = cmd ? "Start a run with this instruction?\n“" + cmd + "”" : "Start the everyone-due run now?";
     const dry = cmd && /\bdry run\b/i.test(cmd);
     let why = dry ? "A dry run reads everything and reports what it would make. It writes nothing."
       : "It can write the post-call brief, copy and fill this week's longform doc in your My Drive, and add to the run log. It skips anything already made.";
     if (cmd && /test flight/i.test(cmd)) why += " Test flight: titles start with [Autopilot test].";
-    const live = $("runChip").className.includes("live");
-    if (live) why += " A run is still going; this starts a second one.";
+    const live = $("runChip").className.includes("live") || runStillGoing(trig);
+    if (live) why += " A run is still going. Starting another can make the same brief or doc twice; wait for it unless you're sure.";
     $("confirmWhy").textContent = why;
     $("confirm").hidden = false;
     $("confirmGo").focus();
   }
   async function start() {
     if (!pending || busy) return;
-    const { cmd, label } = pending;
+    const { cmd, label, force } = pending;
     pending = null; $("confirm").hidden = true;
     if (!mcp) { say("err", "!", errText({ code: "not_granted" })); return; }
     setBusy(true);
@@ -557,16 +586,31 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
       const got = await call("get_trigger", { trigger_id: TRIGGER_ID });
       const t = got && got.trigger;
       if (!t) throw { code: "tool_error", message: "the routine wasn't found" };
+      renderTrigger(t);
       const now = (t.derived_state && t.derived_state.prompt) || "";
       const base = baseOf(now);
-      if (!base.trim()) throw { code: "tool_error", message: "the routine has no prompt" };
-      if (now !== base) { await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: base }); say("sys", " ", "Removed an instruction left in the prompt by an earlier dashboard run."); }
+      if (!base.includes("longform-batch-autopilot") || base.length < 400)
+        throw { code: "page_check", message: "The routine's prompt isn't the longform autopilot prompt, so nothing was started. Check routines/longform-batch-autopilot.md" };
+      if (!force && runStillGoing(t)) { setBusy(false); ask(cmd, label, true); return; }
+      if (now !== base) {
+        const left = sectionLeft(now);
+        if (left !== null && left > VALID_MIN - 2) throw { code: "page_check", message: "Another dashboard run is starting right now. Try again in a minute" };
+        await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: base });
+        say("sys", " ", "Removed an instruction left in the prompt by an earlier dashboard run.");
+      }
       let fired;
       if (cmd) {
-        const p = base + SEP + "Jeremiah started this run from his dashboard. For this run only, his instruction below replaces \"everyone due\". Every limit above still applies, and a dry run writes nothing.\n\n" + cmd;
-        await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: p });
-        try { fired = await call("fire_trigger", { trigger_id: TRIGGER_ID }); }
-        finally { await restorePrompt(base); }
+        const until = new Date(Date.now() + VALID_MIN * 60000).toISOString();
+        const p = base + SEP + "Valid until: " + until + "\nJeremiah started this run from his dashboard. For this run only, his instruction below replaces \"everyone due\". Every limit above still applies, and a dry run writes nothing.\n\n" + cmd;
+        try {
+          await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: p });
+          const chk = await call("get_trigger", { trigger_id: TRIGGER_ID });
+          const saved = chk && chk.trigger && chk.trigger.derived_state && chk.trigger.derived_state.prompt;
+          if (saved !== p) throw { code: "page_check", message: "The instruction didn't save, so nothing was started" };
+          fired = await call("fire_trigger", { trigger_id: TRIGGER_ID });
+        } finally {
+          await restorePrompt(base);
+        }
       } else {
         fired = await call("fire_trigger", { trigger_id: TRIGGER_ID });
       }
@@ -664,7 +708,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   $("resumeNo").addEventListener("click", () => { $("resumeConfirm").hidden = true; });
   $("refreshBtn").addEventListener("click", refreshAll);
   $("restoreBtn").addEventListener("click", async () => {
-    if (!trig) return;
+    if (!trig || busy) return;
     const p = (trig.derived_state && trig.derived_state.prompt) || "";
     if (await restorePrompt(baseOf(p))) { say("sys", " ", "Normal prompt restored."); $("restoreBanner").hidden = true; refreshAll(); }
   });

@@ -29,7 +29,7 @@ Rules that come from your messages rather than the Looms:
 | `.claude/skills/longform-batch-autopilot/SKILL.md` | The pipeline the routine follows |
 | `.claude/skills/longform-batch-autopilot/references/` | Brief format and prompt, longform doc rules, client registry, Loom rules, Chrome steps |
 | `.claude/skills/longform-batch-autopilot/scripts/` | `schedule_rows.py` (schedule doc table), `entries.py` (LONGFORMS lines), `longform_batch.py` (the edit batch for a copied doc), `new_doc_batch.py` (a new client's first doc), `verify_doc.py` (the read-back check), `check_quotes.py` (the brief's quotes against the transcript) |
-| `.claude/skills/longform-batch-autopilot/tests/` | Golden cases from his real docs (Mason, Caulen, Keval, Teddy, Ben K, Nathan) and the Type A rule; doc-batch and check tests |
+| `.claude/skills/longform-batch-autopilot/tests/` | Golden cases from his real docs (Mason, Caulen, Keval, Teddy), provisional snapshots for Ben K and Nathan C, the Type A rule; doc-batch, read-back and quote-check tests |
 | `routines/longform-batch-autopilot.md` | The scheduled routine's prompt and settings, and how dashboard runs work |
 | `dashboard/longform-autopilot.html` | The dashboard: run everyone, one client, a test flight or a dry run, type any instruction, watch the run, pause the schedule |
 | `DECISIONS.md` | Every decision and why, open questions, test-flight results, how to change it |

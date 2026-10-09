@@ -3,17 +3,18 @@
 the structure of Jeremiah's real Mason Oct Wk2 doc: new header, "Media Folder:" bold + " \\n" not bold,
 no chip, LONGFORMS, each line Heading 2 bold + one empty Normal paragraph. The cut-down ("subset") form
 of the same read must give the identical batch. Run: python3 -I tests/test_copy_batch.py"""
-import json, os, subprocess, sys
+import json, os, shutil, subprocess, sys, tempfile
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
 import simulate_docs_batch as sim
 script = os.path.join(here, "..", "scripts", "longform_batch.py")
 lines = ["1 - (X/LI) - (P) - (Long-form)", "2 - (X/LI) - (Q) - (Thread)"]
-lp = os.path.join(here, "_copy_lines.json"); json.dump(lines, open(lp, "w"))
+tmp = tempfile.mkdtemp()
+lp = os.path.join(tmp, "lines.json"); json.dump(lines, open(lp, "w"))
 run = lambda read: json.loads(subprocess.run([sys.executable, "-I", script, os.path.join(here, read), "auto:Oct:2", lp],
                                              capture_output=True, text=True, check=True).stdout)
 full, subset = run("copied_doc_read.json"), run("copied_doc_subset.json")
-os.remove(lp)
+shutil.rmtree(tmp)
 cells = sim.cells_from(sim.load(os.path.join(here, "copied_doc_read.json")))
 for r in full["requests"]:
     sim.apply(cells, r)

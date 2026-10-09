@@ -17,7 +17,7 @@ Every rule below was checked frame by frame against both Looms and three transcr
 | 1.2 | Rename it once, not every run. It used to be "Client topic batch schedule". | 0:09–0:18 ⋮ › Rename, types " and long-form", Save. | Never renamed. |
 | 1.3 | The request needn't be verbatim: "you don't have to take this by verbatim… write something like this". Its three parts: the updated topic batches (new topics *to be submitted next week*), the content batches, organized like last time. | Typed 0:27–1:04, said 1:04–1:19. He corrected the wording three times ("for next" → "(to be submitted next week)", "long-form" → "content batch"). | Step 1.0 sends his exact text. |
 | 1.4 | "Content batch" means the long-form batch: the doc's "Content batches (long-forms)" table and ClickUp's "… \| Longforms" tasks. | 0:51–0:56 he types "long-form", deletes it, types "content batch". | Step 1.2 reads that table. |
-| 1.5 | Leave the model as it is (Opus 5.5). He opens the picker, checks it, closes it. | 1:17–1:19. | Not applicable; the routine sets the model. |
+| 1.5 | Leave the model as it is (his default). He opens the picker, checks it, closes it. | 1:17–1:19. | Not applicable; the routine sets the model. |
 | 1.6 | Wait for the refresh to finish before using the table. It took over 8 minutes and 25 tool steps; he paused the recording ("let us assume that this is already done loading"). | Clock 15:16 → 15:24 between 1:20 and 1:21; "Used ClickUp, used Slack, and 23 more steps 8m 39s" at 1:42. | Step 1.0: carry on with the doc as it stands, re-check the chat before Step 7, and pick up rows that only appear after the refresh. |
 | 1.7 | Never edit the schedule doc by hand; he only selects text to point at it. | 1:28–1:34. | Read-only. |
 | 1.8 | A client is ready when its row's Status is "In progress": "let's take Mason for an example. He is in progress." To do rows wait; Internal QA rows are past this step. | 1:28–1:34. | Step 1.4, using the live ClickUp status. |
@@ -41,11 +41,11 @@ Every rule below was checked frame by frame against both Looms and three transcr
 
 | # | Rule | Evidence | Skill |
 |---|---|---|---|
-| 3.1 | Make the brief in a new chat inside the client's project ("Mason L."), from the project page's composer, not claude.ai/new. | 2:19–2:34 "open another Claude tab… go to Mason L." | The cloud run writes the brief as a Claude Doc with the same content; `routines/per-project-brief.md` and `chrome-mode.md` put it in the project. |
+| 3.1 | Make the brief in a new chat inside the client's project ("Mason L."), from the project page's composer, not claude.ai/new. | 2:19–2:34 "open another Claude tab… go to Mason L." | The cloud run writes the brief as a Claude Doc with the same content (no tool can open his projects from the cloud; `DECISIONS.md`, design 3). `chrome-mode.md` can put it in the project on his Mac. |
 | 3.2 | Attach two files to the message itself, never to project knowledge: the transcript MD first, then the topic sheet as PDF (File › Download › PDF, Tab "Current Tab"). | 2:33–2:45; last week's chat shows the same pair, MD then PDF. | Step 4 reads both through the connectors. |
 | 3.3 | Copy the prompt from last week's chat "<Client> brief from <Strategist> meeting" (the latest one), the final message ending "In a claude doc pls", and paste it verbatim: "Please, in verbatim, please prompt it like this." | 2:45–3:00. The first try without that line ended "Claude's response was interrupted." | `references/brief.md` holds the exact text, curly quotes included. |
 | 3.4 | The output must be a Claude Doc. | 2:47 and 3:02. | Step 4.3. |
-| 3.5 | Send only once both attachments have finished processing; leave Opus 5.5 / High / Auto. | 2:45–2:59. | `chrome-mode.md`. |
+| 3.5 | Send only once both attachments have finished processing; leave the model, effort (High) and mode (Auto) as they are. | 2:45–2:59. | `chrome-mode.md`. |
 | 3.6 | Wait until Claude has finished the doc; its summary changed while he watched ("four were kept" → "three were kept"). | Paused 3:01–3:02 for 1m47s; still editing at 3:27. | Step 4.4 verifies the finished doc. |
 | 3.7 | The brief has a `# \| Topic \| Vehicle \| Status` table with KEPT / PIVOT (…) / NOT DISCUSSED, and per topic the Original brief, From the call and a Note. | 3:02–3:27. | `references/brief.md`. |
 | 3.8 | KEPT and PIVOT topics go in the batch. | 3:14–3:21. | `entries.py` `included()`. |
@@ -96,3 +96,5 @@ From Jeremiah, Oct 9 2026:
 - Each week's brief is a new chat, with last week's prompt copied verbatim along with the new transcript.
 - **A Type A topic gets a line only if the call answered it:** "if something is not discussed in the call (type A topic), or a type A topic was killed/wasn't answered, it shouldn't be in the document, since it's already skipped in the call itself". Status NOT ANSWERED covers a Type A topic that came up but got no answer (deferred, no take given), even when something else is pending too.
 - A new client (Nathan C.) has no earlier doc to copy, so the doc is built from scratch (`references/longform-doc.md` § Exceptions).
+- Krisp: "ignore the Krisp first". A run uses a Krisp route only if one is already set up (SKILL.md Step 3).
+- The schedule doc: "it is updated weekly so keep that in mind". Its title dates change each week, so every run reads it fresh and checks for a newer doc with the same title prefix (SKILL.md Step 1.1).

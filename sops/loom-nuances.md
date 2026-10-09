@@ -33,8 +33,8 @@ Importance: critical / important / minor. The automation follows every critical 
   _Evidence:_ Earlier user message "Something went in progress when I was asleep, can you recheck again and give me the updated one?"; the reply footer at 0:24 shows "yesterday"; he sends a new update request on Oct 9 in the same thread.
 - **important, said.** Treat the narration as addressed to Claude itself: "Okay, Claude, what we're going to do here is you're going to...". Every "you're going to" in these Looms is an instruction for the automation to perform.  
   _Evidence:_ SRT 0:00-0:07.6 "Okay, 2Quad, what we're going to do here is you're going to go into the..." (2Quad = "to Claude"); Whisper: "Okay to Claude, what we're going to do here is..."
-- **minor, shown.** Use the model already selected (Opus 5.5). He did not open the model picker or change any setting before typing the prompt. The footer also shows "Skip", which he left untouched.  
-  _Evidence:_ Footer "Opus 5.5" and "Skip" from 0:00 to 1:00 (z_footer.png); no click on them.
+- **minor, shown.** Use the model already selected ([default model]). He did not open the model picker or change any setting before typing the prompt. The footer also shows "Skip", which he left untouched.  
+  _Evidence:_ Footer "[default model]" and "Skip" from 0:00 to 1:00 (z_footer.png); no click on them.
 - **minor, shown.** In this step he does NOT open the schedule doc (no click on [Open] or on the artifact link) and does not attach files. He only types into the existing thread. Doc review happens later, after Claude updates it.  
   _Evidence:_ 0:00-1:00: the doc card's Open button and https://claude.ai/code/artifact/f079cbb4-... link are never clicked; the cursor only passes over the reply text.
 - **minor, shown.** Client workspaces are pinned claude.ai Projects, one per client, named "<First name> <Last initial>." (e.g. "Mason L."). Utility chats (the schedule chat) are pinned below the projects. Later steps use the "Mason L." project, which is visible here in the Pinned list.  
@@ -50,7 +50,7 @@ Importance: critical / important / minor. The automation follows every critical 
 - The prompt is not sent within 0:00-1:00. Right after it (1:05+) he highlights the text and says it need not be verbatim. Whether he pressed Enter is outside this segment (L1-B should confirm).
 - "Organize them like last time" depends on the previous doc's layout (tables "Topic batches" and "Content batches (long-forms)"), which is never opened in this segment. The exact columns and sort order must come from the doc itself.
 - The chat is a Cowork session (hover link claude.ai/cowork/cse_01VT4cAcAw8Wrd4LPaCmyNiQ), but the address bar shows claude.ai/chat/f6da90a8-f5ac-80f7-905d-050254f551d3. It is unclear which handle the automation should treat as canonical, or whether the routine should write to the doc directly instead of messaging this chat.
-- The footer label "Skip" next to "Opus 5.5" is not explained. It may be a permission or approval mode. The laptop icon with an orange dot next to the chat title (possibly 'running on this computer') is also unexplained.
+- The footer label "Skip" next to "[default model]" is not explained. It may be a permission or approval mode. The laptop icon with an orange dot next to the chat title (possibly 'running on this computer') is also unexplained.
 - The Loom widget covers the first letters of five pinned project names: "[..]al S.", "[..]t O.", "[..]a L.", "[..]n D.", plus "Phillip R." which is fully visible. The full client roster in this list can't be read from this segment.
 - No Whisper-medium transcript exists for v1 (only the Loom SRT, identical to the user's upload, and Whisper-small). The narration was reconciled against the on-screen typing, so the gaps there are minor.
 
@@ -74,8 +74,8 @@ Importance: critical / important / minor. The automation follows every critical 
   _Evidence:_ 01:48-01:55: he hovers and clicks only the Google Doc chip and the Fireflies link and never touches the PDF comment. SRT 02:03-02:19: 'download the meeting transcript... in MD file. Very, very important.'
 - **important, shown.** Call the long-form deliverables 'content batch(es)'. He deleted 'long-form' and retyped 'content batch as well'. Keep the existing doc's two sections and format ('Topic batches' and 'Content batches (long-forms)') because the prompt says 'organize them like last time'.  
   _Evidence:_ t_0054 '...and long-form' -> t_0056 '...and lo' -> t_0057 '...and conte' -> t_0058 '...and content batch as well'. The doc heading is 'Content batches (long-forms)'.
-- **important, shown.** Use the model Opus 5.5 ('For complex work and everyday tasks'). He opened the model picker, confirmed Opus 5.5 was ticked, looked at 'More models' (Fable 5.1, Sonnet 5.5, Haiku 5.5, etc.) and did not switch. Leave the 'Skip' control next to it alone.  
-  _Evidence:_ t_0078-t_0080 (01:17-01:19): menu shows 'Opus 5.5 ✓', submenu opened, closed without change, then send.
+- **important, shown.** Keep the selected default model ('For complex work and everyday tasks'). He opened the model picker, confirmed the default model was ticked, looked at 'More models' (a list of other models) and did not switch. Leave the 'Skip' control next to it alone.  
+  _Evidence:_ t_0078-t_0080 (01:17-01:19): menu shows '[default model] ✓', submenu opened, closed without change, then send.
 - **important, shown.** Wait for the schedule update to FINISH before using the table. It takes 8+ minutes and 23+ tool steps (ClickUp, Slack, Claude Docs). Do not time out early. He paused the recording for about 8 minutes and said to assume it is done loading.  
   _Evidence:_ Clock 15:16 -> 15:24 between t_0081 and t_0082. Step line 'Using Claude Docs: Update 8m 18s' up to 'Used ClickUp, used Slack, and 23 more steps 8m 39s' at 01:42, still running. SRT 01:20.9: 'let us assume that this is already done loading.'
 - **important, shown.** Take the deadline from the table's Due column, which is the earliest of three dates: the client's day on the team calendar, the ClickUp date, or a date Kyle sets in Slack. Do not use the ClickUp date alone. Mason: Due Oct 12, 2026 (Monday) vs ClickUp Oct 13 (Tuesday). Work the batches in Due-date order.  
@@ -100,7 +100,7 @@ Importance: critical / important / minor. The automation follows every critical 
 - The update was still running (8m39s+) when he moved on, and he only said 'assume it's done loading'. It is unclear whether he checks the finished result or the chat's text summary before continuing.
 - Claude added a checkbox before every client name in the long-form table during this update. He did not say who ticks it or when (e.g. after the long-form doc is finished, or after QA).
 - How often to send the schedule update prompt (the previous one was 'yesterday'), and whether it must run before every client batch or once per day.
-- The 'Skip' label next to 'Opus 5.5' under the composer was not touched or explained.
+- The 'Skip' label next to '[default model]' under the composer was not touched or explained.
 - His narration lags the actions. He says 'then open this, the topic sheet' at 01:55, six seconds after he had opened it (01:49), while hovering the Fireflies link. The order (task -> topic sheet -> Fireflies) is clear from the frames, but the narration alone is misleading.
 - The 'Client strategy' tab in the topic doc shows a badge '1' (probably one comment) and there is a second tab 'Strategy'. He did not open either in this segment, so it is unclear which tab the brief should be based on and whether the 'Strategy' tab matters.
 - ClickUp shows 'Subtasks 1 open' and 'Attachments 1' on the task. He did not open them, so it is unclear whether the subtask (possibly a design request) needs any action in this SOP.
@@ -150,8 +150,8 @@ Importance: critical / important / minor. The automation follows every critical 
   _Evidence:_ 01:53 and 02:39: "Client strategy" badge "1"; PDF export at 02:43 (Docs PDFs exclude comments). Background: Kyle's comment on T2.
 - **minor, shown.** Keep Fireflies' default file name ("<MEETING-TITLE-SLUG>-<hash>.md", e.g. "MASON-L-X-KYLE-88cf75cc-9bb4.md"). Do not rename it. As a sanity check, the file should be non-empty (this 30:47 call gave 20.3 KB, 60 lines).  
   _Evidence:_ 02:20: Chrome bubble "MASON-L-X-KYLE-88cf75cc-9bb4.md 20.3 KB • Done". 02:38: chip "MASON-L-X-...75cc-9bb4.md 60 lines".
-- **minor, shown.** Leave the model settings at the project default: "Opus 5.5", effort "High", mode "Auto". He changes nothing.  
-  _Evidence:_ 02:24 and 02:34: "Opus 5.5 High Auto" under the composer, untouched through 02:52.
+- **minor, shown.** Leave the model settings at the project default: "[default model]", effort "High", mode "Auto". He changes nothing.  
+  _Evidence:_ 02:24 and 02:34: "[default model] High Auto" under the composer, untouched through 02:52.
 - **minor, shown.** Attach the transcript MD first, then the topic-sheet PDF. The draft order is [MD, PDF], the same as last week's message.  
   _Evidence:_ 02:38: MD chip attached; 02:45: PDF added second. Last week's chat (02:47) also shows MD then PDF.
 - **minor, shown.** Keep Google's default export name, "<Doc title with | replaced by _>.pdf" (e.g. "Mason L _ OCT WK2 _ Topics.pdf"). Do not rename it.  
@@ -204,8 +204,8 @@ Importance: critical / important / minor. The automation follows every critical 
   _Evidence:_ Narration 3:21-3:31: 'Six and seven is not discussed. This is because I think it is a topic B... No answer needed.' He then opens the sheet at 03:28 and says (3:32-3:39) 'Oh yeah. Okay, so in this, topic six is type A'.
 - **important, inferred.** Do not send until both attachments have finished processing, which for a PDF means its page thumbnail has rendered.  
   _Evidence:_ 02:45-02:53: the PDF card is a grey placeholder. 02:54: the thumbnail renders. He sends only at 02:59.
-- **important, shown.** Leave the model settings as he had them: Opus 5.5, effort High, mode 'Auto'. He changes nothing in the model picker. Last week's chat showed 'Manual' in the same slot.  
-  _Evidence:_ 02:45-03:00: under the composer 'Opus 5.5  High   Auto'; the new chat footer reads 'Opus 5.5 High Auto'. Last week's chat footer read 'Opus 5.5 High Manual'.
+- **important, shown.** Leave the model settings as he had them: [default model], effort High, mode 'Auto'. He changes nothing in the model picker. Last week's chat showed 'Manual' in the same slot.  
+  _Evidence:_ 02:45-03:00: under the composer '[default model]  High   Auto'; the new chat footer reads '[default model] High Auto'. Last week's chat footer read '[default model] High Manual'.
 - **important, shown.** Read the topic sheet from its 'Client strategy' document tab (URL ...edit?tab=t.mcidewmh8er7), where the TOPIC n | TYPE x blocks live. The doc also has a second tab, 'Strategy'.  
   _Evidence:_ 03:28-03:46: left 'Document tabs' panel shows 'Client strategy' (active, badge '1') and 'Strategy'.
 - **important, inferred.** Topic sheet header convention: 'TOPIC <n> | TYPE <A|B>', optionally followed by a post count such as '2 POSTS'. A count means the topic yields that many separate posts and entries.  
@@ -240,7 +240,7 @@ Importance: critical / important / minor. The automation follows every critical 
 - 'KEPT (gaps flagged)' on T4: he does not say whether flagged gaps block the topic, need a client follow-up, or are just noted. Known final doc includes T4 as entry 5.
 - 'PIVOT (scope)' on T5 and 'PIVOT (angle)' on T2: how the pivot changes the entry line (vehicle or perspective) is not covered in this segment.
 - Prompt phrase 'name the brief according to its correct vehicle in the chat' is ambiguous (name each topic's section by vehicle? name the doc?). He insists the prompt be sent verbatim anyway.
-- Mode 'Auto' (new chat) vs 'Manual' (last week's chat) next to 'Opus 5.5 High': its meaning is unclear (likely tool or permission auto-run). He did not change it.
+- Mode 'Auto' (new chat) vs 'Manual' (last week's chat) next to '[default model] High': its meaning is unclear (likely tool or permission auto-run). He did not change it.
 - He moved on to the topic sheet while Claude was still editing the doc ('Edit doc 2m 15s'). It is unclear whether he re-checked the final doc. The summary line changed mid-view (four kept → three kept).
 - Where to get the prompt for a client with no previous '<Client> brief from <Strategist> meeting' chat is not addressed. The prompt text captured here should be used, with client and strategist names swapped.
 - Clients whose strategist is not Kyle (e.g. Devin's, transcripts from Krisp) would change 'meeting with Kyle'. Whether anything else in the prompt changes is not shown.

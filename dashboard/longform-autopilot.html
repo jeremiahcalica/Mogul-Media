@@ -1,0 +1,692 @@
+<title>Longform Autopilot Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a control console. Run controls and the schedule side by side, the terminal full width under them. */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #18202c;
+  --muted: #5b6577;
+  --line: #d9dee6;
+  --accent: #0d6a6a;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2f1f0;
+  --term-bg: #121821;
+  --term-ink: #d6dde8;
+  --term-dim: #7f8a9c;
+  --term-accent: #5fd0c2;
+  --ok: #1d7a4c;
+  --ok-soft: #e3f3ea;
+  --warn: #a35f00;
+  --warn-soft: #fbefdc;
+  --bad: #b3261e;
+  --bad-soft: #fbe6e4;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1117; --surface: #151b24; --ink: #e5e9f0; --muted: #97a1b2; --line: #263040;
+    --accent: #4fc4b6; --accent-ink: #06231f; --accent-soft: #12302d;
+    --term-bg: #090c11; --term-ink: #d6dde8; --term-dim: #7a8597; --term-accent: #5fd0c2;
+    --ok: #4cc38a; --ok-soft: #113024; --warn: #f0a43a; --warn-soft: #33250f; --bad: #f0736b; --bad-soft: #3a1714;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1117; --surface: #151b24; --ink: #e5e9f0; --muted: #97a1b2; --line: #263040;
+  --accent: #4fc4b6; --accent-ink: #06231f; --accent-soft: #12302d;
+  --term-bg: #090c11; --term-ink: #d6dde8; --term-dim: #7a8597; --term-accent: #5fd0c2;
+  --ok: #4cc38a; --ok-soft: #113024; --warn: #f0a43a; --warn-soft: #33250f; --bad: #f0736b; --bad-soft: #3a1714;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font-body); padding: 0 16px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 48px; display: grid; gap: 20px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 4vw, 34px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 18px; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--accent); }
+.label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-mono); }
+
+header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; }
+header .sub { color: var(--muted); margin-top: 4px; max-width: 60ch; }
+.clock { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.stack { display: grid; gap: 8px; }
+
+button { font: 600 14px/1 var(--font-body); border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 10px 14px; cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.danger { color: var(--bad); }
+button.link { border: 0; background: none; color: var(--accent); padding: 4px 0; font-weight: 500; text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+select, input[type="text"] { font: 15px var(--font-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; min-width: 0; }
+select { min-width: 12ch; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; }
+.seg span { display: block; padding: 8px 12px; font-size: 14px; font-weight: 500; color: var(--muted); border-right: 1px solid var(--line); cursor: pointer; }
+.seg label:last-child span { border-right: 0; }
+.seg input:checked + span { background: var(--accent-soft); color: var(--ink); }
+.seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -2px; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; }
+.hint { font-size: 13px; color: var(--muted); }
+.divider { border-top: 1px solid var(--line); }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; font: 600 12px/1 var(--font-body); letter-spacing: 0.04em; text-transform: uppercase; border-radius: 999px; padding: 5px 10px; background: var(--accent-soft); color: var(--ink); }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.8; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.idle { background: var(--bg); color: var(--muted); }
+.chip.live::before { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .chip.live::before { animation: none; } }
+
+dl.facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 16px; margin: 0; }
+dl.facts dt { color: var(--muted); font-size: 14px; }
+dl.facts dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+.banner { border-radius: 8px; padding: 12px 14px; font-size: 14px; display: grid; gap: 8px; }
+.banner.warn { background: var(--warn-soft); color: var(--ink); border: 1px solid var(--warn); }
+.banner.bad { background: var(--bad-soft); color: var(--ink); border: 1px solid var(--bad); }
+
+/* terminal */
+.term { background: var(--term-bg); color: var(--term-ink); border-radius: var(--radius); overflow: hidden; display: grid; min-width: 0; }
+.term-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid rgba(127, 138, 156, 0.25); }
+.term-title { font-family: var(--font-mono); font-size: 13px; color: var(--term-dim); min-width: 0; overflow-wrap: anywhere; }
+.term-title b { color: var(--term-ink); font-weight: 600; }
+.term-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.term-actions button, .term-actions a { font: 500 13px/1 var(--font-mono); background: transparent; color: var(--term-ink); border: 1px solid rgba(127, 138, 156, 0.4); border-radius: 6px; padding: 7px 10px; text-decoration: none; }
+.term-actions button:hover:not(:disabled), .term-actions a:hover { border-color: var(--term-accent); }
+.term .chip { background: rgba(127, 138, 156, 0.18); color: var(--term-ink); }
+.term .chip.ok { color: #6fdca2; } .term .chip.warn { color: #f3b55a; } .term .chip.bad { color: #f58d86; }
+.log { font: 13px/1.6 var(--font-mono); margin: 0; padding: 14px 16px; height: clamp(220px, 42vh, 420px); overflow: auto; display: grid; align-content: start; gap: 2px; }
+.ln { display: grid; grid-template-columns: 6.2ch 1.6ch minmax(0, 1fr); gap: 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ln .t { color: var(--term-dim); font-variant-numeric: tabular-nums; }
+.ln .g { color: var(--term-dim); }
+.ln.you .g, .ln.you .x { color: var(--term-accent); }
+.ln.tool .x { color: var(--term-dim); }
+.ln.done .g, .ln.done .x { color: #6fdca2; }
+.ln.err .g, .ln.err .x { color: #f58d86; }
+.ln.sys .x { color: var(--term-dim); font-style: italic; }
+.ln.sub .x { padding-left: 2ch; }
+.confirm { margin: 0 16px 12px; border: 1px solid var(--term-accent); border-radius: 8px; padding: 12px 14px; display: grid; gap: 10px; font: 13px/1.55 var(--font-mono); }
+.confirm .q { color: var(--term-ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.confirm .why { color: var(--term-dim); }
+.confirm button { font: 600 13px/1 var(--font-mono); border-radius: 6px; padding: 8px 12px; }
+.confirm button.go { background: var(--term-accent); color: #062420; border-color: var(--term-accent); }
+.confirm button.no { background: transparent; color: var(--term-ink); border-color: rgba(127, 138, 156, 0.5); }
+.prompt { display: flex; gap: 10px; align-items: center; padding: 10px 16px 14px; border-top: 1px solid rgba(127, 138, 156, 0.25); }
+.prompt span { color: var(--term-accent); font: 600 15px var(--font-mono); }
+.prompt input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--term-ink); font: 14px var(--font-mono); padding: 6px 0; }
+.prompt input::placeholder { color: var(--term-dim); }
+.prompt input:focus-visible { outline: none; }
+.prompt:focus-within { box-shadow: inset 0 2px 0 var(--term-accent); }
+.quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
+.quick button { font: 12px/1 var(--font-mono); background: transparent; color: var(--term-dim); border: 1px dashed rgba(127, 138, 156, 0.45); border-radius: 6px; padding: 6px 9px; }
+.quick button:hover { color: var(--term-ink); border-color: var(--term-accent); }
+
+.runs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.runs li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line); }
+.runs li:first-child { border-top: 0; }
+.runs .cmd { overflow-wrap: anywhere; }
+.runs .when { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-width: 75ch; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Longform Autopilot</h1>
+      <p class="sub">Post-call briefs and this week's longform docs for every batch due. Runs in the cloud on your Claude account; this page starts runs and shows what they do.</p>
+    </div>
+    <div class="clock" id="clock">Manila --:--</div>
+  </header>
+
+  <div id="pageBanner" class="banner bad" hidden></div>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="runH">
+      <h2 id="runH">Run now</h2>
+      <div class="stack">
+        <div class="row">
+          <button class="primary" id="runAll" type="button">Run everyone due</button>
+          <button id="dryAll" type="button">Dry run (writes nothing)</button>
+        </div>
+        <p class="hint">Everyone due is the same run the schedule does: the schedule doc's in-progress batches, earliest due first. It skips anything already made.</p>
+      </div>
+      <div class="divider"></div>
+      <form id="clientForm" class="stack" autocomplete="off">
+        <span class="label">One client</span>
+        <div class="row">
+          <select id="client" aria-label="Client">
+            <optgroup label="Kyle · Fireflies">
+              <option>Mason</option><option>Josh C</option><option>Keval</option><option>Caulen</option><option>Lior</option>
+              <option>Abdul</option><option>Jason</option><option>Shane</option><option>Michael K</option><option>Zarak</option>
+            </optgroup>
+            <optgroup label="Devin · Krisp">
+              <option>Ben K</option><option>Teddy</option><option>Josh D</option><option>Marco</option><option>Nathan C</option>
+            </optgroup>
+          </select>
+          <div class="seg" role="radiogroup" aria-label="What to make">
+            <label><input type="radio" name="what" id="whatBoth" value="both" checked><span>Brief + doc</span></label>
+            <label><input type="radio" name="what" id="whatBrief" value="brief"><span>Brief</span></label>
+            <label><input type="radio" name="what" id="whatDoc" value="doc"><span>Doc</span></label>
+            <label><input type="radio" name="what" id="whatDry" value="dry"><span>Dry run</span></label>
+          </div>
+        </div>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="testFlight"> Test flight (titles start with [Autopilot test])</label>
+        </div>
+        <div class="row">
+          <button class="primary" type="submit" id="runClient">Run for this client</button>
+          <span class="hint mono" id="cmdPreview"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="schedH">
+      <div class="row" style="justify-content: space-between">
+        <h2 id="schedH">Schedule</h2>
+        <span class="chip idle" id="stateChip">Loading</span>
+      </div>
+      <dl class="facts">
+        <dt>Routine</dt><dd id="fName">…</dd>
+        <dt>Runs at</dt><dd id="fCron">…</dd>
+        <dt>Next run</dt><dd id="fNext">…</dd>
+        <dt>Last run</dt><dd id="fLast">…</dd>
+      </dl>
+      <div id="restoreBanner" class="banner warn" hidden>
+        <p>The routine's prompt still holds an instruction from a dashboard run, so the next scheduled run would follow it instead of running everyone due.</p>
+        <div><button type="button" id="restoreBtn">Restore the normal prompt</button></div>
+      </div>
+      <div id="skillBanner" class="banner warn" hidden>
+        <p>The routine isn't pointed at the longform-batch-autopilot skill yet. Runs started here won't do the longform work until it is.</p>
+      </div>
+      <div class="row">
+        <button type="button" id="toggleBtn" disabled>Pause schedule</button>
+        <button type="button" class="link" id="refreshBtn">Refresh</button>
+      </div>
+      <div id="resumeConfirm" class="banner warn" hidden>
+        <p>Scheduled runs will start making briefs and docs at the times above. Resume the schedule?</p>
+        <div class="row"><button type="button" class="primary" id="resumeYes">Resume</button><button type="button" id="resumeNo">Cancel</button></div>
+      </div>
+      <p class="hint" id="schedNote"></p>
+    </section>
+  </div>
+
+  <section class="term" aria-labelledby="termH">
+    <div class="term-head">
+      <div class="term-title" id="termH"><b>run output</b> <span id="termSession">no run selected</span></div>
+      <div class="term-actions">
+        <span class="chip idle" id="runChip" hidden>idle</span>
+        <a id="openLink" href="#" target="_blank" rel="noopener" hidden>Open in Claude</a>
+        <button type="button" id="stopBtn" hidden>Stop run</button>
+      </div>
+    </div>
+    <div class="log" id="log" role="log" aria-live="polite"></div>
+    <div class="confirm" id="confirm" hidden>
+      <div class="q" id="confirmQ"></div>
+      <div class="why" id="confirmWhy"></div>
+      <div class="row"><button type="button" class="go" id="confirmGo">Start run</button><button type="button" class="no" id="confirmNo">Cancel</button></div>
+    </div>
+    <form class="prompt" id="promptForm" autocomplete="off">
+      <span aria-hidden="true">›</span>
+      <input type="text" id="promptInput" aria-label="Instruction for a run" placeholder="type an instruction, e.g. longforms for Caulen, or help">
+    </form>
+    <div class="quick" aria-label="Examples">
+      <button type="button" data-q="test flight for Mason">test flight for Mason</button>
+      <button type="button" data-q="longforms for Caulen">longforms for Caulen</button>
+      <button type="button" data-q="brief only for Keval">brief only for Keval</button>
+      <button type="button" data-q="dry run for everyone due">dry run for everyone due</button>
+      <button type="button" data-q="help">help</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="recentH">
+    <h2 id="recentH">Runs started here</h2>
+    <ul class="runs" id="runs"></ul>
+    <p class="hint" id="runsEmpty">Runs you start from this page show up here, on this device. Click one to see its output.</p>
+  </section>
+
+  <footer>
+    <p>How a run works: this page puts your instruction into the routine's prompt, starts the routine, and puts the normal prompt back straight away. The run itself happens in a fresh cloud session with your connectors, and its summary also arrives as a push notification.</p>
+    <p>Where the batches come from: <a href="https://claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b" target="_blank" rel="noopener">Next Week: Topics and Content Batches</a>, the doc your schedule chat updates each week.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const TRIGGER_ID = "trig_01KHnmqSHRLJhaURiFFbgoyG";
+  const SERVER = "Claude Code Remote";
+  const MARK = "[dashboard-run]";
+  const SEP = "\n\n---\n" + MARK + "\n";
+  const RUNS_KEY = "lfa-runs";
+  const $ = (id) => document.getElementById(id);
+  const tz = "Asia/Manila";
+
+  let mcp = null;
+  let trig = null;
+  let unTrig = null, unSess = null, unEv = null;
+  let current = null;           // session id shown in the terminal
+  let pending = null;           // {cmd, label} awaiting confirmation
+  let localLines = [];          // lines this page printed (help, errors, notices)
+  let eventLines = [];          // lines from the watched run
+  let busy = false;
+
+  // ---------- time ----------
+  const fmtTime = new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" });
+  const fmtDay = new Intl.DateTimeFormat("en-US", { timeZone: tz, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const fmtHM = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit" });
+  const tick = () => { $("clock").textContent = "Manila " + fmtDay.format(new Date()); };
+  tick(); setInterval(tick, 30000);
+  const when = (iso) => { if (!iso) return ""; const d = new Date(iso); return isNaN(d) ? iso : fmtDay.format(d); };
+  const hm = (iso) => { const d = iso ? new Date(iso) : new Date(); return isNaN(d) ? "" : fmtHM.format(d); };
+
+  function cronText(c) {
+    if (!c) return "No schedule: runs only when started by hand";
+    const m = c.match(/^(?:CRON_TZ=(\S+)\s+)?(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/);
+    if (!m) return c;
+    const [, zone, min, hour, dom, mon, dow] = m;
+    if (!/^\d+$/.test(min) || !/^[\d,]+$/.test(hour) || dom !== "*" || mon !== "*") return c;
+    const times = hour.split(",").map((h) => {
+      const H = +h, ap = H < 12 ? "AM" : "PM", h12 = H % 12 || 12;
+      return h12 + ":" + String(min).padStart(2, "0") + " " + ap;
+    });
+    const names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    let days = "every day";
+    if (dow !== "*") {
+      days = dow.split(",").map((p) => p.includes("-") ? p.split("-").map((x) => names[+x]).join("–") : names[+p]).join(", ");
+    }
+    const place = zone === "Asia/Manila" ? "Manila time" : (zone || "UTC");
+    return times.join(" and ") + ", " + days + " (" + place + ")";
+  }
+
+  // ---------- connector plumbing ----------
+  function extractJson(x) {
+    if (x && typeof x === "object") return x;
+    if (typeof x !== "string") return null;
+    const i = x.indexOf("{");
+    if (i < 0) return null;
+    let depth = 0, inStr = false, esc = false;
+    for (let j = i; j < x.length; j++) {
+      const ch = x[j];
+      if (inStr) { if (esc) esc = false; else if (ch === "\\") esc = true; else if (ch === '"') inStr = false; continue; }
+      if (ch === '"') inStr = true;
+      else if (ch === "{") depth++;
+      else if (ch === "}") { depth--; if (depth === 0) { try { return JSON.parse(x.slice(i, j + 1)); } catch (e) { return null; } } }
+    }
+    return null;
+  }
+  function resultData(r) {
+    if (!r) return null;
+    const p = r.payload !== undefined ? r.payload : (r.content || []).map((b) => b.text || "").join("\n");
+    return extractJson(p);
+  }
+  async function call(tool, input) {
+    if (!mcp) throw { code: "not_granted", message: "Connector access isn't available in this view." };
+    const r = await mcp.callTool(SERVER, tool, input, { cache: false });
+    return resultData(r);
+  }
+  function errText(e) {
+    const code = (e && e.code) || "upstream_error";
+    const msg = (e && e.message) || String(e);
+    switch (code) {
+      case "needs_reauth": return "Claude Code Remote needs reconnecting: claude.ai › Settings › Connectors.";
+      case "server_not_connected":
+      case "selection_required":
+      case "server_not_found": return "This page can't reach Claude Code Remote here. Open it in claude.ai, signed in as the routine's owner.";
+      case "not_in_manifest": return "Claude Code Remote is turned off for this page. Turn it on in the page's Permissions menu, then Refresh.";
+      case "approval_required": return "This needs your OK. Try again and choose Allow when asked.";
+      case "blocked_by_policy": return "Your organization's policy blocks this action for this page.";
+      case "tool_error": return "The routine service refused it: " + msg;
+      case "server_unavailable":
+      case "rate_limited": return "The routine service didn't answer just now. Try Refresh in a moment.";
+      case "not_granted":
+      case "capability_disabled":
+      case "capability_removed": return "Connector access isn't available in this view. Open this page in claude.ai.";
+      default: return "Something failed (" + code + "): " + msg;
+    }
+  }
+
+  // ---------- terminal ----------
+  function line(kind, glyph, text, at) {
+    return { kind, glyph, text, at: at || new Date().toISOString() };
+  }
+  function say(kind, glyph, text) {
+    localLines.push(line(kind, glyph, text));
+    if (localLines.length > 200) localLines = localLines.slice(-200);
+    renderLog();
+  }
+  function renderLog() {
+    const log = $("log");
+    const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+    const all = localLines.concat(eventLines).sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+    log.replaceChildren(...all.map((l) => {
+      const row = document.createElement("div");
+      row.className = "ln " + l.kind;
+      const t = document.createElement("span"); t.className = "t"; t.textContent = hm(l.at);
+      const g = document.createElement("span"); g.className = "g"; g.textContent = l.glyph;
+      const x = document.createElement("span"); x.className = "x"; x.textContent = l.text;
+      row.append(t, g, x);
+      return row;
+    }));
+    if (atBottom) log.scrollTop = log.scrollHeight;
+  }
+  function toolLabel(name, input) {
+    input = input || {};
+    const mc = /^mcp__([^_].*?)__(.+)$/.exec(name || "");
+    if (mc) return mc[1].replace(/_/g, " ") + " › " + mc[2];
+    const short = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
+    switch (name) {
+      case "Bash": return "Bash › " + short(input.description || input.command, 90);
+      case "Skill": return "Skill › " + short(input.skill, 60);
+      case "Agent": case "Task": return "Agent › " + short(input.description || input.prompt, 80);
+      case "Read": case "Write": case "Edit": return name + " › " + short(String(input.file_path || "").split("/").pop(), 60);
+      case "Workflow": return "Workflow › " + short(input.description || "", 60);
+      default: return name || "tool";
+    }
+  }
+  function eventsToLines(data) {
+    const out = [];
+    for (const ev of data || []) {
+      const at = ev.created_at;
+      if (ev.assistant) {
+        const c = ev.assistant.internal_anthropic_catchall || {};
+        const sub = !!c.parent_tool_use_id;
+        for (const b of (c.message && c.message.content) || []) {
+          if (b.type === "text" && b.text && b.text.trim()) out.push(line(sub ? "sub" : "say", " ", b.text.trim(), at));
+          else if (b.type === "tool_use") out.push(line("tool" + (sub ? " sub" : ""), "·", toolLabel(b.name, b.input), at));
+        }
+      } else if (ev.result) {
+        const r = ev.result.internal_anthropic_catchall || {};
+        if (r.is_error || (r.subtype && r.subtype !== "success")) out.push(line("err", "!", "Turn ended with an error" + (r.result ? ": " + r.result : ""), at));
+        else out.push(line("done", "✓", "Turn finished.", at));
+      }
+    }
+    return out;
+  }
+
+  // ---------- run status ----------
+  function bucketChip(s) {
+    const b = String((s && (s.status_bucket || s.session_status)) || "").toUpperCase();
+    if (/PENDING|STARTING/.test(b)) return ["Starting", "warn live"];
+    if (/WORKING|RUNNING/.test(b)) return ["Working", "warn live"];
+    if (/BLOCKED/.test(b)) return ["Needs you", "bad"];
+    if (/FAILED/.test(b)) return ["Failed", "bad"];
+    if (/REVIEW_READY|COMPLETED|IDLE/.test(b)) return ["Finished", "ok"];
+    if (/ARCHIVED/.test(b)) return ["Archived", "idle"];
+    return [b ? b.replace(/^SESSION_STATUS_(BUCKET_)?/, "").toLowerCase() : "unknown", "idle"];
+  }
+  function watchRun(sessionId, label) {
+    if (unSess) unSess(); if (unEv) unEv();
+    unSess = unEv = null;
+    current = sessionId;
+    eventLines = [];
+    $("termSession").textContent = label ? "· " + label : "· " + sessionId;
+    const url = "https://claude.ai/code/" + String(sessionId).replace(/^cse_/, "session_");
+    $("openLink").href = url; $("openLink").hidden = false;
+    $("runChip").hidden = false; $("runChip").textContent = "Starting"; $("runChip").className = "chip warn live";
+    $("stopBtn").hidden = false;
+    renderLog();
+    if (!mcp) return;
+    let finished = false;
+    unSess = mcp.watchTool(SERVER, "get_session", { session_id: sessionId }, (ev) => {
+      if (current !== sessionId) return;
+      if (ev.type === "error") { say("err", "!", errText(ev.error)); return; }
+      const s = resultData(ev.result);
+      const ses = s && (s.ccr || s);
+      const [txt, cls] = bucketChip(ses);
+      $("runChip").textContent = txt; $("runChip").className = "chip " + cls;
+      $("stopBtn").hidden = !/live/.test(cls);
+      if (ses && ses.title) $("termSession").textContent = "· " + ses.title.replace(/^⚡\s*/, "");
+      finished = !/live/.test(cls);
+    }, { refetchInterval: 30000, cache: { staleTime: 0, gcTime: 300000 } });
+    unEv = mcp.watchTool(SERVER, "list_events", { session_id: sessionId, kinds: ["assistant", "result"], limit: 100 }, (ev) => {
+      if (current !== sessionId) return;
+      if (ev.type === "error") { say("err", "!", errText(ev.error)); return; }
+      const d = resultData(ev.result);
+      const page = d && (d.ccr || d);
+      eventLines = eventsToLines(page && page.data);
+      if (page && page.has_more) eventLines.unshift(line("sys", " ", "Earlier output isn't shown here. Open the run in Claude for the full transcript.", eventLines.length ? eventLines[0].at : undefined));
+      if (!eventLines.length) eventLines = [line("sys", " ", "Waiting for the run to start…")];
+      renderLog();
+    }, { refetchInterval: 30000, cache: { staleTime: 0, gcTime: 300000 } });
+  }
+
+  // ---------- schedule ----------
+  function renderTrigger(t) {
+    trig = t;
+    const prompt = (t.derived_state && t.derived_state.prompt) || "";
+    $("fName").textContent = t.name || TRIGGER_ID;
+    $("fCron").textContent = cronText(t.cron_expression);
+    $("fNext").textContent = t.enabled ? (t.next_run_at ? when(t.next_run_at) : "not scheduled") : "paused";
+    const lr = t.last_run;
+    const fLast = $("fLast");
+    fLast.replaceChildren();
+    if (lr && lr.session_id) {
+      const st = String(lr.status || "").replace("ROUTINE_RUN_STATUS_", "").toLowerCase();
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "link";
+      b.textContent = when(lr.fired_at) + " · " + (st || "unknown");
+      b.addEventListener("click", () => watchRun(lr.session_id, "last run, " + when(lr.fired_at)));
+      fLast.append(b);
+      if (lr.failure_reason) fLast.append(document.createTextNode(" (" + String(lr.failure_reason).replace("ROUTINE_RUN_FAILURE_REASON_", "").toLowerCase().replace(/_/g, " ") + ")"));
+    } else fLast.textContent = "none yet";
+    const chip = $("stateChip");
+    if (t.ended_reason) { chip.textContent = "Ended"; chip.className = "chip bad"; }
+    else if (t.suspension_reason) { chip.textContent = "On hold"; chip.className = "chip warn"; }
+    else if (t.enabled) { chip.textContent = "Scheduled"; chip.className = "chip ok"; }
+    else { chip.textContent = "Paused"; chip.className = "chip idle"; }
+    const tb = $("toggleBtn");
+    tb.disabled = busy;
+    tb.textContent = t.enabled ? "Pause schedule" : "Resume schedule";
+    $("restoreBanner").hidden = !prompt.includes(MARK);
+    $("skillBanner").hidden = prompt.includes("longform-batch-autopilot");
+    $("schedNote").textContent = t.enabled ? "" : "Paused: nothing runs on its own. Runs you start here still work.";
+  }
+  function watchTrigger() {
+    if (unTrig) unTrig();
+    unTrig = mcp.watchTool(SERVER, "get_trigger", { trigger_id: TRIGGER_ID }, (ev) => {
+      if (ev.type === "error") {
+        const deny = ["needs_reauth", "server_not_connected", "not_in_manifest", "blocked_by_policy", "approval_required", "selection_required"];
+        if (deny.includes(ev.error && ev.error.code)) { $("stateChip").textContent = "No access"; $("stateChip").className = "chip bad"; }
+        $("schedNote").textContent = errText(ev.error);
+        return;
+      }
+      const d = resultData(ev.result);
+      if (d && d.trigger) renderTrigger(d.trigger);
+    }, { refetchInterval: 60000, cache: { staleTime: 0, gcTime: 300000 } });
+  }
+  async function refreshAll() {
+    if (!mcp) return;
+    try { await mcp.invalidate(SERVER); } catch (e) { watchTrigger(); if (current) watchRun(current); }
+  }
+
+  const baseOf = (p) => { const i = p.indexOf(SEP); if (i >= 0) return p.slice(0, i); const j = p.indexOf(MARK); return j >= 0 ? p.slice(0, j).replace(/\s*-{3}\s*$/, "") : p; };
+  async function restorePrompt(base) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try { await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: base }); return true; }
+      catch (e) { if (attempt === 0) await new Promise((r) => setTimeout(r, 1500)); else say("err", "!", "Couldn't put the normal prompt back: " + errText(e)); }
+    }
+    $("restoreBanner").hidden = false;
+    return false;
+  }
+
+  // ---------- starting runs ----------
+  function setBusy(b) {
+    busy = b;
+    for (const id of ["runAll", "dryAll", "runClient", "confirmGo", "toggleBtn"]) $(id).disabled = b || (id === "toggleBtn" && !trig);
+  }
+  function ask(cmd, label) {
+    pending = { cmd, label };
+    $("confirmQ").textContent = cmd ? "Start a run with this instruction?\n“" + cmd + "”" : "Start the everyone-due run now?";
+    const dry = cmd && /\bdry run\b/i.test(cmd);
+    let why = dry ? "A dry run reads everything and reports what it would make. It writes nothing."
+      : "It can write the post-call brief, copy and fill this week's longform doc in your My Drive, and add to the run log. It skips anything already made.";
+    if (cmd && /test flight/i.test(cmd)) why += " Test flight: titles start with [Autopilot test].";
+    const live = $("runChip").className.includes("live");
+    if (live) why += " A run is still going; this starts a second one.";
+    $("confirmWhy").textContent = why;
+    $("confirm").hidden = false;
+    $("confirmGo").focus();
+  }
+  async function start() {
+    if (!pending || busy) return;
+    const { cmd, label } = pending;
+    pending = null; $("confirm").hidden = true;
+    if (!mcp) { say("err", "!", errText({ code: "not_granted" })); return; }
+    setBusy(true);
+    say("you", "›", label);
+    try {
+      const got = await call("get_trigger", { trigger_id: TRIGGER_ID });
+      const t = got && got.trigger;
+      if (!t) throw { code: "tool_error", message: "the routine wasn't found" };
+      const now = (t.derived_state && t.derived_state.prompt) || "";
+      const base = baseOf(now);
+      if (!base.trim()) throw { code: "tool_error", message: "the routine has no prompt" };
+      if (now !== base) { await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: base }); say("sys", " ", "Removed an instruction left in the prompt by an earlier dashboard run."); }
+      let fired;
+      if (cmd) {
+        const p = base + SEP + "Jeremiah started this run from his dashboard. For this run only, his instruction below replaces \"everyone due\". Every limit above still applies, and a dry run writes nothing.\n\n" + cmd;
+        await call("update_trigger", { trigger_id: TRIGGER_ID, prompt: p });
+        try { fired = await call("fire_trigger", { trigger_id: TRIGGER_ID }); }
+        finally { await restorePrompt(base); }
+      } else {
+        fired = await call("fire_trigger", { trigger_id: TRIGGER_ID });
+      }
+      const sid = fired && fired.session_id;
+      if (!sid) throw { code: "tool_error", message: "the routine started but returned no session" };
+      say("sys", " ", "Run started. Output appears below every 30 seconds; a full run takes a while.");
+      remember({ id: sid, cmd: label, at: new Date().toISOString() });
+      watchRun(sid, label);
+      refreshAll();
+    } catch (e) {
+      say("err", "!", errText(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // ---------- run history (this device only) ----------
+  function loadRuns() { try { return JSON.parse(localStorage.getItem(RUNS_KEY) || "[]"); } catch (e) { return []; } }
+  function remember(r) {
+    const runs = [r].concat(loadRuns().filter((x) => x.id !== r.id)).slice(0, 10);
+    try { localStorage.setItem(RUNS_KEY, JSON.stringify(runs)); } catch (e) {}
+    renderRuns(runs);
+  }
+  function renderRuns(runs) {
+    runs = runs || loadRuns();
+    $("runsEmpty").hidden = runs.length > 0;
+    $("runs").replaceChildren(...runs.map((r) => {
+      const li = document.createElement("li");
+      const b = document.createElement("button"); b.type = "button"; b.className = "link cmd"; b.textContent = r.cmd;
+      b.addEventListener("click", () => watchRun(r.id, r.cmd));
+      const w = document.createElement("span"); w.className = "when"; w.textContent = when(r.at);
+      li.append(b, w);
+      return li;
+    }));
+  }
+
+  // ---------- commands ----------
+  function clientCmd() {
+    const c = $("client").value;
+    const what = document.querySelector('input[name="what"]:checked').value;
+    const test = $("testFlight").checked;
+    if (what === "dry") return "Dry run for " + c + " only: check the inputs and say what you would make. Write nothing at all (no schedule chat message, no brief, no doc, no run log entry).";
+    const scope = what === "brief" ? ", brief only (no longform doc)" : what === "doc" ? ", longform doc only (no brief)" : "";
+    return (test ? "Test flight for " + c : "Run it for " + c + " only") + scope + ".";
+  }
+  const preview = () => { $("cmdPreview").textContent = "“" + clientCmd() + "”"; };
+  const HELP = [
+    "Type what you'd say to Claude, then press Enter. You confirm before anything starts.",
+    "  longforms for Caulen        one client, brief + doc",
+    "  test flight for Mason       titles start with [Autopilot test]",
+    "  brief only for Keval        no doc",
+    "  doc only for Nathan C       no brief",
+    "  dry run for everyone due    reads everything, writes nothing",
+    "Built in: status, pause, resume, stop, clear, help.",
+  ];
+  async function terminal(text) {
+    const t = text.trim();
+    if (!t) return;
+    const k = t.toLowerCase();
+    if (k === "help" || k === "?") { say("you", "›", t); HELP.forEach((h) => say("sys", " ", h)); return; }
+    if (k === "clear") { localLines = []; eventLines = []; renderLog(); return; }
+    if (k === "status") { say("you", "›", t); refreshAll(); if (trig) say("sys", " ", ($("stateChip").textContent) + " · next run " + $("fNext").textContent + " · last run " + $("fLast").textContent); return; }
+    if (k === "pause" || k === "resume") { say("you", "›", t); if (k === "resume") { $("resumeConfirm").hidden = false; say("sys", " ", "Confirm in the Schedule panel."); } else toggle(false); return; }
+    if (k === "stop") { say("you", "›", t); stopRun(); return; }
+    if (/^(run (longforms|everyone|everything)|run longforms for everyone( due)?|everyone due)$/i.test(t)) { ask(null, "run everyone due"); return; }
+    ask(t, t);
+  }
+  async function toggle(enable) {
+    if (!trig || busy) return;
+    setBusy(true);
+    try {
+      await call("update_trigger", { trigger_id: TRIGGER_ID, enabled: enable });
+      say("sys", " ", enable ? "Schedule resumed." : "Schedule paused. Runs you start here still work.");
+      refreshAll();
+    } catch (e) { say("err", "!", errText(e)); }
+    finally { setBusy(false); }
+  }
+  async function stopRun() {
+    if (!current) { say("sys", " ", "No run selected."); return; }
+    try { await call("interrupt_session", { session_id: current }); say("sys", " ", "Stop sent. The run stops at its next checkpoint; anything already made stays."); refreshAll(); }
+    catch (e) { say("err", "!", errText(e)); }
+  }
+
+  // ---------- wiring ----------
+  $("runAll").addEventListener("click", () => ask(null, "run everyone due"));
+  $("dryAll").addEventListener("click", () => ask("Dry run for everyone due: build the queue, check each client's inputs and say what you would make. Write nothing at all (no schedule chat message, no brief, no doc, no run log entry).", "dry run for everyone due"));
+  $("clientForm").addEventListener("submit", (e) => { e.preventDefault(); const c = clientCmd(); ask(c, c); });
+  $("clientForm").addEventListener("change", preview);
+  $("confirmGo").addEventListener("click", start);
+  $("confirmNo").addEventListener("click", () => { pending = null; $("confirm").hidden = true; say("sys", " ", "Cancelled."); $("promptInput").focus(); });
+  $("promptForm").addEventListener("submit", (e) => { e.preventDefault(); const v = $("promptInput").value; $("promptInput").value = ""; terminal(v); });
+  document.querySelectorAll(".quick button").forEach((b) => b.addEventListener("click", () => { $("promptInput").value = b.dataset.q; $("promptInput").focus(); }));
+  $("toggleBtn").addEventListener("click", () => { if (!trig) return; if (trig.enabled) toggle(false); else $("resumeConfirm").hidden = false; });
+  $("resumeYes").addEventListener("click", () => { $("resumeConfirm").hidden = true; toggle(true); });
+  $("resumeNo").addEventListener("click", () => { $("resumeConfirm").hidden = true; });
+  $("refreshBtn").addEventListener("click", refreshAll);
+  $("restoreBtn").addEventListener("click", async () => {
+    if (!trig) return;
+    const p = (trig.derived_state && trig.derived_state.prompt) || "";
+    if (await restorePrompt(baseOf(p))) { say("sys", " ", "Normal prompt restored."); $("restoreBanner").hidden = true; refreshAll(); }
+  });
+  $("stopBtn").addEventListener("click", stopRun);
+
+  preview();
+  renderRuns();
+  say("sys", " ", "Type help for commands, or use the buttons above.");
+
+  (async () => {
+    const api = window.claude && window.claude.use ? await window.claude.use("mcp") : null;
+    if (!api) {
+      $("pageBanner").textContent = "This view can't reach your routines. Open the page in claude.ai to run the autopilot from here.";
+      $("pageBanner").hidden = false;
+      $("stateChip").textContent = "Offline"; $("stateChip").className = "chip idle";
+      ["fName", "fCron", "fNext", "fLast"].forEach((id) => { $(id).textContent = "—"; });
+      setBusy(true);
+      return;
+    }
+    mcp = api;
+    setBusy(false);
+    watchTrigger();
+  })();
+})();
+</script>

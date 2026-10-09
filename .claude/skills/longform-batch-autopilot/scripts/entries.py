@@ -2,14 +2,22 @@
 """Turn a client's topics (+ post-call statuses) into the LONGFORMS entry lines.
 
 Usage: python3 -I entries.py TOPICS.json
-Prints {"entries": [{"topic", "line"}], "left_out": [{"topic", "why"}], "notes": [...], "problems": [...]}.
-Write the doc with the lines; put every note and problem in the run summary.
+Prints {"entries": [{"topic", "line"}], "left_out": [{"topic", "why"}],
+        "would_be": [{"topic", "lines", "why"}], "notes": [...], "problems": [...]}.
+Write the doc with the lines; put every note, problem and would-be line in the run summary.
+
+would_be: each Type A topic left out for want of answers (no transcript, NOT ANSWERED, NOT DISCUSSED;
+never a killed, struck, ❌, snipe, merged, parked or on-hold one) with the line(s) it would get if Jeremiah
+adds it, worked out as if the call happened and it was KEPT. They are numbered "?" ("?.1" / "?.2" for an
+X/LI split) and never use up a real number: {"topic": 3, "lines": ["? - (X/LI) - (...) - (...)"], "why": "..."}.
+Its extra_posts' lines come after its own; a left-out topic's extra posts are left out with it ("3+").
 
 The rules come from Jeremiah's real docs (Mason Oct Wk1 + Wk2, Keval, Josh C, Ben K, Teddy, Abdul, Lior,
 Jason; see references/longform-doc.md). TOPICS.json:
 
 {
   "client": "Mason L.",                  # longform doc name; loads the per-client settings in CLIENTS
+  "strategist": "Kyle",                  # named in the type-clash gate; "the strategist" if missing
   "platforms": "X, LinkedIn",            # the topic sheet's PLATFORMS row
   "call": true,                          # false with no transcript and no brief: Type B in, Type A out
   "expected_posts": null,                # the brief's total post count, if it states one (checked)
@@ -23,19 +31,34 @@ Jason; see references/longform-doc.md). TOPICS.json:
      "status": "KEPT",                   # the brief's status, as written; normalised here
      "struck": false, "check": null,     # whole topic struck through on the sheet / "✅" or "❌" on its header
      "vehicle_override": null,           # only when the CALL settled a new vehicle
-     "posts_override": null,             # only when the CALL changed the post count
+     "posts_override": null,             # only when the call or a strategist comment changed the post count
+     "posts_override_source": null,      # where posts_override came from: "Kyle's sheet comment \"2 posts\"" (Josh C
+                                         #   Oct Wk2 T4); named in its note, else the note says "set on the call"
      "perspective_override": null,       # a label, when the sheet has no PERSPECTIVE (freeform / new post)
+     "inferred": null,                   # what was inferred rather than read: "vehicle and post count from the
+                                         #   heading" (Ben K Oct Wk2 T7, no VEHICLE field); flagged
      "merged_into": null,                # topic number this one was folded into (human call; flagged)
      "objective": null,                  # OBJECTIVE field; "snipe" / "quick response" in it is flagged
      "other_tab_label": null,            # the same topic's header label on the other tab (e.g. Strategy says "Snipe")
-     "no_cta": null, "li_vehicle": null, # Ben: value tweet with no DM CTA / LinkedIn format from a FOR LINKEDIN note
+     "other_tab_type": null,             # "A" / "B": the Strategy tab's raw list type, when it differs (Lior Oct Wk2)
+     "client_question": null,            # true: a Type B box that carries a FOR <CLIENT> question
+                                         #   (either one is a strategist gate in problems, call or no call,
+                                         #   unless the topic is out for another reason: killed, struck, snipe...)
+     "written_answer": null,             # the client's own written answer on the sheet, in short: "RECENT WINS JOSH
+                                         #   SENT + image" (Josh D Oct Wk2 T3); flagged when a Type A topic is left out
+     "freeform": false,                  # a "Topic 0" or EXTRA post outside the sheet tables: n stays an integer (an
+                                         #   EXTRA takes the next number after the sheet topics), type null, and
+                                         #   perspective_override a 1-3 word subject ("Trybe", Josh D Oct Wk1); flagged
+     "no_cta": null, "li_vehicle": null, # Ben: no DM CTA, so an X/LI post stays one line / LinkedIn format from a
+                                         #   FOR LINKEDIN note (the only thing that splits a Ben value tweet)
      "extra_posts": []}                  # posts the strategist asked for in a sheet comment or on the call:
                                          #   {"perspective": "Chad mentality", "vehicle": null, "same_material": false,
                                          #    "source": "Kyle comment: Make a 2nd post on Boxing and chad mentality"}
+                                         #   they follow their parent in or out
   ]
 }
 """
-import json, re, sys
+import itertools, json, re, sys
 
 # Per-client line habits, learned from their real docs. Keyed by longform doc name.
 CLIENTS = {
@@ -125,6 +148,7 @@ def norm_vehicle(v, cfg, notes):
     def bracket(m):
         inner, before = m.group(1).strip(), v[:m.start()]
         if inner.lower() in FMT:
+            notes.append("format noun in brackets merged into the vehicle: (%s): confirm" % inner)
             return " " + inner.lower()
         if re.search(r"\+\s*[^+()]+$", before):
             notes.append("bracket after a '+ asset' dropped: (%s): confirm" % inner)
@@ -145,9 +169,9 @@ def article_pieces(plat, text, notes):
     as in Keval Oct Wk2. Returns None when `text` is not an X article."""
     t = text.strip()
     if plat in ("X", "X/LI") and re.match(r"^(X\s+)?article\b", t, re.I) and (plat == "X" or t[:1] in "Xx"):
-        rest = QT_AFTER.split(re.sub(r"^(X\s+)?article\b", "", t, flags=re.I))[0].strip(" ,.")
+        rest = QT_AFTER.split(re.sub(r"^(X\s+)?article\b", "", t, flags=re.I))[0].strip(" ,.:;-–—")
         if rest:
-            notes.append("X article vehicle %r written as (Article), qualifier dropped: confirm" % t)
+            notes.append("X article vehicle %r written as (Article), qualifier dropped: '%s': confirm" % (t, rest))
         if QT_AFTER.search(t):
             notes.append("X article + QT %r: wrapper given its own number, as in Keval's doc: confirm" % t)
             return [("X", "Article"), "WRAPPER"]
@@ -242,6 +266,12 @@ def status_norm(s):
     return "UNKNOWN"
 
 
+# Type A topics left out only for want of answers: these get would-be lines (Josh D Oct Wk2, no transcript)
+NO_CALL_A = "Type A, no transcript to show the call answered it"
+NOT_ANSWERED_A = "Type A, not answered on the call"
+NOT_DISCUSSED_A = "Type A, not discussed on the call (no answers to write from)"
+
+
 def included(t, call, notes, problems):
     label, veh = t.get("label") or "", t.get("vehicle") or ""
     tn = t.get("n")
@@ -259,7 +289,7 @@ def included(t, call, notes, problems):
         if typ.startswith("B"):
             return True, "no transcript: Type B needs no answers"
         notes.append("T%s is Type A and there is no transcript: left out; add its line if the call answered it" % tn)
-        return False, "Type A, no transcript to show the call answered it"
+        return False, NO_CALL_A
     s = status_norm(t.get("status"))
     if s == "KILLED":
         return False, "killed on the call"
@@ -277,11 +307,11 @@ def included(t, call, notes, problems):
         # Jeremiah, Oct 9: a Type A topic the call didn't answer was skipped on the call, so no line
         if typ.startswith("B"):
             return True, "came up unanswered, but Type B needs no answers"
-        return False, "Type A, not answered on the call"
+        return False, NOT_ANSWERED_A
     if s == "NOT DISCUSSED":
         if typ.startswith("B"):
             return True, "not discussed, but Type B needs no answers"
-        return False, "Type A, not discussed on the call (no answers to write from)"
+        return False, NOT_DISCUSSED_A
     if s == "NEW":
         if t.get("vehicle_override") or veh:
             return True, "new on the call, vehicle set"
@@ -296,43 +326,64 @@ def included(t, call, notes, problems):
     return True, s.lower()
 
 
+def type_clash(t, who, strategist):
+    """A strategist gate: the type decides in or out, so a doubt over it is a problem (Lior Oct Wk2 T1: Type B
+    in Client strategy, Type A with a question for Reut in the Strategy tab's raw list)."""
+    typ = re.sub(r"^TYPE\s*", "", (t.get("type") or "B").strip().upper())
+    why = []
+    other = re.sub(r"^TYPE\s*", "", (t.get("other_tab_type") or "").strip().upper())
+    if other and other != typ:
+        why.append("Strategy tab says Type %s" % other)
+    if t.get("client_question") and typ.startswith("B"):
+        why.append("the box asks %s a question" % who)
+    if why:
+        return "T%s type clash: Client strategy says Type %s, %s: line follows Client strategy, confirm with %s" % (
+            t.get("n"), typ, " and ".join(why), strategist)
+
+
 def build(data):
     cfg = dict(CLIENTS.get(data.get("client", ""), {}))
     plat_default = default_platform(cfg.get("platforms") or data.get("platforms", "X, LinkedIn"))
     call = data.get("call", True)
-    entries, left_out, notes, problems = [], [], [], []
-    n = 0
+    who = (data.get("client") or "").split(" ")[0] or "the client"
+    strategist = data.get("strategist") or "the strategist"
+    entries, left_out, would_be, notes, problems = [], [], [], [], []
+    numbers_from = itertools.count(1)
 
-    def emit(tn, persp, vehicle, posts, t):
-        nonlocal n
+    def shape(tn, persp, vehicle, posts, t, notes):
+        """-> (pieces, posts): one post's (platform, vehicle) pieces and how many posts get them."""
         pieces, count = split_pieces(vehicle, plat_default, cfg, notes)
         posts = int(t.get("posts_override") or max(posts or 1, count or 1))
         if t.get("li_vehicle") and len(pieces) == 1:
             pieces = [("X", pieces[0][1]), ("LI", norm_vehicle(t["li_vehicle"], cfg, notes))]
             notes.append("T%s LinkedIn format from its FOR LINKEDIN note" % tn)
         elif cfg.get("split_cta_posts") and len(pieces) == 1 and pieces[0][0] == "X/LI":
-            no_cta = t.get("no_cta")
-            if no_cta is None:
-                no_cta = bool(re.search(r"value tweet|\bVT\b", (t.get("label") or "") + " " + vehicle, re.I)
-                              and re.search(r"hot take|opinion", persp, re.I))
-            if not no_cta:
-                pieces = [("X", pieces[0][1]), ("LI", pieces[0][1])]
-            notes.append("T%s %s (this client splits posts with a DM CTA): confirm" % (tn, "kept X/LI" if no_cta else "split X / LI"))
-        for _ in range(posts):
-            wrapper = "WRAPPER" in pieces
-            real = [p for p in pieces if p != "WRAPPER"]
-            n += 1
-            if len(real) == 1:
-                entries.append({"topic": tn, "line": "%d - (%s) - (%s) - (%s)" % (n, real[0][0], persp, real[0][1])})
+            if re.search(r"value tweet|\bVTs?\b", (t.get("label") or "") + " " + vehicle, re.I):
+                # Ben K Oct Wk1: 'Value tweet ">" Listicle' stayed one X/LI line; only a FOR LINKEDIN note split one
+                notes.append("T%s kept X/LI (value tweet; split only with a FOR LINKEDIN note): confirm" % tn)
             else:
-                for i, (plat, veh) in enumerate(real, 1):
-                    entries.append({"topic": tn, "line": "%d.%d - (%s) - (%s) - (%s)" % (n, i, plat, persp, veh)})
-            if wrapper:
-                n += 1
-                entries.append({"topic": tn, "line": "%d - (X) - (%s) - (Article wrapper)" % (n, persp)})
+                if not t.get("no_cta"):
+                    pieces = [("X", pieces[0][1]), ("LI", pieces[0][1])]
+                notes.append("T%s %s (this client splits posts with a DM CTA): confirm"
+                             % (tn, "kept X/LI" if t.get("no_cta") else "split X / LI"))
+        return pieces, posts
 
-    def persp_or_label(t, raw, tn):
-        if t.get("perspective_override"):
+    def write(nums, persp, pieces, posts):
+        """The lines for `posts` posts, numbered from `nums` (real numbers, or "?" for would-be lines)."""
+        out = []
+        real = [p for p in pieces if p != "WRAPPER"]
+        for _ in range(posts):
+            num = next(nums)
+            if len(real) == 1:
+                out.append("%s - (%s) - (%s) - (%s)" % (num, real[0][0], persp, real[0][1]))
+            else:
+                out += ["%s.%d - (%s) - (%s) - (%s)" % (num, i, plat, persp, veh) for i, (plat, veh) in enumerate(real, 1)]
+            if "WRAPPER" in pieces:
+                out.append("%s - (X) - (%s) - (Article wrapper)" % (next(nums), persp))
+        return out
+
+    def persp_or_label(t, raw, tn, notes, problems):
+        if t.get("perspective_override") and not t.get("freeform"):
             notes.append("T%s perspective is a label, not the sheet's PERSPECTIVE: %r, confirm" % (tn, t["perspective_override"]))
         p = perspective_text(raw, cfg, notes) if raw else ""
         if not p:
@@ -344,38 +395,80 @@ def build(data):
             problems.append("T%s has no perspective or title: line says (TBD)" % tn)
         return p
 
+    def topic_lines(t, tn, nums, notes, problems):
+        raw_p = t.get("perspective_override") or t.get("perspective")
+        persp = persp_or_label(t, raw_p, tn, notes, problems)
+        vehicle = t.get("vehicle_override") or t.get("vehicle") or ""
+        if t.get("vehicle_override"):
+            notes.append("T%s vehicle set on the call: %r" % (tn, vehicle))
+        if t.get("posts_override"):
+            src = t.get("posts_override_source")
+            notes.append("T%s post count %s from %s: confirm" % (tn, t["posts_override"], src) if src
+                         else "T%s post count set on the call: %s" % (tn, t["posts_override"]))
+        if int(t.get("posts") or 1) > 1 and t.get("extra_posts"):
+            problems.append("T%s has a header count (%s posts) and extra posts too: a comment naming each post's "
+                            "subject is not extra posts, check for double counting" % (tn, t.get("posts")))
+        snipe_hint = " ".join(str(t.get(k) or "") for k in ("objective", "other_tab_label"))
+        if re.search(r"\b(snipe|quick\s*response)\b", snipe_hint, re.I):
+            problems.append("T%s may be a snipe/quick response (%s): kept in LONGFORMS, confirm or move it to "
+                            "its own doc" % (tn, snipe_hint.strip()[:80]))
+        if not vehicle.strip():
+            vehicle = "Long-form promo" if re.search(r"promo", t.get("title") or "", re.I) else "Long-form"
+            notes.append("T%s has no VEHICLE: used %r, confirm" % (tn, vehicle))
+        if t.get("freeform"):
+            notes.append("freeform extra post T%s (%s): confirm" % (tn, persp))
+            if not isinstance(tn, int):
+                problems.append("T%s freeform topic number should be an integer, the next after the sheet topics" % tn)
+            label = t.get("perspective_override") or ("" if t.get("perspective") else persp)
+            if len(label.split()) > 3:
+                # Josh D Oct Wk1: Jeremiah labelled Devin's EXTRA newsletter article just "Trybe"
+                problems.append("T%s freeform label %r: label should be a 1-3 word subject, as in Jeremiah's 'Trybe'"
+                                % (tn, label))
+        pieces, posts = shape(tn, persp, vehicle, t.get("posts"), t, notes)
+        if cfg.get("promo_split") and re.search(r"\bpromo\b", t.get("title") or "", re.I) \
+                and not re.search(r"\bpromo\b", vehicle, re.I) and [p[0] for p in pieces] == ["X/LI"]:
+            # Josh C Oct Wk2 T7 "A Day in My Life on the Road (Ecom North Toronto Promo)", VEHICLE "Longform, ..."
+            notes.append("T%s title says promo, vehicle doesn't: split X/LI?" % tn)
+        return write(nums, persp, pieces, posts)
+
+    def extra_lines(t, x, nums, notes, problems):
+        tn = t.get("n")
+        raw_p = x.get("perspective") or (t.get("perspective") if x.get("same_material") else None)
+        if not raw_p:
+            problems.append("T%s extra post has no perspective label: line says (TBD)" % tn)
+        persp = perspective_text(raw_p, cfg, notes) if raw_p else "TBD"
+        vehicle = x.get("vehicle") or t.get("vehicle_override") or t.get("vehicle") or "Long-form"
+        notes.append("T%s extra post added (%s): confirm" % (tn, x.get("source") or "strategist request"))
+        return write(nums, persp, *shape("%s+" % tn, persp, vehicle, 1, {}, notes))
+
     for t in data["topics"]:
         tn = t.get("n")
         ok, why = included(t, call, notes, problems)
+        would = not ok and why in (NO_CALL_A, NOT_ANSWERED_A, NOT_DISCUSSED_A)
+        clash = (ok or would) and type_clash(t, who, strategist)
+        if clash:
+            problems.append(clash)
+        if t.get("inferred") and (ok or would):
+            notes.append("T%s %s: inferred, not on the sheet: confirm" % (tn, t["inferred"]))
         if ok:
-            raw_p = t.get("perspective_override") or t.get("perspective")
-            persp = persp_or_label(t, raw_p, tn)
-            vehicle = t.get("vehicle_override") or t.get("vehicle") or ""
-            if t.get("vehicle_override"):
-                notes.append("T%s vehicle set on the call: %r" % (tn, vehicle))
-            if t.get("posts_override"):
-                notes.append("T%s post count set on the call: %s" % (tn, t["posts_override"]))
-            if int(t.get("posts") or 1) > 1 and t.get("extra_posts"):
-                problems.append("T%s has a header count (%s posts) and extra posts too: a comment naming each post's "
-                                "subject is not extra posts, check for double counting" % (tn, t.get("posts")))
-            snipe_hint = " ".join(str(t.get(k) or "") for k in ("objective", "other_tab_label"))
-            if re.search(r"\b(snipe|quick\s*response)\b", snipe_hint, re.I):
-                problems.append("T%s may be a snipe/quick response (%s): kept in LONGFORMS, confirm or move it to "
-                                "its own doc" % (tn, snipe_hint.strip()[:80]))
-            if not vehicle.strip():
-                vehicle = "Long-form promo" if re.search(r"promo", t.get("title") or "", re.I) else "Long-form"
-                notes.append("T%s has no VEHICLE: used %r, confirm" % (tn, vehicle))
-            emit(tn, persp, vehicle, t.get("posts"), t)
+            entries += [{"topic": tn, "line": l} for l in topic_lines(t, tn, numbers_from, notes, problems)]
         else:
             left_out.append({"topic": tn, "why": why})
-        for x in t.get("extra_posts") or []:      # strategist-requested extra posts follow their parent
-            raw_p = x.get("perspective") or (t.get("perspective") if x.get("same_material") else None)
-            if not raw_p:
-                problems.append("T%s extra post has no perspective label: line says (TBD)" % tn)
-            persp = perspective_text(raw_p, cfg, notes) if raw_p else "TBD"
-            vehicle = x.get("vehicle") or t.get("vehicle_override") or t.get("vehicle") or "Long-form"
-            notes.append("T%s extra post added (%s): confirm" % (tn, x.get("source") or "strategist request"))
-            emit("%s+" % tn, persp, vehicle, 1, {})
+        if would:
+            # as if the call happened and kept it; its own notes would only repeat what the line shows
+            would_be.append({"topic": tn, "lines": topic_lines(t, tn, itertools.repeat("?"), [], []), "why": why})
+            if t.get("written_answer"):
+                # Josh D Oct Wk2 T3: "RECENT WINS JOSH SENT" pasted under PERSPECTIVE, no transcript
+                notes.append("T%s left out, but the sheet holds %s's written answer (%s): answered in writing? add its line?"
+                             % (tn, who, t["written_answer"]))
+        for x in t.get("extra_posts") or []:      # strategist-requested extra posts follow their parent, in or out
+            if ok:
+                entries += [{"topic": "%s+" % tn, "line": l} for l in extra_lines(t, x, numbers_from, notes, problems)]
+                continue
+            # a left-out Type A topic's extra post needs the call's answers too: no real number
+            left_out.append({"topic": "%s+" % tn, "why": "extra post on T%s, left out with it (%s)" % (tn, why)})
+            if would:
+                would_be[-1]["lines"] += extra_lines(t, x, itertools.repeat("?"), [], [])
 
     numbers = {re.match(r"(\d+)", e["line"]).group(1) for e in entries}
     if data.get("expected_posts") and len(numbers) != int(data["expected_posts"]):
@@ -383,8 +476,7 @@ def build(data):
     for e in entries:
         if "()" in e["line"]:
             problems.append("empty slot in line: %r" % e["line"])
-    return {"entries": entries, "left_out": left_out, "notes": notes, "problems": problems}
-
+    return {"entries": entries, "left_out": left_out, "would_be": would_be, "notes": notes, "problems": problems}
 
 if __name__ == "__main__":
     print(json.dumps(build(json.load(open(sys.argv[1]))), ensure_ascii=False, indent=1))

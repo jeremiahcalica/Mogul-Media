@@ -1,0 +1,15 @@
+Id: 01TESTFIXTURE0000000000000
+Title: SAM T X KYLE
+DateString: 2026-10-07T17:30:00.000Z
+Speakers: Kyle Meng, Sam Test
+Sentences: [00:00 - 00:03] Kyle Meng: Okay, let's get into the first topic.
+[00:04 - 00:09] Sam Test: Honestly, the biggest mistake I see founders make is hiring too fast.
+[00:10 - 00:14] Sam Test: You hire ten people and then you have to manage ten people.
+[00:15 - 00:18] Sam Test: And the payroll eats the margin before you notice.
+[00:19 - 00:22] Kyle Meng: That's perfect.
+[00:30 - 00:34] Sam Test: We, we hired, hired way too early.
+[01:30 - 01:34] Sam Test: I was going to tell you about the.
+[01:35 - 01:40] Sam Test: We scaled to 9 figures in like three years, which was wild.
+[02:10 - 02:14] Kyle Meng: Next one, what does your morning look like?
+[02:15 - 02:20] Sam Test: I wake up at five, I train, and then I read for an hour.
+[1:02:03 - 1:02:06] Sam Test: Last thing, thanks for having me on.

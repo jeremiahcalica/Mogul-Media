@@ -44,7 +44,7 @@ LONGFORMS                                   (H1, bold)
 
    | Topic | Line? |
    |---|---|
-   | Header label or VEHICLE says **Snipe** or **Quick Response** | **No.** These go in their own doc, "<Name> - <Mon> - Week <N> (Snipes)" / "(Quick response posts)". A plain "quote tweet" is not a snipe. |
+   | Header label or VEHICLE says **Snipe** or **Quick Response** | **No.** These go in their own doc, "<Name> - <Mon> - Week <N> (Snipes)" / "(Quick response posts)", named with last week's exact suffix (SKILL.md Step 5). A plain "quote tweet" is not a snipe. |
    | Struck through, or ❌ on the sheet | No |
    | Folded into another topic (`merged_into`, only when the brief says so) | No, flagged |
    | **No transcript and no brief**, Type B | **Yes** (Type B needs no answers, call or no call) |
@@ -52,7 +52,7 @@ LONGFORMS                                   (H1, bold)
    | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (answers given, still this batch, waiting on an asset or sign-off), RESOLVED | Yes |
    | NOT DISCUSSED, Type B | Yes |
    | NOT DISCUSSED, Type A | No |
-   | NOT ANSWERED, Type A: it came up on the call but its questions got no answer (deferred, "I'll think about it", no take given), even if something else is also pending | **No.** "If it's not discussed in the call, or a Type A topic was killed or wasn't answered, it shouldn't be in the document" (Jeremiah, Oct 9) |
+   | NOT ANSWERED, Type A: it came up on the call but its questions got no answer (deferred, "I'll think about it", no take given), even if something else is also pending. An answer the client wrote on the sheet after the call doesn't change it (Keval Oct Wk3; see below). | **No.** "If it's not discussed in the call, or a Type A topic was killed or wasn't answered, it shouldn't be in the document" (Jeremiah, Oct 9) |
    | NOT ANSWERED, Type B | Yes (Type B needs no answers) |
    | KILLED / skipped / dropped | No |
    | PARKED | No. Exception: a screenshot topic where the client sends the screenshots (Keval T4). That one is yes, flagged. |
@@ -62,12 +62,15 @@ LONGFORMS                                   (H1, bold)
    | A status the script doesn't recognise | Yes, flagged |
 
    Briefs word statuses freely ("Go, with gaps", "Draftable", "No pivot called", "Skipped on call"); `status_norm()` maps them. Put the brief's status in `status` as written.
+
+   Every Type A topic left out (no transcript, NOT ANSWERED, NOT DISCUSSED) comes back in `would_be` with the line(s) it would get, numbered "?". They go in the summary under "Type A left out", so Jeremiah can paste one if the call did answer it. A left-out topic with the client's own written answer on the sheet (`written_answer`, Josh D's "RECENT WINS JOSH SENT", Oct Wk2) stays out too; its summary entry adds "answered in writing? add line?".
 2. **Extra posts the strategist asked for.** A comment on the topic sheet like "Make a 2nd post on Boxing and chad mentality" (Mason Wk1), or "3 posts / 1/ … 2/ … 3/ …" (Abdul), adds lines right after the parent topic's own lines.
    - Not when the header already counts them: Caulen T2 "(3 post)" with Kyle's comment naming posts 2 and 3 gives three identical "(Founder milestones) - (Short-form listicle)" lines in his real doc. The subjects go in the brief. `entries.py` flags a header count combined with extra posts as possible double counting.
-   - A comment that isn't on any topic but asks for a post (Devin's "EXRA … turn it into an article with Doc SS QT", Josh D) becomes a freeform topic after the last sheet topic, with the post's subject as its `perspective_override` and the comment's format as its vehicle, flagged.
    - Put each one in the parent's `extra_posts`, with a short perspective label taken from the comment ("Chad mentality").
    - The vehicle defaults to the parent's.
    - These are always flagged.
+   - They follow their parent: if the parent topic is left out (a Type A topic with no answer, killed, struck), so are its extra posts, and a would-be parent's `would_be` lines include them.
+   - A comment that isn't on any topic but asks for a post (Devin's "EXRA … turn it into an article with Doc SS QT", Josh D) is not an extra post: it becomes a freeform topic (`"freeform": true`) numbered with the next integer after the last sheet topic. Its `perspective_override` is a short 1–3 word subject, like Jeremiah's "Trybe" for Josh D's newsletter (his Oct Wk1 doc), and its vehicle is the comment's format. Flagged.
    - A comment that asks for a *pivot* ("Make a pivot to long-form for this week", Mason Wk2 T2) changes nothing. It goes in the brief's Note, and the line stays as the sheet has it.
 3. **Perspective.** The topic's PERSPECTIVE field, word for word, minus its final period. Keep curly and straight apostrophes and double quotes as the sheet has them ("who’s", "won't").
    - The field ends at the first blank line or double soft break: Keval pastes his own post right after it, and that text is not perspective (`entries.py` cuts there and notes it).
@@ -83,7 +86,7 @@ LONGFORMS                                   (H1, bold)
    - per-platform vehicles separated by `/`, `,`, `;` or `·` after a tag (`Thread (X), Long-form listicle (LinkedIn)`), written as prefixes (`X article + Doc SS QT / LI Longform`), or as bullets (`•X: … •LinkedIn: …`);
    - a bare `Thread`, or a thread inside brackets, for an X + LinkedIn client: X `Thread`, LI `Long-form` (Abdul: `Long-form listicle`);
    - `X article, then quote tweet` is a different case: two numbers, `(X) … (Article)` then `(X) … (Article wrapper)` (Keval T6). The same goes for the X half of a split that quote-tweets its own article (`X article + Doc SS QT / LI Longform` gives n.1 X Article, n.2 LI Long-form, then n+1 X Article wrapper). It is flagged to confirm.
-6. **Post counts.** "2 POSTS" / "(3 post)" in the header, or ", x2" / "two posts" in VEHICLE, gives consecutive numbers with identical lines. A bare "2 posts" strategist comment does the same through `posts_override`, flagged. A topic with no VEHICLE whose heading names the format and lists items (Ben's "VALUE TWEETS - INSTAGRAM REEL REPURPOSE", two reels) gets the vehicle from the heading and one post per item, flagged.
+6. **Post counts.** "2 POSTS" / "(3 post)" in the header, or ", x2" / "two posts" in VEHICLE, gives consecutive numbers with identical lines. A bare "2 posts" strategist comment does the same through `posts_override`, flagged. A topic with no VEHICLE whose heading names the format and lists items (Ben's "VALUE TWEETS - INSTAGRAM REEL REPURPOSE", two reels) gets the vehicle from the heading and one post per item, with `inferred` saying so, flagged.
 7. **Vehicle wording.**
    - Longform / Long form → `Long-form`; Medium form → `Medium-form`. Inside a phrase they stay lowercase ("Opinion-led long-form post").
    - "Listicle long-form" → `Long-form listicle`.
@@ -101,7 +104,7 @@ LONGFORMS                                   (H1, bold)
    |---|---|
    | Jason G. | Perspective drops its last sentence. "Doc SS" / "Google Doc Screenshot" → "Apple Notes …" |
    | Abdul F. | "+ photo" is dropped, a thread's LinkedIn half is "Long-form listicle", "Doc SS" → "Apple Notes …" |
-   | Ben K. | Every X/LI post splits into n.1 (X) / n.2 (LI) because of the DM CTA, except a value tweet with no CTA (flagged). A "FOR LINKEDIN" note sets the LI vehicle (`li_vehicle`). |
+   | Ben K. | Every X/LI post splits into n.1 (X) / n.2 (LI) because of the DM CTA. A value tweet stays one X/LI line (his Oct Wk1 doc), unless a "FOR LINKEDIN" note gives a LinkedIn format, which sets the LI vehicle (`li_vehicle`) and splits it. Flagged. |
    | Joshua C. | Promo posts split X / LI |
    | Lior P., Zarak A. | X only |
 
@@ -120,8 +123,9 @@ LONGFORMS                                   (H1, bold)
 
 - Copy `vehicle`, `perspective` and `label` exactly as the sheet has them, including bullets and line breaks. The script does all the cleaning.
 - Read the VEHICLE field, not the italic vehicle in the topic's header row.
-- Use `vehicle_override` and `posts_override` only when the call clearly settled a new vehicle or post count, not when it was only floated (Josh T4 "listable format"). The script lists every override in `notes`.
-- Save the printed `entries[].line` values as a JSON list (`lines.json`) for the next step. Put every `notes`, `problems` and `left_out` item in the run summary.
+- Use `vehicle_override` and `posts_override` only when the call (or, for a post count, a strategist's sheet comment, with `posts_override_source`) clearly settled a new vehicle or post count, not when it was only floated (Josh T4 "listable format"). The script lists every override in `notes`.
+- The optional keys `inferred`, `other_tab_type`, `client_question`, `posts_override_source`, `written_answer` and `freeform` are described in SKILL.md Step 5.3.
+- Save the printed `entries[].line` values as a JSON list (`lines.json`) for the next step. Put every `notes`, `problems`, `left_out` and `would_be` item in the run summary.
 
 ## The copy and the edit, step by step
 
@@ -143,11 +147,12 @@ LONGFORMS                                   (H1, bold)
    - replaces the old header text last, so its length can't shift the other ranges;
    - prints `{"documentId","requests","writeControl"}`. `writeControl.requiredRevisionId` comes from the read, so Google refuses the whole batch if the doc changed in between.
 5. **Send it** with `update_doc`. It is one atomic call: if it fails, nothing changed. Read the copy again and rebuild; never resend stale indexes.
-6. **Verify** with `read_doc` again and `python3 -I scripts/verify_doc.py <read> lines.json --header "<header>"` (or `--md` on `read_file_content` when the read is too long to save). It checks:
+6. **Verify** with `read_doc` again and `python3 -I scripts/verify_doc.py <read> lines.json --header "<header>"`. Always also run it with `--md` on `read_file_content` of the doc; that mode drops an unbolded first H1 that is only the tab title ("# Content", Josh C). When the read comes back inline and too long to save, write the minimal form in `verify_doc.py`'s docstring and check that; never skip the style checks. It checks:
    - the header is the new text;
    - the Media Folder paragraph has no richLink or link;
    - the body holds no `inlineObjectElement`;
-   - the lines match `lines.json` exactly, each Heading 2 and bold, each followed by an empty normal paragraph.
+   - the lines match `lines.json` exactly, each Heading 2 and bold, each followed by an empty normal paragraph;
+   - the Heading 1 and Heading 2 named styles are present (it fails if they are missing and warns on non-default sizes).
    - "Bold" means bold on the text: each line's run reads `{"bold": true}`, and the doc's Heading 2 style is not bold, as in every client doc. A line that reads back `textStyle {}` because the doc's Heading 2 style is bold means the doc was built wrong (an HTML import): Clear formatting won't work in it. Report it rather than calling it done.
 
 ### Exceptions

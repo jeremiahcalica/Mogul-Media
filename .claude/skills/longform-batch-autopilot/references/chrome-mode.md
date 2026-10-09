@@ -44,5 +44,5 @@ The default is the Claude Doc the cloud run makes with the connector, which is t
    - **Transcript:** paste the transcript text; long pastes become an attachment card.
 3. Wait until every attachment has finished processing (the PDF card shows its page thumbnail).
 4. Paste the prompt from `references/brief.md` word for word, with the client and strategist swapped in, keeping its last line "In a claude doc pls". In the Loom he copies it from last week's chat "<Client> brief from <Strategist> meeting", the most recent one, using its last successful message (the one ending with that line). The text in `brief.md` is that message.
-5. Leave the model as it is (Opus 5.5, High, Auto) and send.
+5. Leave the model, effort and mode settings as they are and send.
 6. Wait until Claude has finished building the doc; the summary changes while it edits (Loom 1, 3:02). Only then read its status table and record the link.

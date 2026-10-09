@@ -2,17 +2,19 @@
 """new_doc_batch.py on an empty doc must give the exact structure of Jeremiah's real Mason Oct Wk2 doc:
 same paragraph boundaries, paragraph styles and text formatting (bold on the text, not in the styles),
 so Clear formatting behaves the same as in his copied docs. Run: python3 -I tests/test_new_doc.py"""
-import json, os, subprocess, sys, tempfile
+import json, os, shutil, subprocess, sys, tempfile
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, here)
 import simulate_docs_batch as sim
 
 lines = open(os.path.join(here, "mason_oct_wk2_expected.txt"), encoding="utf-8").read().splitlines()
-with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
-    json.dump(lines, f); lp = f.name
+tmp = tempfile.mkdtemp()
+lp = os.path.join(tmp, "lines.json")
+json.dump(lines, open(lp, "w"))
 out = subprocess.run([sys.executable, "-I", os.path.join(here, "..", "scripts", "new_doc_batch.py"),
                       os.path.join(here, "blank_doc_read.json"), "Mason L. - Week 2 - Oct", lp],
                      capture_output=True, text=True, check=True).stdout
+shutil.rmtree(tmp)
 batch = json.loads(out)
 cells = sim.cells_from(sim.load(os.path.join(here, "blank_doc_read.json")))
 for r in batch["requests"]:

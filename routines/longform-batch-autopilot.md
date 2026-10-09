@@ -1,6 +1,6 @@
 # Routine: Longform Batch Autopilot
 
-- **Routine:** "Longform Batch Autopilot", `trig_01KHnmqSHRLJhaURiFFbgoyG`. It was made from a Cowork chat on Oct 9 as "Longform prep autopilot" and repointed to this prompt on Oct 9. It is the only routine that has the connectors (see "Where it lives").
+- **Routine:** "Longform Batch Autopilot", `trig_01KHnmqSHRLJhaURiFFbgoyG`. It was made from a Cowork chat on Oct 9 as "Longform prep autopilot" and repointed to this prompt, renamed and paused on Oct 10 (01:19 Manila); its auto permission mode, connectors and push notification were kept. It is the only routine that has the connectors (see "Where it lives").
 - **Schedule:** `CRON_TZ=Asia/Manila 52 9,21 * * *`, every day at 9:52 AM and 9:52 PM Manila.
   - The 9:52 PM run lands before Jeremiah's night shift, after Kyle's US-morning calls.
   - The 9:52 AM run picks up anything posted overnight.
@@ -17,7 +17,7 @@
 
 ## Dashboard runs
 
-The dashboard (`dashboard/longform-autopilot.html`, published as an artifact) starts runs by hand:
+The dashboard (`dashboard/longform-autopilot.html`, published at https://claude.ai/artifact/C5SUVeCGaTJVnDAT4QMMZR) starts runs by hand:
 1. It reads the routine's prompt and refuses to go on unless it is this prompt (it names the skill). It appends a section, `---`, a line `[dashboard-run]`, a line `Valid until: <now + 10 minutes>`, and the instruction ("Test flight for Mason.", "Dry run for everyone due: …", or whatever was typed), saves it, and reads it back.
 2. Only if the read-back matches, it fires the routine; the new session starts with that prompt.
 3. It always puts the prompt back as it was, even when a step failed. If that fails too, it shows "Restore the normal prompt", and it removes any leftover section before its next run. A leftover section that slipped through expires after 10 minutes: a scheduled run then ignores it and runs everyone due.

@@ -47,7 +47,8 @@ LONGFORMS                                   (H1, bold)
    | Header label or VEHICLE says **Snipe** or **Quick Response** | **No.** These go in their own doc, "<Name> - <Mon> - Week <N> (Snipes)" / "(Quick response posts)". A plain "quote tweet" is not a snipe. |
    | Struck through, or ❌ on the sheet | No |
    | Folded into another topic (`merged_into`, only when the brief says so) | No, flagged |
-   | **No transcript** | **Yes, every other topic** |
+   | **No transcript and no brief**, Type B | **Yes** (Type B needs no answers, call or no call) |
+   | **No transcript and no brief**, Type A | **No**, listed in the summary: nothing shows the call answered it (Jeremiah, Oct 9) |
    | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (answers given, still this batch, waiting on an asset or sign-off), RESOLVED | Yes |
    | NOT DISCUSSED, Type B | Yes |
    | NOT DISCUSSED, Type A | No |

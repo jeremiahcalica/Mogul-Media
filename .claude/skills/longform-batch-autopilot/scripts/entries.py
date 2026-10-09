@@ -222,10 +222,14 @@ def included(t, call, notes, problems):
     if t.get("merged_into") is not None:
         notes.append("T%s folded into T%s: confirm" % (tn, t["merged_into"]))
         return False, "merged into T%s" % t["merged_into"]
-    if not call:
-        return True, "no transcript: every topic goes in"
-    s = status_norm(t.get("status"))
     typ = (t.get("type") or "B").strip().upper()
+    if not call:
+        # Jeremiah, Oct 9: Type B stays regardless of the call; a Type A topic needs the call's answers
+        if typ.startswith("B"):
+            return True, "no transcript: Type B needs no answers"
+        notes.append("T%s is Type A and there is no transcript: left out; add its line if the call answered it" % tn)
+        return False, "Type A, no transcript to show the call answered it"
+    s = status_norm(t.get("status"))
     if s == "KILLED":
         return False, "killed on the call"
     if s == "PARKED":

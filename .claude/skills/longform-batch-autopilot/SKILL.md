@@ -124,7 +124,7 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
 
 Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jargon (e.g. "Dubai" for media buying, "big ham" for big TAM). Quotes keep the words as transcribed, and a likely reading goes in brackets marked as a reading.
 
-**No transcript means no brief.** "It doesn't make sense to push the topic brief to Claude and ask for pivots since there's no transcript" (Jeremiah, Oct 9). Still make the longform doc (Step 5) with every topic from the sheet as written.
+**No transcript means no brief.** "It doesn't make sense to push the topic brief to Claude and ask for pivots since there's no transcript" (Jeremiah, Oct 9). Still make the longform doc (Step 5) straight away: every Type B topic as the sheet has it, and no Type A topic, because nothing shows the call answered it (Jeremiah, Oct 9: Type B is "retained as-is regardless of whether there's a call or not"; Type A "that wasn't answered in the call however must be removed"). List each Type A topic left out in the summary so he can add its line if the call did answer it.
 
 ## Step 4: Write the brief (only with a transcript)
 
@@ -161,7 +161,8 @@ Follow `references/longform-doc.md`. In short:
 3. **Work out the lines.**
    - Write `topics.json` (schema in `references/longform-doc.md`). Set `"client"` to the doc name. For each topic give its number, type, label, title, post count, ✅/❌ or strikethrough, VEHICLE and PERSPECTIVE, copied exactly from the sheet. Add its status from the brief.
    - Extra posts asked for in an open comment or on the call go in `extra_posts`.
-   - With no transcript, set `"call": false`.
+   - If a brief for this client-week already exists (Jeremiah's or an earlier run's), take each topic's status from it and leave `"call": true`, even when this run has no transcript.
+   - With no transcript and no brief, set `"call": false`: Type B topics go in, Type A topics stay out and are listed.
    - Run `scripts/entries.py topics.json`. It applies every line rule and prints the lines, what it left out and why, `notes` and `problems`:
      - numbering, post counts, X/LI splits and wording;
      - snipes and quick responses left out;
@@ -189,7 +190,8 @@ Follow `references/longform-doc.md`. In short:
 ## Step 6: A transcript that arrives later
 
 The doc may already exist with no brief, because there was no transcript when it was made. If this run finds a transcript, write the brief (Step 4), then compare it with the doc's lines:
-- topics that are now NOT DISCUSSED, NOT ANSWERED (Type A) or KILLED;
+- topics that are now NOT DISCUSSED, NOT ANSWERED (Type A) or KILLED (lines to remove);
+- Type A topics the call did answer, which a no-transcript doc left out (lines to add);
 - vehicles the call changed.
 
 List the differences in the summary as suggestions. Never edit a doc that already exists; Jeremiah may be working in it.

@@ -31,7 +31,7 @@ Every client follows the same setup, so the pipeline below works for all of them
 Jeremiah authorizes these writes, and only these:
 - Send the weekly update request to his schedule chat (Step 1.0), as he does in Loom 1.
 - Create **one** brief Claude Doc per client per week.
-- **Copy** last week's longform doc into **his My Drive**, and edit **only that new copy**. For a new client with no earlier doc, create the blank skeleton doc in his My Drive instead (`references/longform-doc.md` § Exceptions) and edit only that.
+- **Copy** last week's longform doc into **his My Drive**, and edit **only that new copy**. For a new client with no earlier doc, create an empty Google Doc in his My Drive instead and fill only that (`references/longform-doc.md` § Exceptions; never an HTML import).
 - Create and append to the run log Claude Doc, "Longform Autopilot — Run Log".
 
 Never do any of these:
@@ -175,7 +175,7 @@ Follow `references/longform-doc.md`. In short:
    - the header text;
    - no chip or link left on the Media Folder line;
    - nothing under LONGFORMS except the new lines;
-   - each line bold (the run's bold, or its Heading 2 style's), with a blank paragraph after it.
+   - each line bold on the text itself (its run reads `bold: true`; the doc's Heading 2 style is not bold), with a blank paragraph after it.
 6. **Star it.** "So it should appear on my Starred" (Loom 2, 3:14). The Drive connector can't star a file. On his Mac with Claude in Chrome, star it (`references/chrome-mode.md` § Star). Otherwise put it under "Star these" in the summary with its link.
 
 **Notes and comments.**

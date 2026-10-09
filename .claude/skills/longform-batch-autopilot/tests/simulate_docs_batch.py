@@ -67,6 +67,8 @@ def apply(cells, req):
             for f in v["fields"].split(","):
                 if f in v["textStyle"]: c["ts"][f] = v["textStyle"][f]
                 else: c["ts"].pop(f, None)
+    elif k == "updateDocumentStyle":
+        pass                                       # page setup only; no effect on text or indexes
     elif k == "replaceAllText":
         find = v["containsText"]["text"]; rep = v["replaceText"]
         s = "".join(c["ch"] for c in cells[1:])

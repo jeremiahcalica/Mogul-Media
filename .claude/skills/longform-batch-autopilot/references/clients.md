@@ -58,7 +58,7 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
   - His shared docs carry last week's "Quick Response Post" block above LONGFORMS. The batch script deletes it.
   - His Topics doc has a stale STRATEGY tab first; read the CLIENT STRATEGY tab.
   - He splits CTA posts into X and LI. His snipes and quick responses go in separate "(Snipes) " and "(Quick response posts) " docs; those titles end in a space.
-- **Nathan C:** new client, first batch OCT WK2. There is no earlier longform doc, so build it from the blank skeleton (`references/longform-doc.md`, Exceptions). Devin reviews it Tuesday evening, Jeremiah finalizes by Wednesday morning.
+- **Nathan C:** new client, first batch OCT WK2. There is no earlier longform doc, so build it as a new empty doc (`references/longform-doc.md`, Exceptions; never an HTML import). Devin reviews it Tuesday evening, Jeremiah finalizes by Wednesday morning.
 - **Teddy:** Devin's Oct 7 EOD moves his writing to Ymarie, but the schedule doc still gives the batch to Jeremiah. Follow the schedule doc.
 
 ## Not Jeremiah's long-forms (topics only, or someone else writes)

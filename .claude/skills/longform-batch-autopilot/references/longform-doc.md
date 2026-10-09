@@ -138,15 +138,19 @@ LONGFORMS                                   (H1, bold)
    - the Media Folder paragraph has no richLink or link;
    - the body holds no `inlineObjectElement`;
    - the lines match `lines.json` exactly, each Heading 2 and bold, each followed by an empty normal paragraph.
-   - "Bold" means effective bold: the run's `bold`, or else the bold of the paragraph's named style. The API can read a line back with `textStyle {}` when its Heading 2 style is already bold; that is fine, it renders bold.
+   - "Bold" means bold on the text: each line's run reads `{"bold": true}`, and the doc's Heading 2 style is not bold, as in every client doc. A line that reads back `textStyle {}` because the doc's Heading 2 style is bold means the doc was built wrong (an HTML import): Clear formatting won't work in it. Report it rather than calling it done.
 
 ### Exceptions
 
 - **Ben K's shared docs** carry last week's "Quick Response Post (from yesterday's call)" block between Media Folder and LONGFORMS. It isn't skeleton (his My Drive drafts don't have it), so `longform_batch.py` deletes whatever sits between those two lines.
 - **No earlier doc** (a new client's first batch; tested on Nathan C, Oct 9):
-  - Create the doc with Drive `create_file` from HTML, `contentMimeType` `application/vnd.google-apps.document`, `parentId` = My Drive. The HTML is `<h1><b>Nathan C. - Week 2 - Oct</b></h1><h1><b>Media Folder:</b></h1><h1><b>LONGFORMS</b></h1>`.
-  - Read it with `read_doc`, then run the batch with the full header text (not `auto:`) and `--explicit-fonts`, e.g. `longform_batch.py <read> "Nathan C. - Week 2 - Oct" lines.json --explicit-fonts`.
-    - `--explicit-fonts` gives the header block Arial 20 and the lines Arial 16 bold, matching the copied docs (the HTML import comes in at 24/18).
-    - The script also handles LONGFORMS being the last paragraph, and puts back the space after "Media Folder:" that the import drops.
-  - Say "first batch: built from a blank skeleton" in the summary.
+  - **Never build it from HTML** (`create_file` with `text/html`). The import puts bold and 24/18pt into the doc's Heading 1 and Heading 2 styles and leaves the text itself unformatted. The Docs API can apply a style but never change one, so that doc can't be repaired: Clear formatting does nothing in it, unlike his copied docs (Jeremiah, Oct 9: "I can't 'clear formatting' for Nathan, but for Mason it's all good").
+  - Create an **empty** native doc: Drive `create_file` with `title` `<Name> - <Mon> - Week <N>`, `contentMimeType` `application/vnd.google-apps.document`, `parentId` = his My Drive root, and no content. Its built-in styles are Google's defaults, the same as every client doc surveyed on Oct 9 (Mason, Keval, Caulen, Josh C, Shane, Teddy, Ben K, Josh D, Marco): Normal text Arial 11 at 1.15 spacing; Heading 1 20pt; Heading 2 16pt; neither heading bold.
+  - Read it with `read_doc` and save the read to a file. Then run `python3 -I scripts/new_doc_batch.py <read> "<Name> - Week <N> - <Mon>" lines.json` and send its `requests` and `writeControl` with one `update_doc`. The batch:
+    - stops unless the doc is empty, so it can never write over content;
+    - makes the doc pageless (a new doc opens in page view; every client doc is pageless);
+    - writes the header, "Media Folder: " and LONGFORMS as Heading 1, then each line as Heading 2 with one empty paragraph after it;
+    - puts the bold on the text itself, exactly as in Mason's doc, so Clear formatting strips it the same way. `tests/test_new_doc.py` checks the result has the same paragraphs, styles and bold as his real Mason Oct Wk2 doc.
+  - Verify as in step 6, plus: the doc's own Heading 2 style is `bold: false`, 16pt; the documentMode is PAGELESS.
+  - Say "first batch: built as a new doc" in the summary.
 - **Copy lands in the wrong folder.** If `get_file_metadata` shows a different parent, report it. Don't move or trash anything.

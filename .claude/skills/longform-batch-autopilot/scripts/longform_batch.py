@@ -2,6 +2,7 @@
 """Build the update_doc arguments that turn a copied longform doc into next week's shell.
 
 Usage: longform_batch.py COPY_READ.json NEW_HEADER LINES.json [--entry-style HEADING_2|NORMAL_TEXT]
+(A new client with no earlier doc: use new_doc_batch.py on an empty native doc instead.)
 
 COPY_READ.json: read_doc result of the NEW COPY (raw doc JSON or {"content": {...}} / {"content": "<json>"}).
 NEW_HEADER: "auto:<Mon>:<N>" (e.g. "auto:Oct:2") changes only the week number and month in last week's header,
@@ -37,9 +38,6 @@ def main():
     style = "HEADING_2"
     if "--entry-style" in args:
         i = args.index("--entry-style"); style = args[i + 1]; del args[i:i + 2]
-    explicit_fonts = "--explicit-fonts" in args     # blank-skeleton docs: match the house Arial 20 / 16
-    if explicit_fonts:
-        args.remove("--explicit-fonts")
     doc_path, new_header, entries_path = args
     doc = load(doc_path)
     auto = re.fullmatch(r"auto:([A-Za-z]+):(\d+)", new_header)
@@ -85,19 +83,13 @@ def main():
         return r
 
     reqs = []
-    if explicit_fonts:
-        # 0. the header block (header, Media Folder, LONGFORMS) in Arial 20; no length change, so it goes first
-        reqs.append({"updateTextStyle": {"range": rng(1, lf["endIndex"]),
-                     "textStyle": {"fontSize": {"magnitude": 20, "unit": "PT"},
-                                   "weightedFontFamily": {"fontFamily": "Arial"}},
-                     "fields": "fontSize,weightedFontFamily"}})
     # 1. delete everything after LONGFORMS (text, images, tables); the body's final newline stays
     if body_end - 1 > ins:
         reqs.append({"deleteContentRange": {"range": rng(ins, body_end - 1)}})
     # 2. insert the entries before the surviving final newline: "E1\n\nE2\n\n...En\n" + kept "\n"
     text = "".join(e + "\n\n" for e in entries)[:-1]
     if ins >= body_end:
-        # LONGFORMS is the last paragraph (a blank skeleton): Google refuses an insert at the body end,
+        # LONGFORMS is the last paragraph (nothing under it): Google refuses an insert at the body end,
         # so insert "\n" + text just before LONGFORMS's own newline. Line 1 still starts at `ins`.
         loc = {"index": ins - 1}
         payload = "\n" + text
@@ -120,11 +112,8 @@ def main():
         if style != "NORMAL_TEXT":
             reqs.append({"updateParagraphStyle": {"range": rng(pos, pos + n),
                          "paragraphStyle": {"namedStyleType": style}, "fields": "namedStyleType"}})
-        ts, fields = {"bold": True}, "bold"
-        if explicit_fonts:
-            ts.update({"fontSize": {"magnitude": 16, "unit": "PT"}, "weightedFontFamily": {"fontFamily": "Arial"}})
-            fields = "bold,fontSize,weightedFontFamily"
-        reqs.append({"updateTextStyle": {"range": rng(pos, pos + n), "textStyle": ts, "fields": fields}})
+        # bold goes on the text, never in the style, so Clear formatting works as in his docs
+        reqs.append({"updateTextStyle": {"range": rng(pos, pos + n), "textStyle": {"bold": True}, "fields": "bold"}})
         pos += n + 1                          # skip the blank paragraph
     # 5. optional: normalise LONGFORMS paragraph mark to bold only (Wk1 had red bg + strike on it)
     reqs.append({"updateTextStyle": {"range": rng(lf["endIndex"] - 1, lf["endIndex"]),
@@ -143,8 +132,8 @@ def main():
             # plain hyperlinked text (no chip): delete the linked text itself
             reqs.append({"deleteContentRange": {"range": rng(el["startIndex"], el["endIndex"]
                          - (1 if el["textRun"]["content"].endswith("\n") else 0))}})
-    # 6b. the label keeps one trailing space ("Media Folder: "), as in the real docs; a blank
-    #     skeleton made from HTML loses it
+    # 6b. the label keeps one trailing space ("Media Folder: "), as in the real docs, even when
+    #     the chip was already gone
     m_text = para_text(media[0])
     has_obj = any("textRun" not in el for el in media[0]["paragraph"]["elements"])
     if not has_obj and m_text.endswith(":\n"):

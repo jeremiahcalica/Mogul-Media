@@ -8,7 +8,8 @@ bold 18pt) and no formatting on the text itself, so Clear formatting does nothin
 Oct 9). The Docs API can apply a named style but never change one. An empty doc made with Drive
 `create_file` (contentMimeType application/vnd.google-apps.document, no content) has Google's
 default named styles, the same as every copied client doc (Heading 1 20pt, Heading 2 16pt, neither
-bold; Normal text Arial 11). This batch then puts the bold on the text, exactly as in Mason's doc:
+bold; Normal text Arial 11). This batch makes it pageless like them (tested Oct 9: updateDocumentStyle
+documentFormat works) and puts the bold on the text, exactly as in Mason's doc:
   header line (incl. its newline) bold, Heading 1
   "Media Folder:" bold, then " " not bold, Heading 1
   "LONGFORMS" (incl. its newline) bold, Heading 1
@@ -68,7 +69,15 @@ def main():
     loc = {"index": start}
     if tab_id:
         loc["tabId"] = tab_id
-    reqs = [{"insertText": {"location": loc, "text": text}}]
+    reqs = []
+    # every client doc is pageless; a new doc follows the account default (pages), so switch it
+    tab_doc = tabs[0]["documentTab"] if tabs else doc
+    if tab_doc.get("documentStyle", {}).get("documentFormat", {}).get("documentMode") != "PAGELESS":
+        uds = {"documentStyle": {"documentFormat": {"documentMode": "PAGELESS"}}, "fields": "documentFormat"}
+        if tab_id:
+            uds["tabId"] = tab_id
+        reqs.append({"updateDocumentStyle": uds})
+    reqs.append({"insertText": {"location": loc, "text": text}})
     # start clean: everything Normal text, no text formatting (incl. the final empty paragraph)
     reqs.append({"updateParagraphStyle": {"range": rng(start, end + 1),
                  "paragraphStyle": {"namedStyleType": "NORMAL_TEXT"}, "fields": "namedStyleType"}})

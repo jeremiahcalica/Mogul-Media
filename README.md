@@ -18,7 +18,7 @@ This automates the weekly post-call routine shown in two Looms on Oct 9 2026, fo
 Rules that come from your messages rather than the Looms:
 - **Krisp, Devin's clients:** "Export as transcript". The run reads it from your browser, the Krisp connector, or a drop folder, whichever is available.
 - **No transcript:** no brief, but the longform doc is made straight away with every topic.
-- **New client:** with no earlier doc (Nathan C), the doc is built from a blank skeleton.
+- **New client:** with no earlier doc (Nathan C), the doc is built from an empty Google Doc with the same styles as the copied docs (never an HTML import, which breaks Clear formatting).
 
 ### Files
 

@@ -5,11 +5,19 @@ Everything in `skills/longform-batch-autopilot/` is derived from these. When the
 
 | File | What it is |
 |---|---|
-| `loom-1-topic-brief.narration.txt` | Machine transcript of Loom 1, "Updating Topic Batches and Transcripts" (3:48). https://www.loom.com/share/03a9ded0933b4076b39b59c3bda9352b |
-| `loom-2-longform-doc.narration.txt` | Machine transcript of Loom 2, "Preparing October Week 2 Longform Topics" (3:28). https://www.loom.com/share/8b52f2094796445e9f776c19a950c84b |
+| `loom-1-topic-brief.narration.txt` | Whisper (medium) transcript of Loom 1, "Updating Topic Batches and Transcripts" (3:48). https://www.loom.com/share/03a9ded0933b4076b39b59c3bda9352b |
+| `loom-1-topic-brief.loom.srt` | Loom's own captions for Loom 1, with exact timings |
+| `loom-2-longform-doc.narration.txt` | Whisper (medium) transcript of Loom 2, "Preparing October Week 2 Longform Topics" (3:28). https://www.loom.com/share/8b52f2094796445e9f776c19a950c84b |
+| `loom-2-longform-doc.loom.srt` | Loom's own captions for Loom 2 |
 | `mini-sops.md` | The written mini-SOPs, as pasted. |
 
-The transcripts are machine-generated, so expect mis-heard words ("long farm" = long-form, "clod" = Claude, "breeder" = operator, "Unbomnotatic but never a job" = "Unapologetic, but never a jab").
+Both transcripts are machine-made and garbled in places. Read them side by side with the frames. Known mis-hearings:
+- "2Quad", "clod", "Plot" = Claude
+- "long farm" = long-form
+- "Maze one", "Maze on L" = Mason L
+- "empty file" = MD file
+- "copy it to my computer" = My Drive
+- "start" = star
 
 ## Rules that are only in the narration (not in the written SOPs)
 

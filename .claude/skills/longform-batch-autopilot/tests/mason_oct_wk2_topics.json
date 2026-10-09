@@ -1,0 +1,13 @@
+{
+ "platforms": "X, LinkedIn",
+ "call": true,
+ "topics": [
+  {"n": 1, "type": "A", "posts": 1, "vehicle": "Longform (X/LI)", "perspective": "Operator in his 30s calling out what he sees people in their 60s get wrong. Unapologetic, but never a jab at anyone he knows personally.", "status": "KEPT"},
+  {"n": 2, "type": "A", "posts": 2, "vehicle": "Value tweet + screenshot", "perspective": "Operator posting a receipt", "status": "PIVOT (angle)"},
+  {"n": 3, "type": "A", "posts": 1, "vehicle": "Medium form + photo", "perspective": "Founder and dad building a different life than the one he grew up with, no knock on it", "status": "KEPT"},
+  {"n": 4, "type": "A", "posts": 1, "vehicle": "Longform", "perspective": "Operator who’s watched founders get rich and go broke on this call, unapologetic", "status": "KEPT (gaps flagged)"},
+  {"n": 5, "type": "A", "posts": 1, "vehicle": "Long form numbered listicle (LI)", "perspective": "Operator saying what others in the space won't, unapologetic. The takes aim at ideas and habits, never at a named person or brand.", "status": "PIVOT (scope)"},
+  {"n": 6, "type": "A", "posts": 1, "vehicle": "Quote tweet + listicle (X)", "perspective": "Operator laying out where he plans to be, stated flat as fact. Ambitious, never hedged.", "status": "NOT DISCUSSED"},
+  {"n": 7, "type": "B", "posts": 1, "vehicle": "Thread (X) / Long form (LI)", "perspective": "Mason telling his own path in first person, matter-of-fact. The ecom brand and the agencies stay unnamed, and the brand is never knocked.", "status": "NOT DISCUSSED"}
+ ]
+}

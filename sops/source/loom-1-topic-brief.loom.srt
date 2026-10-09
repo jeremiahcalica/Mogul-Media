@@ -1,0 +1,231 @@
+1
+00:00:00,016 --> 00:00:02,787
+Okay, 2Quad,
+
+2
+00:00:02,788 --> 00:00:07,568
+what we're going to do here is you're going to go into the
+
+3
+00:00:07,569 --> 00:00:09,961
+Client, TopicBatch,
+
+4
+00:00:10,100 --> 00:00:12,935
+Schedule, TopicBatch,
+
+5
+00:00:14,374 --> 00:00:17,844
+and Launch. Farm,
+
+6
+00:00:17,845 --> 00:00:22,534
+Schedule, you're going to go into this Conversation,
+
+7
+00:00:23,185 --> 00:00:26,116
+and then you're going to type in,
+
+8
+00:00:26,788 --> 00:00:31,419
+Claude, can you give me the
+
+9
+00:00:31,420 --> 00:00:36,360
+update? Topic and Content
+
+10
+00:00:36,361 --> 00:00:41,343
+Batch. by now, there are already new
+
+11
+00:00:41,344 --> 00:00:44,131
+topics. Or,
+
+12
+00:00:44,132 --> 00:00:46,257
+next. to be submitted next week,
+
+13
+00:00:46,568 --> 00:00:50,404
+to be submitted next week,
+
+14
+00:00:50,693 --> 00:00:53,047
+in the long form,
+
+15
+00:00:53,401 --> 00:00:57,850
+and content batch, batch as well.
+
+16
+00:00:57,860 --> 00:01:01,298
+or next organize them,
+
+17
+00:01:01,299 --> 00:01:03,372
+like, last time.
+
+18
+00:01:04,767 --> 00:01:08,184
+So, you don't have to take this by,
+
+19
+00:01:08,185 --> 00:01:11,580
+by verbatim. What I need you to do,
+
+20
+00:01:12,538 --> 00:01:16,547
+is to. Write something like this,
+
+21
+00:01:16,548 --> 00:01:19,974
+then, prompt, clod.
+
+22
+00:01:20,974 --> 00:01:25,745
+Okay, so, let us assume that this is already done
+
+23
+00:01:25,746 --> 00:01:28,564
+loading. So,
+
+24
+00:01:28,565 --> 00:01:31,875
+let's take Mason for an example.
+
+25
+00:01:32,598 --> 00:01:38,168
+He is in progress. He is due by October
+
+26
+00:01:38,169 --> 00:01:42,763
+13, which is next Monday. What you're going to do is open
+
+27
+00:01:42,764 --> 00:01:44,607
+this,
+
+28
+00:01:55,032 --> 00:01:57,169
+then open this,
+
+29
+00:01:57,170 --> 00:02:03,036
+the topic sheet, and then open this, the column. Now,
+
+30
+00:02:03,037 --> 00:02:07,954
+what you're going to do is download the meeting transcript.
+
+31
+00:02:07,955 --> 00:02:12,666
+It is imperative to download the meeting transcript
+
+32
+00:02:12,667 --> 00:02:14,968
+in empty file. Very,
+
+33
+00:02:14,969 --> 00:02:19,572
+very important. Once downloaded,
+
+34
+00:02:19,573 --> 00:02:21,636
+open up the Plot tab,
+
+35
+00:02:21,637 --> 00:02:27,186
+and then what you're going
+
+36
+00:02:27,235 --> 00:02:31,299
+to do is go to Maze one.
+
+37
+00:02:31,300 --> 00:02:33,813
+Here,
+
+38
+00:02:33,814 --> 00:02:38,318
+Maze on L. Upload the MD
+
+39
+00:02:38,319 --> 00:02:43,045
+file, download the topic sheet and PDF.
+
+40
+00:02:44,045 --> 00:02:49,429
+Upload it here, and then what you're going to do is
+
+41
+00:02:50,162 --> 00:02:52,339
+prompt it like this.
+
+42
+00:02:53,797 --> 00:02:55,803
+Something like this. Please,
+
+43
+00:02:55,843 --> 00:03:00,087
+in verbatim, please prompt it like this.
+
+44
+00:03:00,088 --> 00:03:03,507
+Now,
+
+45
+00:03:03,508 --> 00:03:05,771
+after you prompt it, it will,
+
+46
+00:03:06,247 --> 00:03:08,716
+it will show you something like this.
+
+47
+00:03:08,726 --> 00:03:11,583
+topic number one. Topic,
+
+48
+00:03:11,584 --> 00:03:14,424
+Vehicle, Status. As you can see,
+
+49
+00:03:14,425 --> 00:03:18,006
+it is connected. Topic two is given.
+
+50
+00:03:18,007 --> 00:03:20,102
+Topic three is kept,
+
+51
+00:03:20,103 --> 00:03:23,348
+kept, kept. Six and seven is not discussed. This is because I think it
+
+52
+00:03:23,349 --> 00:03:26,881
+is a topic B. A no answer even,
+
+53
+00:03:26,882 --> 00:03:30,883
+I believe. No answer needed.
+
+54
+00:03:32,303 --> 00:03:35,005
+Oh yeah. Okay,
+
+55
+00:03:35,038 --> 00:03:39,009
+so in this, topic six is type A,
+
+56
+00:03:39,010 --> 00:03:41,966
+which means we are not going to include this.
+
+57
+00:03:42,820 --> 00:03:45,112
+Topic B. No answer needed,
+
+58
+00:03:45,170 --> 00:03:46,311
+which is included.

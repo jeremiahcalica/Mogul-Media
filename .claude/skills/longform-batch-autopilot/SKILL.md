@@ -93,7 +93,10 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
      - Fireflies, Kyle's clients: `fireflies\.ai/view/[^\s:]*::([0-9A-HJKMNP-TV-Z]{26})`, usually in a comment. The ID is the 26 characters after `::`. Drop any `?ref=…` or `?channelSource=…`.
      - Krisp, Devin's clients: `app.krisp.ai/m/<slug>` in the description after `Call:`.
      - Granola: `notes.granola.ai/d/…`. These are notes, not a transcript.
-   - If no Topics doc is linked, use the New Topics task for the same week: its "Google Drive / Google Docs" field holds the doc. Otherwise search the client's Topics folder (`references/clients.md`) for the month and week, e.g. `title contains 'OCT' and title contains 'WK2'`. Skip "_" copies in My Drive; those are Jeremiah's imports, not the strategist's doc.
+   - If no Topics doc is linked, use the New Topics task for the same week: its "Google Drive / Google Docs" field holds the doc.
+     - Otherwise search Drive by title for the month and week, e.g. `title contains 'OCT' and title contains 'WK2' and title contains '<client>'`. Don't search only by the Topics folder: sheets can sit in a subfolder (Nathan's is in TOPICS › OCT 2026).
+     - Keep a doc owned by the strategist account (mistymeng2000@ for Kyle, manaallmalikk@ for Devin's pod).
+     - Skip "_" copies in My Drive; those are Jeremiah's imports, not the strategist's doc.
 3. **What already exists.** This keeps re-runs safe. Check both outputs before you make anything.
    - **Brief:** search the Artifact `list` for a title that has the client's brief name (Mason L, Josh Chin, Ben K., …), the week ("Oct Wk2", "October Week 2") and "Brief". If one exists, don't make another. Mason Oct Wk2 already has one.
    - **Longform doc:** `search_files` with `title contains '<Name> - <Mon> - Week <N>'`. Exclude titles with suffixes like (Snipes), (Design Request) and (Quick Response), and allow a trailing space. If one exists anywhere (his My Drive or the client's Content folder), don't make another.

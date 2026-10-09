@@ -142,8 +142,10 @@ LONGFORMS                                   (H1, bold)
 ### Exceptions
 
 - **Ben K's shared docs** carry last week's "Quick Response Post (from yesterday's call)" block between Media Folder and LONGFORMS. It isn't skeleton (his My Drive drafts don't have it), so `longform_batch.py` deletes whatever sits between those two lines.
-- **No earlier doc** (a new client's first batch, e.g. Nathan C):
-  - Create the doc with Drive `create_file` from HTML: `<h1><b>Name - Week N - Mon</b></h1><h1><b>Media Folder:</b> </h1><h1><b>LONGFORMS</b></h1>`. Set `parentId` to My Drive.
-  - Then read it and run the same batch.
+- **No earlier doc** (a new client's first batch; tested on Nathan C, Oct 9):
+  - Create the doc with Drive `create_file` from HTML, `contentMimeType` `application/vnd.google-apps.document`, `parentId` = My Drive. The HTML is `<h1><b>Nathan C. - Week 2 - Oct</b></h1><h1><b>Media Folder:</b></h1><h1><b>LONGFORMS</b></h1>`.
+  - Read it with `read_doc`, then run the batch with the full header text (not `auto:`) and `--explicit-fonts`, e.g. `longform_batch.py <read> "Nathan C. - Week 2 - Oct" lines.json --explicit-fonts`.
+    - `--explicit-fonts` gives the header block Arial 20 and the lines Arial 16 bold, matching the copied docs (the HTML import comes in at 24/18).
+    - The script also handles LONGFORMS being the last paragraph, and puts back the space after "Media Folder:" that the import drops.
   - Say "first batch: built from a blank skeleton" in the summary.
 - **Copy lands in the wrong folder.** If `get_file_metadata` shows a different parent, report it. Don't move or trash anything.

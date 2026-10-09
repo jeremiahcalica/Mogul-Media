@@ -5,7 +5,7 @@
   - The 9:52 AM run picks up anything posted overnight.
   - Each run skips what is already done, so running twice a day is safe.
 - **Mode:** a fresh session on each fire, in the Cowork environment (like the Learning Pass routines), auto permission mode, model claude-opus-5-5, push notification on finish.
-- **Connectors:** Claude_Docs, ClickUp, Fireflies, Google_Drive, Google_Docs.
+- **Connectors:** Claude_Docs, ClickUp, Fireflies, Google_Drive, Google_Docs, Claude_Code_Remote. The last one sends the update request to the schedule chat.
 - **Needs:** the `longform-batch-autopilot` skill installed on the account (Save skill on the .skill file, or upload it in claude.ai › Customize › Skills).
 
 ## Prompt
@@ -16,6 +16,7 @@
 Run the longform batch autopilot for everyone due. This is an unattended scheduled run: never stop to ask; decide, note the decision in the summary, and keep going.
 
 Jeremiah authorizes these writes for this run, and only these:
+- send the weekly update request to his schedule chat "Client topic batch and long-form schedule" (session cse_01VT4cAcAw8Wrd4LPaCmyNiQ), as he does in his Loom, unless that chat is busy;
 - create one post-call topic brief Claude Doc per client per week (skip any client-week that already has one);
 - copy last week's longform Google Doc into his My Drive as this week's doc (skip any week that already has one), and edit only that new copy: header, empty Media Folder, clear everything under LONGFORMS, add the entry lines;
 - create or append to the Claude Doc "Longform Autopilot — Run Log".

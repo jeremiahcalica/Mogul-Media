@@ -35,15 +35,22 @@ Rules (taken from Jeremiah's Week 1 and Week 2 longform docs, see references/lon
 import json, re, sys
 
 TAG = re.compile(r"\s*\((X\s*/\s*LI|LI\s*/\s*X|X|LI|LinkedIn)\)\s*", re.I)
+# a platform written as a leading word: "LI Longform", "X: Narrative thread", "LinkedIn - case study"
+PREFIX = re.compile(r"^\s*[•\-*]?\s*\**\s*(X|Twitter|LI|LinkedIn)\s*\**\s*[:\-–]?\s*\**\s+", re.I)
 
 
 def norm_vehicle(v):
-    v = v.strip().rstrip(".")
-    v = re.sub(r"\blong[\s-]?form\b", "Long-form", v, flags=re.I)
-    v = re.sub(r"\bmedium[\s-]?form\b", "Medium-form", v, flags=re.I)
-    v = re.sub(r"\bshort[\s-]?form\b", "Short-form", v, flags=re.I)
-    v = re.sub(r"\s+", " ", v).strip()
+    v = re.sub(r"\s+", " ", v).strip().strip("*").strip()
+    v = v.rstrip(".").strip()
+    v = re.sub(r"\blong[\s-]?form\b", "long-form", v, flags=re.I)
+    v = re.sub(r"\bmedium[\s-]?form\b", "medium-form", v, flags=re.I)
+    v = re.sub(r"\bshort[\s-]?form\b", "short-form", v, flags=re.I)
     return v[:1].upper() + v[1:] if v else v
+
+
+def plat_word(w):
+    w = w.upper()
+    return "X" if w in ("X", "TWITTER") else "LI"
 
 
 def tag_of(s):
@@ -63,10 +70,16 @@ def default_platform(platforms):
 
 def split_vehicle(vehicle, platforms):
     """Return [(platform, vehicle_text), ...]; more than one item means an n.1/n.2 split."""
-    parts = [p for p in re.split(r"\s+/\s+", vehicle) if p.strip()]
+    parts = [p for p in re.split(r"\s+/\s+|\n+", vehicle) if p.strip() and p.strip() not in ("•", "-", "*")]
     tagged = [(tag_of(p), TAG.sub(" ", p).strip()) for p in parts]
     if len(parts) > 1 and all(t in ("X", "LI") for t, _ in tagged):
         return [(t, norm_vehicle(v)) for t, v in tagged]
+    prefixed = [PREFIX.match(p) for p in parts]
+    if len(parts) > 1 and all(prefixed):
+        # "X article + Doc SS QT / LI Longform", or one bullet per platform: keep the format words
+        # (up to the first full stop), drop the platform word
+        return [(plat_word(m.group(1)), norm_vehicle(p[m.end():].split(". ")[0]))
+                for m, p in zip(prefixed, parts)]
     t = tag_of(vehicle)
     base = TAG.sub(" ", vehicle).strip()
     plat = t or default_platform(platforms)
@@ -114,7 +127,10 @@ def build(data):
             notes.append("T%s: vehicle changed on the call to %r" % (t["n"], vehicle))
         posts = int(t.get("posts_override") or t.get("posts") or 1)
         persp = perspective_text(t["perspective"])
-        pieces = split_vehicle(vehicle, platforms)
+        if t.get("split"):   # explicit per-platform vehicles, e.g. [{"platform":"X","vehicle":"Thread"}, ...]
+            pieces = [(s["platform"].upper().replace("LINKEDIN", "LI"), norm_vehicle(s["vehicle"])) for s in t["split"]]
+        else:
+            pieces = split_vehicle(vehicle, platforms)
         for _ in range(posts):
             n += 1
             if len(pieces) == 1:

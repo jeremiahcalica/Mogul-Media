@@ -29,6 +29,7 @@ Every client follows the same setup, so the pipeline below works for all of them
 ## What you may and may not change
 
 Jeremiah authorizes these writes, and only these:
+- Send the weekly update request to his schedule chat (Step 1.0), as he does in Loom 1.
 - Create **one** brief Claude Doc per client per week.
 - **Copy** last week's longform doc into **his My Drive**, and edit **only that new copy**.
 - Create and append to the run log Claude Doc, "Longform Autopilot — Run Log".
@@ -43,15 +44,27 @@ If a write is refused (a permission prompt or a denied tool call), stop writing 
 
 ## Step 0: Load what you need
 
-- Load the connector tools with tool search: Claude Docs (`read`, `batch`, `update`), ClickUp (`get_task`, `get_task_comments`, `filter_tasks`), Fireflies (`fireflies_fetch`, `fireflies_get_transcript`), Google Drive (`search_files`, `read_file_content`, `get_file_metadata`, `copy_file`, `download_file_content`) and Google Docs (`read_doc`, `update_doc`).
+- Load the connector tools with tool search:
+  - Claude Docs: `read`, `batch`, `update`
+  - ClickUp: `get_task`, `get_task_comments`, `filter_tasks`
+  - Fireflies: `fireflies_fetch`, `fireflies_get_transcript`
+  - Google Drive: `search_files`, `read_file_content`, `get_file_metadata`, `copy_file`, `create_file`
+  - Google Docs: `read_doc`, `update_doc`
+  - claude-code-remote: `get_session`, `send_message`
 - If the Claude Docs connector gives no instructions, call its `guide` with `["topic.index"]` once.
 - Read the `google-workspace` skill's `references/docs.md` before the first Google Docs edit.
 - This skill's scripts live in its own `scripts/` folder. Run them with `python3 -I`. They read the files the harness saves when a tool result is large.
 
 ## Step 1: Build the queue
 
-The Loom starts by asking the "Client topic batch and long-form schedule" chat for the updated table. That chat keeps the schedule in a Claude Doc, so read the doc directly.
+The Loom starts in the pinned chat "Client topic batch and long-form schedule". That chat is a Cowork session (`cse_01VT4cAcAw8Wrd4LPaCmyNiQ`) that keeps the schedule in a Claude Doc, refreshed from Slack and ClickUp. Do what Jeremiah does: ask it for the update, then read the doc.
 
+0. **Ask the schedule chat for the update** (skip in a test flight).
+   - Call `get_session` on `cse_01VT4cAcAw8Wrd4LPaCmyNiQ`. If it is running, Jeremiah is probably using it: don't send, and note "schedule not refreshed, chat busy".
+   - Otherwise call `send_message` to that session with `priority: "later"` and this text (his own words, Loom 1, 0:27–1:04; it needn't be verbatim, so a fixed copy is fine): "Claude, can you give me the updated topic and content batch? By now, there are already new topics (to be submitted next week) and content batch as well, organize them like last time."
+   - The refresh takes about 8 minutes and 20+ tool steps (Loom 1, 1:21–1:42). Don't wait idle: carry on with Steps 1–5 using the doc as it stands.
+   - Before Step 7, call `get_session` again. Once it is idle and its summary is newer than your message, re-read the doc (step 2 below) and process any row that only now shows up as in progress.
+   - If it hasn't finished, note "schedule refresh still running" and stop there.
 1. **Find the doc.** Use the Artifact tool's `list` (limit 50) and take the most recently updated artifact whose title starts with `Next Week: Topics and Content Batches`. Last known: `https://claude.ai/artifact/5dSKyoafmKQJ93gw67JPi2` ("(Oct 12–16)").
 2. **Read it.**
    - `read` with `ref {"object":"project","id":"<artifact id>"}` gives the body node id (`files[0].content.id`).
@@ -96,7 +109,8 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
   3. **Drop folder.** He may have dropped the exported file into the My Drive folder "Autopilot Transcripts". Look for a file whose title has the client's name or the Krisp slug and that was modified after the task went in progress. Read it with `read_file_content`.
   4. If none of these works, the client has no transcript this run (flag "Krisp transcript not available").
 - **Granola, or no call link:** no transcript.
-- **Fallback:** if the Fireflies fetch fails, use the transcript text Kyle sometimes pastes into the task's "Google Drive / Google Docs" field (it starts `<Speaker> - 00:00` and ends "Transcribed by https://fireflies.ai/"). Flag that you did.
+- **Kyle's PDF:** Kyle also attaches the transcript as a PDF (`<TITLE>-<hash>.pdf`). Jeremiah skips it and goes to the Fireflies link (Loom 1, 1:48–1:55), so don't use it.
+- **Fallback:** if the Fireflies fetch fails, use the transcript text Kyle sometimes pastes into the task's "Google Drive / Google Docs" field. It starts `<Speaker> - 00:00` and ends "Transcribed by https://fireflies.ai/". Flag that you did.
 
 Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jargon (e.g. "Dubai" for media buying, "big ham" for big TAM). Quotes keep the words as transcribed, and a likely reading goes in brackets marked as a reading.
 

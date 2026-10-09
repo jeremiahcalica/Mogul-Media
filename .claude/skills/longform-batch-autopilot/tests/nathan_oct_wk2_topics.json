@@ -1,0 +1,12 @@
+{
+ "platforms": "X, LinkedIn",
+ "call": false,
+ "topics": [
+  {"n": 1, "type": "B", "posts": 1, "vehicle": "X article + Doc SS QT / LI Longform", "perspective": "Storytelling + Authority, through a founder interview."},
+  {"n": 2, "type": "B", "posts": 1, "vehicle": "•**X:** Narrative thread. Each tweet carries one story beat plus one clip from the interview.\n•**LinkedIn:** Long-form first-person narrative.", "perspective": "Storytelling + Authority, through a founder interview."},
+  {"n": 3, "type": "B", "posts": 1, "vehicle": "Long-form single post with Reddit AMA screenshot.", "perspective": "Storytelling + Authority, through Nathan's own experience."},
+  {"n": 4, "type": "B", "posts": 1, "vehicle": "Opinion-led long-form post", "perspective": "Storytelling + Opinion."},
+  {"n": 5, "type": "B", "posts": 1, "vehicle": "Doc SS", "perspective": "Technical + Authority."},
+  {"n": 6, "type": "B", "posts": 1, "vehicle": "•**X:** member-journey thread with numbered lessons.\n•**LinkedIn:** narrative case study.", "perspective": "Midas + Authority, through member proof."}
+ ]
+}

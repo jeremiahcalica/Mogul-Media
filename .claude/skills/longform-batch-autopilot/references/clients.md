@@ -13,6 +13,9 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
 - **Jeremiah's My Drive root:** `0APF3ebrWaXbcUk9PVA`. Confirm with `get_file_metadata` `fileId "root"`.
 - **ClickUp:** workspace `9015589795`, space `90152587982`. Each client has a folder `<PREFIX> | INTERNAL` with a list `CONTENT WRITING`. Tasks are named `<PREFIX> | <MON> WK<N> | Longforms`, with siblings `| New Topics` and `| Design Request`. Jeremiah is ClickUp user 306644176.
 - **Schedule doc:** the newest Claude Doc titled `Next Week: Topics and Content Batches (…)`.
+- **Schedule chat:** "Client topic batch and long-form schedule", pinned in claude.ai.
+  - Cowork session `cse_01VT4cAcAw8Wrd4LPaCmyNiQ` (claude.ai/chat/f6da90a8-f5ac-80f7-905d-050254f551d3).
+  - Bypass permissions, Opus 5.5. It refreshes the doc from Slack and ClickUp when asked.
 
 ## Jeremiah's long-form clients
 

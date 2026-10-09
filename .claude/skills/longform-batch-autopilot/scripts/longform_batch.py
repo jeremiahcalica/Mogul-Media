@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Build the update_doc arguments that turn a copied longform doc into next week's shell.
 
-Usage: build_longform_batch.py COPY_READ.json NEW_HEADER ENTRIES.json [--entry-style HEADING_2|NORMAL_TEXT]
+Usage: longform_batch.py COPY_READ.json NEW_HEADER LINES.json [--entry-style HEADING_2|NORMAL_TEXT]
 
 COPY_READ.json: read_doc result of the NEW COPY (raw doc JSON or {"content": {...}} / {"content": "<json>"}).
-NEW_HEADER: e.g. "Mason L. - Week 2 - Oct".
-ENTRIES.json: JSON list of entry strings, e.g. "1 - (X/LI) - (...) - (Long-form)".
+NEW_HEADER: "auto:<Mon>:<N>" (e.g. "auto:Oct:2") changes only the week number and month in last week's header,
+            the way Jeremiah does it; or the full header text, e.g. "Mason L. - Week 2 - Oct".
+LINES.json: JSON list of entry lines, e.g. "1 - (X/LI) - (...) - (Long-form)".
 Prints {"documentId", "requests", "writeControl"} as JSON.
 """
-import json, sys
+import json, re, sys
 
 TEXT_FIELDS = ("bold,italic,underline,strikethrough,smallCaps,backgroundColor,"
                "foregroundColor,fontSize,weightedFontFamily,baselineOffset,link")
@@ -38,6 +39,7 @@ def main():
         i = args.index("--entry-style"); style = args[i + 1]; del args[i:i + 2]
     doc_path, new_header, entries_path = args
     doc = load(doc_path)
+    auto = re.fullmatch(r"auto:([A-Za-z]+):(\d+)", new_header)
     entries = json.load(open(entries_path))
     tabs = doc.get("tabs")
     if tabs and len(tabs) != 1:
@@ -50,6 +52,15 @@ def main():
     old_header = para_text(header).rstrip("\n")
     if header["paragraph"]["paragraphStyle"].get("namedStyleType") != "HEADING_1":
         sys.exit("first paragraph is not HEADING_1: %r" % old_header)
+    if auto:
+        # Loom 2: change only the week number (and the month, at a month change) in last week's own header
+        mon, week = auto.group(1), auto.group(2)
+        h = re.sub(r"\bWeek\s*\d+(?:\s*/\s*\d+)?", "Week " + week, old_header, count=1)
+        h = re.sub(r"\b(Jan|Feb|March|Mar|April|Apr|May|June|Jun|July|Jul|Aug|Sept|Sep|Oct|Nov|Dec)\b",
+                   mon, h, count=1)
+        if h == old_header and not re.search(r"\bWeek\s*%s\b" % week, old_header):
+            sys.exit("could not find 'Week N' in the old header %r; pass the new header explicitly" % old_header)
+        new_header = h
 
     media = [p for p in paras if para_text(p).strip().lower().startswith("media folder")]
     if len(media) != 1:

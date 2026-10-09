@@ -19,12 +19,14 @@ Jeremiah exports these with "Export as transcript". In Chrome:
 
 ## Fireflies (only if the connector fails)
 
-The connector gives the same text, so this is a fallback. Open `app.fireflies.ai/view/<slug>::<id>` and open **Download**. In the "Download Meeting" dialog, on the **Transcript** tab:
-- choose **MD**;
-- keep **Include timestamp**, **Show speaker name** and **Remove Fireflies Branding** all ticked (as in Loom 1, 2:40);
-- click **Download**.
-
-The file is named `<TITLE-SLUG>-<hash>.md`, e.g. `MASON-L-X-KYLE-bd7e113d-c191.md`. It lands on his Mac, so prefer reading the transcript panel on the page.
+The connector gives the same text, so this is a fallback. Loom 1, 2:03–2:14:
+1. Open `app.fireflies.ai/view/<slug>::<id>` from the ClickUp comment.
+2. Click the **"…"** button to the right of the meeting title and choose **Download**. Don't use the download icon in the player bar.
+3. In "Download Meeting", on the **Transcript** tab, choose **MD**.
+   - Leave **Include timestamp** and **Show speaker name** ticked, as they are by default.
+   - Tick **Remove Fireflies Branding**.
+4. Click **Download**. The file is `<TITLE-SLUG>-<hash>.md` (e.g. `MASON-L-X-KYLE-bd7e113d-c191.md`) and lands on his Mac, so read the transcript panel on the page instead where you can.
+5. Never use Kyle's transcript PDF in ClickUp, or any other Fireflies format.
 
 ## Star the new longform doc
 
@@ -34,10 +36,13 @@ The file is named `<TITLE-SLUG>-<hash>.md`, e.g. `MASON-L-X-KYLE-bd7e113d-c191.m
 
 ## The brief inside the client's Claude project (optional)
 
-The default is the Claude Doc the cloud run makes with the connector, which is the same output. Do this only if Jeremiah asks for the brief chat to live in the client's project, as in Loom 1 (2:20–3:00):
-1. Open claude.ai and pick the client's project from the sidebar's Pinned list. Project names are in `references/clients.md` (e.g. "Mason L.", URL claude.ai/project/019ea4df-9219-7701-ae41-474c4ff6e50c).
-2. In the project page's composer ("New session in Mason L."), add the transcript and the topic sheet:
-   - **Topic sheet:** the composer's **+** › Add from Google Drive › the Topics doc.
-   - **Transcript:** paste the transcript text into the composer; long pastes become an attachment card. Native file pickers can't be driven from the extension, so don't open them.
-3. Paste the prompt from `references/brief.md` word for word, with the client and strategist swapped in. Leave the model on Opus 5.5.
-4. Send. Wait until the Claude Doc card appears in the reply, then record its link.
+The default is the Claude Doc the cloud run makes with the connector, which is the same output. Do this only if Jeremiah asks for the brief chat to live in the client's project, as in Loom 1 (2:20–3:00). Order matters:
+1. Open claude.ai, then the client's project from the sidebar's Pinned list. Project names are in `references/clients.md` (e.g. "Mason L.", claude.ai/project/019ea4df-9219-7701-ae41-474c4ff6e50c).
+   - Use the project page's composer ("New session in Mason L."), not claude.ai/new.
+2. Attach the **transcript first**, then the **topic sheet**, to the message itself. Never use the project-knowledge drop zone or Context › Add.
+   - **Topic sheet:** in the Loom he uploads `File › Download › PDF Document (.pdf)`, with Tab = "Current Tab" (Client strategy). The extension can't drive a native file picker, so use the composer's **+** › Add from Google Drive › the Topics doc instead.
+   - **Transcript:** paste the transcript text; long pastes become an attachment card.
+3. Wait until every attachment has finished processing (the PDF card shows its page thumbnail).
+4. Paste the prompt from `references/brief.md` word for word, with the client and strategist swapped in, keeping its last line "In a claude doc pls". In the Loom he copies it from last week's chat "<Client> brief from <Strategist> meeting", the most recent one, using its last successful message (the one ending with that line). The text in `brief.md` is that message.
+5. Leave the model as it is (Opus 5.5, High, Auto) and send.
+6. Wait until Claude has finished building the doc; the summary changes while it edits (Loom 1, 3:02). Only then read its status table and record the link.

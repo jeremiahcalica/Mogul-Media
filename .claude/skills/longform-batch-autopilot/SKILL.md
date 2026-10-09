@@ -83,7 +83,9 @@ The Loom starts in the pinned chat "Client topic batch and long-form schedule". 
 For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short `state.json` of what you found.
 
 1. **The ClickUp task.** Call `clickup_get_task` with `include ["description","attachments","custom_fields","subtasks"]`, and `clickup_get_task_comments`.
-   - **Week label:** take it from the task name `<CLIENT> | <MON> WK<N> | Longforms`, e.g. OCT WK2 → month "Oct", week 2. Trust the task the schedule row links to, even when another task with a similar name exists (the ClickUp bot reuses labels).
+   - **Week label:** the topic sheet's name sets the week ("Mason L | OCT WK2 | Topics" → Oct, Week 2). In Loom 2 (0:59) Jeremiah reads it off the sheet's tab, not last week's number plus one.
+     - Cross-check it with the task name `<CLIENT> | <MON> WK<N> | Longforms`. The ClickUp bot reuses labels, so if the two disagree, go by the sheet and flag it.
+     - Trust the task the schedule row links to, even when another task with a similar name exists.
    - **Strategist:** Kyle (POD 2) or Devin (POD 1). Take it from the assignees and check it against `references/clients.md`.
 2. **The links.** Search the comments and the description; never rely on their order.
    - Topics doc: a `docs.google.com/document/d/<id>` link. Kyle's clients have it in a comment, often without `https://`. Devin's clients have it in the description after `Topics:`.
@@ -131,8 +133,13 @@ Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jarg
      - **Open** comments are the strategist's live notes and count: e.g. Kyle's "Make a pivot to long-form for this week" on Mason's Topic 2, or "Make a 2nd post on Boxing and chad mentality".
      - **Resolved** comments are already applied; ignore them.
    - **Use the strategist's sheet,** in the client's Topics folder. Skip "_" copies in My Drive.
-2. **Write the brief** exactly as `references/brief.md` describes. It starts from Jeremiah's own prompt, used verbatim with only the client and strategist swapped in, and gives the layout of his Mason Oct Wk2 brief. Create it with the Claude Docs `batch` tool: title, byline, then one pending block per section, filled section by section.
-3. **Verify it** before moving on:
+2. **Read the client's context.** Jeremiah writes the brief inside the client's Claude project, so Claude has the client's files. Give yourself the same:
+   - read the Client Brain and the feedback ledger in the client's `Client Info` folder;
+   - check the Claude Docs ledger (e.g. "Mason L. — Feedback Ledger") in the Artifact list.
+   - Use them only to spell names right and to flag sensitivities, e.g. Mason: "no $ numbers", never cross-reference Jason. Never use them as a source of quotes or facts for the brief.
+   - Build the brief from the "Client strategy" tab, the tab he exports to PDF. Use the "Strategy" tab only to resolve a reference.
+3. **Write the brief** exactly as `references/brief.md` describes. It starts from Jeremiah's own prompt, used verbatim with only the client and strategist swapped in, and gives the layout of his Mason Oct Wk2 brief. Create it with the Claude Docs `batch` tool: title, byline, then one pending block per section, filled section by section.
+4. **Verify it** before moving on:
    - Every topic on the sheet appears, in order, with a status.
    - Every "Original brief" field is copied word for word from the sheet.
    - Every call quote can be found in the transcript at its timestamp.
@@ -156,7 +163,7 @@ Follow `references/longform-doc.md`. In short:
    - If `problems` isn't empty, still write the doc, but put each problem at the top of that client's summary.
 4. **Edit the copy in one guarded batch.**
    - Call `read_doc` on the NEW copy; the result is saved to a file.
-   - Run `scripts/longform_batch.py <saved read> "<Name> - Week <N> - <Mon>" lines.json`.
+   - Run `scripts/longform_batch.py <saved read> "auto:<Mon>:<N>" lines.json`. The `auto:` form changes only the week number and month in last week's header, so each client's own wording survives (Loom 2, 1:24).
    - Send the printed `requests` and `writeControl` with `update_doc`.
    - The batch sets the header, empties the Media Folder link (keeping the "Media Folder:" label), deletes everything under LONGFORMS (post bodies, images, old entries), then writes each line as a bold heading with one blank line after it.
 5. **Verify.** Call `read_doc` again and check four things:

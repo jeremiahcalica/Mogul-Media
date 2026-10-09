@@ -35,37 +35,83 @@ LONGFORMS                                   (H1, bold)
 
 ## The line rules (scripts/entries.py)
 
-`entries.py` reproduces the real Mason Oct Wk2 doc exactly (`tests/`). The rules:
+`entries.py` was checked against real docs:
+- **Exact matches (the golden tests in `tests/`):** Mason Oct Wk1 and Wk2, Keval Oct Wk2 and Teddy Oct Wk1.
+- **Also checked line by line:** Josh C, Ben K, Abdul, Lior and Jason. The only remaining differences are hand edits no rule can predict.
+- Run `python3 -I tests/run_tests.py` after any change.
 
-1. **Which topics get lines.**
-   - **With a call:** KEPT and PIVOT topics get lines. NOT DISCUSSED topics get lines only if they are Type B. KILLED and PARKED topics don't. A NEW topic gets a line only if the call set its vehicle.
-   - **Without a call (no transcript):** every topic gets a line.
-2. **Perspective.** The topic's PERSPECTIVE field, word for word, minus its final period. Keep curly and straight apostrophes as they are ("who’s", "won't").
-3. **Platform.**
-   - A tag inside VEHICLE moves into the platform slot: `Longform (X/LI)` gives `(X/LI)`, and `Long form numbered listicle (LI)` gives `(LI)`.
-   - With no tag, use the sheet's PLATFORMS row: X + LinkedIn gives `X/LI`, X only gives `X`, LinkedIn only gives `LI`.
-4. **Vehicle wording.**
-   - "Longform", "Long form" and "Long-form" all become `Long-form`.
-   - "Medium form" becomes `Medium-form`.
-   - Everything else stays as written ("Value tweet + screenshot", "Quote tweet + listicle").
-5. **Numbers.** Numbers run 1, 2, 3 … over the lines written, not the sheet's topic numbers. In Mason Oct Wk2, sheet T3 became line 4 and T7 became 7.1/7.2.
-6. **"2 POSTS".** A topic whose header says `TYPE A  2 POSTS` gives two consecutive numbers with identical lines.
-7. **Split vehicles.** `Thread (X) / Long form (LI)` gives one number split into `n.1 - (X) - (…) - (Thread)` and `n.2 - (LI) - (…) - (Long-form)`. A bare `Thread` for an X + LinkedIn client splits the same way (LinkedIn has no threads).
-8. **Not automatic.** Strategist comments, schedule notes and NEW posts with no vehicle never add or change lines. They go in the summary for Jeremiah to decide. Two examples:
-   - Kyle's comment "Make a pivot to long-form for this week" on Mason's T2 did not change the Week 2 lines.
-   - "Make a 2nd post on Boxing and chad mentality" in Week 1 did add one, by hand.
+1. **Who gets a line.** The first match wins.
 
-`topics.json` input, one object per topic on the sheet, in sheet order:
+   | Topic | Line? |
+   |---|---|
+   | Header label or VEHICLE says **Snipe** or **Quick Response** | **No.** These go in their own doc, "<Name> - <Mon> - Week <N> (Snipes)" / "(Quick response posts)". A plain "quote tweet" is not a snipe. |
+   | Struck through, or ❌ on the sheet | No |
+   | Folded into another topic (`merged_into`, only when the brief says so) | No, flagged |
+   | **No transcript** | **Yes, every other topic** |
+   | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (still this batch), RESOLVED | Yes |
+   | NOT DISCUSSED, Type B | Yes |
+   | NOT DISCUSSED, Type A | No |
+   | KILLED / skipped / dropped | No |
+   | PARKED | No. Exception: a screenshot topic where the client sends the screenshots (Keval T4). That one is yes, flagged. |
+   | ON HOLD | No, flagged |
+   | NEW, with a vehicle set on the call | Yes |
+   | NEW, no vehicle | No, flagged "decide" |
+   | A status the script doesn't recognise | Yes, flagged |
+
+   Briefs word statuses freely ("Go, with gaps", "Draftable", "No pivot called", "Skipped on call"); `status_norm()` maps them. Put the brief's status in `status` as written.
+2. **Extra posts the strategist asked for.** A comment on the topic sheet like "Make a 2nd post on Boxing and chad mentality" (Mason Wk1), or "3 posts / 1/ … 2/ … 3/ …" (Abdul), adds lines right after the parent topic's own lines.
+   - Put each one in the parent's `extra_posts`, with a short perspective label taken from the comment ("Chad mentality").
+   - The vehicle defaults to the parent's.
+   - These are always flagged.
+   - A comment that asks for a *pivot* ("Make a pivot to long-form for this week", Mason Wk2 T2) changes nothing. It goes in the brief's Note, and the line stays as the sheet has it.
+3. **Perspective.** The topic's PERSPECTIVE field, word for word, minus its final period. Keep curly and straight apostrophes as they are ("who’s", "won't").
+   - A PIVOT never rewrites the perspective (6 of 8 cases had pivots; none changed the line).
+   - Never take line text from the brief's headings.
+   - No PERSPECTIVE (a freeform "Topic 0", a NEW post): put a short label in `perspective_override` (e.g. "Toronto event", "Repurposed", "Carro Holiday Season"). Otherwise the title is used. Either way it is flagged.
+4. **Platform.**
+   - A tag in VEHICLE moves into the platform slot. `(X/LI)`, `(X and LI)`, `(X & LinkedIn)` and "for X and LinkedIn" all give `X/LI`; `(LI)` gives `LI`.
+   - A tag glued to an image request ("with image (LI)") is not the platform.
+   - With no tag, use the sheet's PLATFORMS row: X + LinkedIn gives `X/LI`, X only gives `X`. Lior and Zarak are X only.
+5. **Splits** give one number with n.1 (X) / n.2 (LI), in the order written:
+   - per-platform vehicles separated by `/`, `,`, `;` or `·` after a tag (`Thread (X), Long-form listicle (LinkedIn)`), written as prefixes (`X article + Doc SS QT / LI Longform`), or as bullets (`•X: … •LinkedIn: …`);
+   - a bare `Thread`, or a thread inside brackets, for an X + LinkedIn client: X `Thread`, LI `Long-form` (Abdul: `Long-form listicle`);
+   - `X article, then quote tweet` is a different case: two numbers, `(X) … (Article)` then `(X) … (Article wrapper)` (Keval T6).
+6. **Post counts.** "2 POSTS" in the header, or ", x2" / "two posts" in VEHICLE, gives consecutive numbers with identical lines.
+7. **Vehicle wording.**
+   - Longform / Long form → `Long-form`; Medium form → `Medium-form`. Inside a phrase they stay lowercase ("Opinion-led long-form post").
+   - "Listicle long-form" → `Long-form listicle`.
+   - Format nouns after the first word are lowercase ("Side-by-side comparison thread", "+ infographic"). Named things keep their capitals ("Apple Notes Screenshot").
+   - Dropped: trailing ALL-CAPS instructions, bare "with image" requests, and noise brackets like (organic), (dash), (GDS).
+   - Any other bracket becomes a comma qualifier ("Listicle (greentext)" → "Listicle, greentext"), flagged.
+   - Straight double quotes become curly (`“hack”`).
+8. **Numbers.** Numbers run 1, 2, 3 … over the lines written, not the sheet's topic numbers.
+9. **Per-client habits** (`CLIENTS` in `entries.py`, chosen by `"client"`):
+
+   | Client | Habit |
+   |---|---|
+   | Jason G. | Perspective drops its last sentence. "Doc SS" / "Google Doc Screenshot" → "Apple Notes …" |
+   | Abdul F. | "+ photo" is dropped, a thread's LinkedIn half is "Long-form listicle", "Doc SS" → "Apple Notes …" |
+   | Ben K. | Every X/LI post splits into n.1 (X) / n.2 (LI) because of the DM CTA, except a value tweet with no CTA (flagged). A "FOR LINKEDIN" note sets the LI vehicle (`li_vehicle`). |
+   | Joshua C. | Promo posts split X / LI |
+   | Lior P., Zarak A. | X only |
+
+10. **Checks.** If the brief states a total post count, set `expected_posts`; a mismatch is reported in `problems`. A line can never have an empty slot: a missing value becomes `TBD` and goes in `problems`.
+
+`topics.json` input, one object per topic on the sheet, in sheet order (the full schema is at the top of `entries.py`):
 
 ```json
-{"platforms": "X, LinkedIn", "call": true,
- "topics": [{"n": 1, "type": "A", "posts": 1, "vehicle": "Longform (X/LI)",
-             "perspective": "Operator in his 30s ... personally.", "status": "KEPT",
-             "vehicle_override": null, "posts_override": null}]}
+{"client": "Mason L.", "platforms": "X, LinkedIn", "call": true, "expected_posts": null,
+ "topics": [{"n": 1, "type": "A", "label": null, "title": "Being Stupid In Your 60s", "posts": 1,
+             "vehicle": "Longform (X/LI)", "perspective": "Operator in his 30s ... personally.",
+             "status": "KEPT", "struck": false, "check": null,
+             "vehicle_override": null, "posts_override": null, "perspective_override": null,
+             "extra_posts": []}]}
 ```
 
-- Use `vehicle_override` and `posts_override` only when the call explicitly set a new vehicle or post count. The script lists every override in `notes`, so each one shows up in the summary.
-- Save the printed `entries[].line` values as a JSON list (`lines.json`) for the next step.
+- Copy `vehicle`, `perspective` and `label` exactly as the sheet has them, including bullets and line breaks. The script does all the cleaning.
+- Read the VEHICLE field, not the italic vehicle in the topic's header row.
+- Use `vehicle_override` and `posts_override` only when the call clearly settled a new vehicle or post count, not when it was only floated (Josh T4 "listable format"). The script lists every override in `notes`.
+- Save the printed `entries[].line` values as a JSON list (`lines.json`) for the next step. Put every `notes`, `problems` and `left_out` item in the run summary.
 
 ## The copy and the edit, step by step
 
@@ -82,6 +128,7 @@ LONGFORMS                                   (H1, bold)
    - finds the header, the Media Folder line and the LONGFORMS heading itself, and stops if the doc doesn't have exactly one of each or has more than one tab;
    - deletes everything after LONGFORMS except the body's final newline;
    - inserts `line\n\n` for each line, resets styles to normal, then makes each line Heading 2 + bold;
+   - deletes anything between the Media Folder line and LONGFORMS (Ben's leftover Quick Response block);
    - removes the chip or link from the Media Folder line, keeping "Media Folder: ";
    - replaces the old header text last, so its length can't shift the other ranges;
    - prints `{"documentId","requests","writeControl"}`. `writeControl.requiredRevisionId` comes from the read, so Google refuses the whole batch if the doc changed in between.
@@ -94,7 +141,7 @@ LONGFORMS                                   (H1, bold)
 
 ### Exceptions
 
-- **Ben K's docs** have an extra H1 block above LONGFORMS ("Quick Response Post (from yesterday's call)" + "X/LI"). The script only clears below LONGFORMS, so that block stays. Empty its contents only if the rest of the doc is empty, and mention it.
+- **Ben K's shared docs** carry last week's "Quick Response Post (from yesterday's call)" block between Media Folder and LONGFORMS. It isn't skeleton (his My Drive drafts don't have it), so `longform_batch.py` deletes whatever sits between those two lines.
 - **No earlier doc** (a new client's first batch, e.g. Nathan C):
   - Create the doc with Drive `create_file` from HTML: `<h1><b>Name - Week N - Mon</b></h1><h1><b>Media Folder:</b> </h1><h1><b>LONGFORMS</b></h1>`. Set `parentId` to My Drive.
   - Then read it and run the same batch.

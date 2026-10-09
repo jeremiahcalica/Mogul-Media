@@ -1,0 +1,11 @@
+{"client": "Mason L.", "platforms": "X, LinkedIn", "call": true, "expected_posts": 6,
+ "topics": [
+  {"n": 1, "type": "A", "vehicle": "Listicle", "perspective": "Operator scrolling the wins channel; volume does the bragging", "status": "KILLED — pivoted into Topic 2", "check": "❌"},
+  {"n": 2, "type": "A", "posts": 2, "vehicle": "Value tweet + screenshot", "perspective": "Operator posting a receipt", "status": "KEPT — own-brand option dropped, two client screenshots", "check": "✅"},
+  {"n": 3, "type": "A", "vehicle": "Longform", "perspective": "Operator in his 30s calling out what he sees 50-somethings get wrong, unapologetic", "status": "KEPT — PIVOT on framing (prediction-based)", "check": "✅",
+   "extra_posts": [{"perspective": "Chad mentality", "vehicle": null, "same_material": false, "source": "Kyle comment: Make a 2nd post on Boxing and chad mentality"}]},
+  {"n": 4, "type": "A", "vehicle": "Longform", "perspective": "Operator reporting from inside his students’ accounts, no theory", "status": "KEPT vehicle — PIVOT on content (Q4 promo/margin take, no student proof)", "check": "✅"},
+  {"n": 5, "type": "A", "vehicle": "Thread", "perspective": "Operator calling an industry shift before anyone else does", "status": "KEPT — LinkedIn caution added", "check": "✅"},
+  {"n": 6, "type": "A", "vehicle": "Medium form + photo", "perspective": "Founder and dad building a different life than the one he grew up with, no knock on it", "status": "KILLED for this week — not covered"},
+  {"n": 7, "type": "A", "vehicle": "Longform", "perspective": "Operator who’s watched founders get rich and go broke on this call, unapologetic", "status": "KILLED for this week — not covered"}
+ ]}

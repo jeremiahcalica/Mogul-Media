@@ -1,0 +1,11 @@
+{"client": "Teddy T.", "platforms": "X, LinkedIn", "call": true,
+ "topics": [
+  {"n": 1, "type": "A", "label": "Snipe", "vehicle": "Medium-form opinion post, QUOTE TWEET", "perspective": "Authority, operator take, reader-identity position", "status": "PIVOT: angle and tone changed; X only"},
+  {"n": 2, "type": "A", "vehicle": "Medium-form opinion post", "perspective": "Authority, operator take, reader-identity position", "status": "KEPT: Q1 answered via the Senior Quote acquisition"},
+  {"n": 3, "type": "A", "vehicle": "Side-by-side comparison Thread (X) / Longform (LI)", "perspective": "Operator take, reader-identity position, comparison", "status": "KEPT: all inputs answered; one framing flag"},
+  {"n": 4, "type": "B", "label": "Input needed", "vehicle": "Long-form listicle", "perspective": "Authority, operator take, named system", "status": "PIVOT: no interview first, live call first"},
+  {"n": 5, "type": "B", "label": "Input needed", "vehicle": "Sectioned how-to listicle + Infographic", "perspective": "Authority, operator take, named system", "status": "KILLED and REPLACED: The scorecard you build before you bring on sales agents"},
+  {"n": 6, "type": "B", "vehicle": "One-line hook plus a doc-screenshot checklist", "perspective": "Authority, operator take, named system", "status": "KEPT: Input 1 answered; Input 2 never asked"},
+  {"n": 7, "type": "B", "vehicle": "Medium-form \"hack\" post", "perspective": "Authority, operator take, named system", "status": "KEPT: both inputs answered"},
+  {"n": "NEW", "type": null, "title": "Evolution of the leader", "vehicle": "", "perspective": "", "status": "NEW: raised at the top of the call; no slot given"}
+ ]}

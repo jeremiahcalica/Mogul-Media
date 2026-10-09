@@ -1,0 +1,11 @@
+{"client": "Keval S.", "platforms": "X, LinkedIn", "call": true,
+ "topics": [
+  {"n": 1, "type": "A", "label": "Snipe", "vehicle": "Snipe (quote tweet)", "perspective": "Authority + industry take", "status": "KEPT"},
+  {"n": 2, "type": "A", "vehicle": "Thread (X), Long-form listicle (LinkedIn)", "perspective": "Authority + industry take", "status": "Answered, no pivot. Ready to draft"},
+  {"n": 3, "type": "A", "vehicle": "One-line hook + Apple Notes screenshot", "perspective": "Authority + industry take", "status": "PIVOT: buyer types became SEO clients"},
+  {"n": 4, "type": "A", "vehicle": "Value tweet screenshot, x2", "perspective": "Client win", "status": "PARKED: no questions asked; Keval sends the screenshots as he has them"},
+  {"n": 5, "type": "A", "vehicle": "Thread (X), Long-form listicle (LinkedIn)", "perspective": "Authority + client story", "status": "PIVOT: client sit-down lessons, no revenue goal"},
+  {"n": 6, "type": "A", "vehicle": "", "perspective": "", "perspective_override": "Repurposed", "status": "Resolved: the thread Keval dropped in Slack", "vehicle_override": "X article, then quote tweet (Wiz doc screenshot)"},
+  {"n": 7, "type": "B", "vehicle": "Doc screenshot (Wiz style), quote tweet", "perspective": "Authority + client win", "status": "Type B, unchanged", "merged_into": 6},
+  {"n": 8, "type": "B", "vehicle": "Listicle", "perspective": "Founder story", "status": "Type B, unchanged"}
+ ]}

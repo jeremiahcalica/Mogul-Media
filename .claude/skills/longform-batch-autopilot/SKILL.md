@@ -108,7 +108,8 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
   2. **Krisp connector.** If Krisp tools are loaded, find the meeting by title and date and read its transcript.
   3. **Drop folder.** He may have dropped the exported file into the My Drive folder "Autopilot Transcripts". Look for a file whose title has the client's name or the Krisp slug and that was modified after the task went in progress. Read it with `read_file_content`.
   4. If none of these works, the client has no transcript this run (flag "Krisp transcript not available").
-- **Granola, or no call link:** no transcript.
+- **Granola (Josh C):** the call's transcript is pasted into a **TRANSCRIPT tab of the Topics doc**. Use that tab. Any Topics doc with a TRANSCRIPT tab counts as having a transcript.
+- **No call link and no TRANSCRIPT tab:** no transcript.
 - **Kyle's PDF:** Kyle also attaches the transcript as a PDF (`<TITLE>-<hash>.pdf`). Jeremiah skips it and goes to the Fireflies link (Loom 1, 1:48–1:55), so don't use it.
 - **Fallback:** if the Fireflies fetch fails, use the transcript text Kyle sometimes pastes into the task's "Google Drive / Google Docs" field. It starts `<Speaker> - 00:00` and ends "Transcribed by https://fireflies.ai/". Flag that you did.
 
@@ -118,10 +119,18 @@ Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jarg
 
 ## Step 4: Write the brief (only with a transcript)
 
-1. **Read the topic sheet** with `read_file_content` and `includeComments: true`. It has two tabs:
-   - "Client strategy": the header table (CLIENT, WEEK, STRATEGIST, PLATFORMS), the client goal, the hypothesis, then one box per topic: `TOPIC N | TYPE A` (or `TYPE B`, sometimes `TYPE A  2 POSTS`), the title, then ANGLE & DESCRIPTION, FOR <CLIENT> (questions) or INITIAL DRAFT DIRECTION (Type B), VEHICLE, VEHICLE INSPIRATION, OBJECTIVE, PERSPECTIVE.
-   - "Strategy": the Loom link, the performance tables, the full hypothesis, and the strategist's raw topic list.
-   - The comment threads come back too. Keep them: e.g. Kyle's "Make a pivot to long-form for this week" on Mason's Topic 2.
+1. **Read the topic sheet** with `read_file_content` and `includeComments: true`.
+   - **Take the topics from the tab named "Client strategy" or "CLIENT STRATEGY"** (any case), not the first tab: Ben's sheet has a stale STRATEGY tab first. It holds:
+     - the header table (CLIENT, WEEK, STRATEGIST, PLATFORMS), the client goal and the hypothesis;
+     - then one box per topic. The header reads `TOPIC N | TYPE A` (or `TYPE B`, sometimes `TYPE A  2 POSTS`; separators `|` or `│`). A third part can be a label like Snipe or Quick Response, and ✅ / ❌ marks can appear.
+     - each box has the title, ANGLE & DESCRIPTION, FOR <CLIENT> (questions) or INITIAL DRAFT DIRECTION (Type B), VEHICLE, VEHICLE INSPIRATION, OBJECTIVE and PERSPECTIVE.
+     - Devin's sheets put per-platform vehicles in bullets.
+   - **The other tab** ("Strategy"): the Loom link, the performance tables, the full hypothesis and the strategist's raw topic list. A TRANSCRIPT tab holds Granola transcripts.
+   - **Freeform topics.** A "Topic 0 - …" or bare "Topic N" note outside the tables is a topic too.
+   - **Comment threads come back too.**
+     - **Open** comments are the strategist's live notes and count: e.g. Kyle's "Make a pivot to long-form for this week" on Mason's Topic 2, or "Make a 2nd post on Boxing and chad mentality".
+     - **Resolved** comments are already applied; ignore them.
+   - **Use the strategist's sheet,** in the client's Topics folder. Skip "_" copies in My Drive.
 2. **Write the brief** exactly as `references/brief.md` describes. It starts from Jeremiah's own prompt, used verbatim with only the client and strategist swapped in, and gives the layout of his Mason Oct Wk2 brief. Create it with the Claude Docs `batch` tool: title, byline, then one pending block per section, filled section by section.
 3. **Verify it** before moving on:
    - Every topic on the sheet appears, in order, with a status.
@@ -135,7 +144,16 @@ Follow `references/longform-doc.md`. In short:
 
 1. **Find last week's doc.** Look in the client's Content folder (Mason's is `Mason Content › 2026`) for the newest doc titled `<Name> - <Mon> - Week <n>` with no suffix. Pick by createdTime, not by arithmetic: Oct Week 1 follows Sept Week 5. "Go to the most recent batch" (Loom 2, 0:37). If it isn't there, use Jeremiah's own My Drive copy of the latest week.
 2. **Copy it into My Drive.** Call `copy_file` with the title `<Name> - <Mon> - Week <N>` (e.g. "Mason L. - Oct - Week 2") and `parentId` = his My Drive root. Get the root ID from `get_file_metadata` with `fileId "root"`; it was `0APF3ebrWaXbcUk9PVA`. Never leave `parentId` empty: the copy would land in the client's shared folder. "Instead of duplicating it inside this folder… copy it to My Drive" (Loom 2, 1:09).
-3. **Work out the lines.** Write `topics.json` with each topic's number, type, post count, VEHICLE and PERSPECTIVE (copied verbatim from the sheet), and its status from the brief. With no transcript, set `"call": false`. Run `scripts/entries.py topics.json`. It applies every line rule (numbering, 2 POSTS, X/LI splits, wording, who's in and who's out) and prints the lines plus what it left out and why.
+3. **Work out the lines.**
+   - Write `topics.json` (schema in `references/longform-doc.md`). Set `"client"` to the doc name. For each topic give its number, type, label, title, post count, ✅/❌ or strikethrough, VEHICLE and PERSPECTIVE, copied exactly from the sheet. Add its status from the brief.
+   - Extra posts asked for in an open comment or on the call go in `extra_posts`.
+   - With no transcript, set `"call": false`.
+   - Run `scripts/entries.py topics.json`. It applies every line rule and prints the lines, what it left out and why, `notes` and `problems`:
+     - numbering, post counts, X/LI splits and wording;
+     - snipes and quick responses left out;
+     - who's in and who's out by status;
+     - per-client habits.
+   - If `problems` isn't empty, still write the doc, but put each problem at the top of that client's summary.
 4. **Edit the copy in one guarded batch.**
    - Call `read_doc` on the NEW copy; the result is saved to a file.
    - Run `scripts/longform_batch.py <saved read> "<Name> - Week <N> - <Mon>" lines.json`.
@@ -148,7 +166,11 @@ Follow `references/longform-doc.md`. In short:
    - each line bold, with a blank paragraph after it.
 6. **Star it.** "So it should appear on my Starred" (Loom 2, 3:14). The Drive connector can't star a file. On his Mac with Claude in Chrome, star it (`references/chrome-mode.md` § Star). Otherwise put it under "Star these" in the summary with its link.
 
-**Notes from the schedule row and strategist comments** never change the lines automatically. If one asks for something extra ("add a post he shared as a long-form if there's room", "make a pivot to long-form"), add it to the summary as a to-do for Jeremiah.
+**Notes and comments.**
+- **A strategist comment asking for another post** ("Make a 2nd post on …") adds a flagged line, as Jeremiah did in Mason's Week 1.
+- **A comment asking for a pivot** ("Make a pivot to long-form") changes nothing on the line; it goes in the brief's Note.
+- **Schedule-row notes** ("add a post he shared here as a long-form if there's room") never add lines. They go in the summary as a to-do.
+- **Snipes and quick responses** have their own docs, which this skill doesn't make. List them in the summary ("Keval T1 snipe: goes in the (Snipes) doc").
 
 ## Step 6: A transcript that arrives later
 

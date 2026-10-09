@@ -99,6 +99,11 @@ def main():
     # 5. optional: normalise LONGFORMS paragraph mark to bold only (Wk1 had red bg + strike on it)
     reqs.append({"updateTextStyle": {"range": rng(lf["endIndex"] - 1, lf["endIndex"]),
                  "textStyle": {"bold": True}, "fields": "bold,strikethrough,backgroundColor"}})
+    # 5b. anything between the Media Folder line and LONGFORMS is last week's leftovers (Ben K's
+    #     "Quick Response Post" block); the skeleton has nothing there, so remove it
+    m_end, lf_start = media[0]["endIndex"], lf["startIndex"]
+    if lf_start > m_end:
+        reqs.append({"deleteContentRange": {"range": rng(m_end, lf_start)}})
     # 6. remove non-text elements (rich link / chip / image) from the Media Folder paragraph,
     #    keeping the label and its trailing space; done after all edits below it, highest first
     for el in sorted(media[0]["paragraph"]["elements"], key=lambda x: -x["startIndex"]):

@@ -40,12 +40,24 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
 ## Per-client notes
 
 - **Mason:** Content and Topics each have a `2026` year folder, so search those, not the parent. Calls are titled "MASON L X KYLE". The client wants no $ numbers in copy (Shift Brief), and must never be cross-referenced with Jason.
-- **Josh C:** OCT WK2's call is a Granola notes link, not Fireflies. Treat it as no transcript. His Topics doc title has no pipes ("Josh OCT Wk2 Topics").
+- **Josh C:** OCT WK2's call is on Granola, not Fireflies. The ClickUp comment links the Granola notes, and the transcript is pasted into a **TRANSCRIPT tab of his Topics doc**. Use that tab as the transcript.
+  - His Topics doc title has no pipes ("Josh OCT Wk2 Topics").
+  - A freeform "Topic 0 - <promo>" can sit above the topic tables.
+  - Platform tags are written "(X and LI)".
 - **Keval:** the schedule doc links his next batch as an OCT WK3 task. The Oct W2 doc already exists, so this batch is Week 3. Go by the linked task. Kyle: combine his written-out topics with the call context, and no snipes. Some H2s sit inside article bodies; match entry lines with `^✅?\d+(\.\d+)? - \(`.
-- **Lior:** calls are titled "Reut Amariyo and Kyle Meng".
+- **Lior:** calls are titled "Reut Amariyo and Kyle Meng". He is X only, so every line is `(X)` and threads never split.
+  - Topics can be killed by strikethrough alone.
+  - Freeform "Topic 7" / "Topic 8" notes sit under the tables.
+- **Jason:** perspectives drop their last sentence; Doc SS becomes "Apple Notes SS". A "✅Topic 0 - <title>" with a "Vehicle:" line can open the sheet.
+- **Abdul:** quick-response topics are marked in the TYPE ("TYPE A (… QUICK RESPONSE)") and go in a shared "Quick response" doc, found by his Content folder.
+  - "+ photo" is dropped from vehicles; a thread's LinkedIn half is "Long-form listicle".
+- **Keval:** "X article, then quote tweet" gives an Article line plus an Article wrapper line. Value tweets read `(Client win) - (Value tweet screenshot)`.
 - **Shane:** repurposed long-forms. His Topics folder sits under Account Report.
 - **Zarak:** X only, so the default platform is `(X)`. Last day is Oct 25.
-- **Ben K:** his docs have a "Quick Response Post" H1 block above LONGFORMS. Leave it in place.
+- **Ben K:**
+  - His shared docs carry last week's "Quick Response Post" block above LONGFORMS. The batch script deletes it.
+  - His Topics doc has a stale STRATEGY tab first; read the CLIENT STRATEGY tab.
+  - He splits CTA posts into X and LI. His snipes and quick responses go in separate "(Snipes) " and "(Quick response posts) " docs; those titles end in a space.
 - **Nathan C:** new client, first batch OCT WK2. There is no earlier longform doc, so build it from the blank skeleton (`references/longform-doc.md`, Exceptions). Devin reviews it Tuesday evening, Jeremiah finalizes by Wednesday morning.
 - **Teddy:** Devin's Oct 7 EOD moves his writing to Ymarie, but the schedule doc still gives the batch to Jeremiah. Follow the schedule doc.
 

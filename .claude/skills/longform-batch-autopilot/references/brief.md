@@ -75,10 +75,17 @@ What each clause means here:
 | `PIVOT (<what changed>)` | The call changed angle, scope, source, vehicle or post count. | Yes. The line keeps the sheet's perspective. The vehicle changes only if the call set a new one. |
 | `NOT DISCUSSED` | The call never reached it. Write "Status is open, not killed." Type B topics: "It's Type B, so {Strategist}'s draft direction is the spine." | Type B yes, Type A no ("topic six is type A, which means we are not going to include this … Type B, no answer needed, which is included", Loom 1, 3:35). |
 | `KILLED` | The strategist or client dropped it on the call. | No |
-| `PARKED` | Moved to a later batch on the call. | No |
+| `KILLED and REPLACED` | Dropped, with a new subject put in its slot. | Yes. The slot keeps the sheet's vehicle and perspective. |
+| `COVERED` | Skipped because it was "already touched on" earlier in the call; the material exists. | Yes |
+| `BLOCKED (<what>)` | Still this batch, but waiting on an asset or a sign-off. | Yes, with the blocker flagged |
+| `PARKED` | Moved to a later batch on the call. | No (unless it's a screenshot topic the client will send screenshots for) |
+| `ON HOLD` | Taken out of this batch for now. | No, flagged |
 | `NEW` | A new post agreed on the call, outside the sheet. Give it its own section after the sheet's topics. | Only if the call set its vehicle. Otherwise flag it for Jeremiah. |
 
 The table's status words must match each topic's Note.
+- Start each status with one of the words above, then any detail: `KEPT (gaps flagged)`, `PIVOT (angle)`, `BLOCKED (video asset)`.
+- Mark snipes and quick responses as such in the table, e.g. `KEPT (snipe)`. Snipes go in their own doc, not LONGFORMS.
+- If the call asked for extra posts on a topic ("make a 2nd post on …"), or a topic is now 2 posts, say so in its Note with the subject of each extra post. The longform doc builds those lines from it.
 
 ## Making the doc with the Claude Docs connector
 

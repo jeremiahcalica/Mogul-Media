@@ -39,27 +39,38 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
 
 ## Per-client notes
 
+- **Kyle's pod:** Fireflies call titles come in two forms, "<FIRST> <LAST INITIAL> X KYLE" and "<First> <Last> and Kyle Meng". Kyle says "quick response" loosely for snipes: keep a topic labelled Snipe as a snipe unless he names the Quick response doc.
+
 - **Mason:** Content and Topics each have a `2026` year folder, so search those, not the parent. Calls are titled "MASON L X KYLE". The client wants no $ numbers in copy (Shift Brief), and must never be cross-referenced with Jason.
 - **Josh C:** OCT WK2's call is on Granola, not Fireflies. The ClickUp comment links the Granola notes, and the transcript is pasted into **the third tab of his Topics doc** (after Client strategy and Strategy; Jeremiah, Oct 9). Use that tab as the transcript, whatever its name.
   - His Topics doc title has no pipes ("Josh OCT Wk2 Topics").
   - A freeform "Topic 0 - <promo>" can sit above the topic tables.
-  - Platform tags are written "(X and LI)".
-- **Keval:** the schedule doc links his next batch as an OCT WK3 task. The Oct W2 doc already exists, so this batch is Week 3. Go by the linked task. Kyle: combine his written-out topics with the call context, and no snipes. Some H2s sit inside article bodies; match entry lines with `^✅?\d+(\.\d+)? - \(`.
+  - Platform tags are written "(X and LI)" or "(X/LI)".
+  - In the transcript tab, "Me" is Josh (he records the call), "Kyle Meng" is Kyle and "Them" is anyone else. It has no timestamps.
+  - He has no Client Brain or ledger. His context is in "JOSH CLIENT INFO SHEET" (Client Info) and "Josh Writer's Checklist" (client folder root); his sheet's Client Brain link opens an old topic sheet.
+- **Keval:** the schedule doc links his next batch as an OCT WK3 task. The Oct W2 doc already exists, so this batch is Week 3. Go by the linked task. Kyle: combine his written-out topics with the call context, and no snipes.
+  - Calls are titled "Keval Shah and Kyle Meng". His ClickUp task can be assigned to Ymarie and Kyle rather than Jeremiah; the schedule doc decides.
+  - He pastes his own written-out answer into each topic box right after PERSPECTIVE. The perspective ends at the blank line; the rest goes in the brief as his written-out answer.
+  - His ledger ("Keval Shah — Client Feedback Ledger") gives the agency as "$2.5M/year" where sheets say "$2M": flag the clash, don't settle it. Some H2s sit inside article bodies; match entry lines with `^✅?\d+(\.\d+)? - \(`.
 - **Lior:** calls are titled "Reut Amariyo and Kyle Meng". He is X only, so every line is `(X)` and threads never split.
+  - Kyle's Longforms task carries only the Topics doc link (OCT WK2: no Fireflies link, no PDF), though a call happened. Where his call links get posted is still to be confirmed with Jeremiah; until then a run says "call happened, transcript link missing: ask Kyle".
   - Topics can be killed by strikethrough alone.
   - Freeform "Topic 7" / "Topic 8" notes sit under the tables.
 - **Jason:** perspectives drop their last sentence; Doc SS becomes "Apple Notes SS". A "✅Topic 0 - <title>" with a "Vehicle:" line can open the sheet.
 - **Abdul:** quick-response topics are marked in the TYPE ("TYPE A (… QUICK RESPONSE)") and go in a shared "Quick response" doc, found by his Content folder.
   - "+ photo" is dropped from vehicles; a thread's LinkedIn half is "Long-form listicle".
-- **Keval:** "X article, then quote tweet" gives an Article line plus an Article wrapper line. Value tweets read `(Client win) - (Value tweet screenshot)`.
+- **Keval:** "X article, then quote tweet" gives an Article line plus an Article wrapper line. Value-tweet lines copy the sheet's PERSPECTIVE and VEHICLE like any topic (Oct Wk2 happened to read `(Client win) - (Value tweet screenshot)`; it is not a habit).
 - **Shane:** repurposed long-forms. His Topics folder sits under Account Report.
 - **Zarak:** X only, so the default platform is `(X)`. Last day is Oct 25.
 - **Ben K:**
   - His shared docs carry last week's "Quick Response Post" block above LONGFORMS. The batch script deletes it.
-  - His Topics doc has a stale STRATEGY tab first; read the CLIENT STRATEGY tab.
+  - His Topics doc has a stale STRATEGY tab (tabId `t.0`; in OCT WK2 it sits second). Always pick CLIENT STRATEGY by name.
   - He splits CTA posts into X and LI. His snipes and quick responses go in separate "(Snipes) " and "(Quick response posts) " docs; those titles end in a space.
 - **Nathan C:** new client, first batch OCT WK2. There is no earlier longform doc, so build it as a new empty doc (`references/longform-doc.md`, Exceptions; never an HTML import). Devin reviews it Tuesday evening, Jeremiah finalizes by Wednesday morning.
-- **Teddy:** Devin's Oct 7 EOD moves his writing to Ymarie, but the schedule doc still gives the batch to Jeremiah. Follow the schedule doc.
+- **Teddy:** Devin's Oct 7 EOD moves his writing to Ymarie, and Arooba wrote in the group DM (Oct 7): "we're gonna be moving teddy from you to ymarie". The schedule doc still gives the batch to Jeremiah, so follow it, and put "Teddy: confirm he's still yours" in the summary until that's settled.
+  - His Topic 1 is usually a Quick Response or Snipe ("bring 2–3 recent wins"), which goes in "Teddy T. - <Mon> - Week <N> (Quick Response)" / "(Snipes)", not LONGFORMS.
+- **Josh D:** his sheets can be titled "JOSH D | <MON> WK<N> | HYPOTHESIS". Devin adds extra posts in comments that aren't on a topic ("EXRA - … turn it into an article with Doc SS QT"): a freeform topic after the last one. His quote-tweet snipes run on X and again on LinkedIn with an image ("Josh D. - Sept - Week 5 (Snipes)"), so X/LI is right for them.
+- **Caulen:** calls are titled "caulen Foster and Kyle Meng". Rules from his Claude project memory, as Jeremiah's Oct Wk2 brief applies them: revenue is always "9 figures" in copy; credit is plural ("we") for anything Brello did; the 9 figures belong to Brello, not the agency; don't position him as the DR copywriter. Flag any quote that breaks one.
 
 ## Not Jeremiah's long-forms (topics only, or someone else writes)
 

@@ -36,11 +36,11 @@ LONGFORMS                                   (H1, bold)
 ## The line rules (scripts/entries.py)
 
 `entries.py` was checked against real docs:
-- **Exact matches (the golden tests in `tests/`):** Mason Oct Wk1 and Wk2, Keval Oct Wk2 and Teddy Oct Wk1.
+- **Exact matches (the golden tests in `tests/`):** Mason Oct Wk1 and Wk2, Keval Oct Wk2, Teddy Oct Wk1 and Caulen Oct Wk2 (7 of 7 lines, from the Oct 9 test flight).
 - **Also checked line by line:** Josh C, Ben K, Abdul, Lior and Jason. The only remaining differences are hand edits no rule can predict.
 - Run `python3 -I tests/run_tests.py` after any change.
 
-1. **Who gets a line.** The first match wins.
+1. **Who gets a line.** The first match wins. A snipe can also hide in the OBJECTIVE ("This is the broad TOF snipe", Josh D T5) or in the other tab's label: put `objective` and `other_tab_label` in topics.json, and `entries.py` keeps the line but puts "may be a snipe" in `problems`.
 
    | Topic | Line? |
    |---|---|
@@ -63,11 +63,15 @@ LONGFORMS                                   (H1, bold)
 
    Briefs word statuses freely ("Go, with gaps", "Draftable", "No pivot called", "Skipped on call"); `status_norm()` maps them. Put the brief's status in `status` as written.
 2. **Extra posts the strategist asked for.** A comment on the topic sheet like "Make a 2nd post on Boxing and chad mentality" (Mason Wk1), or "3 posts / 1/ … 2/ … 3/ …" (Abdul), adds lines right after the parent topic's own lines.
+   - Not when the header already counts them: Caulen T2 "(3 post)" with Kyle's comment naming posts 2 and 3 gives three identical "(Founder milestones) - (Short-form listicle)" lines in his real doc. The subjects go in the brief. `entries.py` flags a header count combined with extra posts as possible double counting.
+   - A comment that isn't on any topic but asks for a post (Devin's "EXRA … turn it into an article with Doc SS QT", Josh D) becomes a freeform topic after the last sheet topic, with the post's subject as its `perspective_override` and the comment's format as its vehicle, flagged.
    - Put each one in the parent's `extra_posts`, with a short perspective label taken from the comment ("Chad mentality").
    - The vehicle defaults to the parent's.
    - These are always flagged.
    - A comment that asks for a *pivot* ("Make a pivot to long-form for this week", Mason Wk2 T2) changes nothing. It goes in the brief's Note, and the line stays as the sheet has it.
-3. **Perspective.** The topic's PERSPECTIVE field, word for word, minus its final period. Keep curly and straight apostrophes as they are ("who’s", "won't").
+3. **Perspective.** The topic's PERSPECTIVE field, word for word, minus its final period. Keep curly and straight apostrophes and double quotes as the sheet has them ("who’s", "won't").
+   - The field ends at the first blank line or double soft break: Keval pastes his own post right after it, and that text is not perspective (`entries.py` cuts there and notes it).
+   - A final period inside closing quotes goes too: `the way the inspo uses "TRUSTED."` → `… "TRUSTED"`.
    - A PIVOT never rewrites the perspective (6 of 8 cases had pivots; none changed the line).
    - Never take line text from the brief's headings.
    - No PERSPECTIVE (a freeform "Topic 0", a NEW post): put a short label in `perspective_override` (e.g. "Toronto event", "Repurposed", "Carro Holiday Season"). Otherwise the title is used. Either way it is flagged.
@@ -79,13 +83,16 @@ LONGFORMS                                   (H1, bold)
    - per-platform vehicles separated by `/`, `,`, `;` or `·` after a tag (`Thread (X), Long-form listicle (LinkedIn)`), written as prefixes (`X article + Doc SS QT / LI Longform`), or as bullets (`•X: … •LinkedIn: …`);
    - a bare `Thread`, or a thread inside brackets, for an X + LinkedIn client: X `Thread`, LI `Long-form` (Abdul: `Long-form listicle`);
    - `X article, then quote tweet` is a different case: two numbers, `(X) … (Article)` then `(X) … (Article wrapper)` (Keval T6). The same goes for the X half of a split that quote-tweets its own article (`X article + Doc SS QT / LI Longform` gives n.1 X Article, n.2 LI Long-form, then n+1 X Article wrapper). It is flagged to confirm.
-6. **Post counts.** "2 POSTS" in the header, or ", x2" / "two posts" in VEHICLE, gives consecutive numbers with identical lines.
+6. **Post counts.** "2 POSTS" / "(3 post)" in the header, or ", x2" / "two posts" in VEHICLE, gives consecutive numbers with identical lines. A bare "2 posts" strategist comment does the same through `posts_override`, flagged. A topic with no VEHICLE whose heading names the format and lists items (Ben's "VALUE TWEETS - INSTAGRAM REEL REPURPOSE", two reels) gets the vehicle from the heading and one post per item, flagged.
 7. **Vehicle wording.**
    - Longform / Long form → `Long-form`; Medium form → `Medium-form`. Inside a phrase they stay lowercase ("Opinion-led long-form post").
    - "Listicle long-form" → `Long-form listicle`.
    - Format nouns after the first word are lowercase ("Side-by-side comparison thread", "+ infographic"). Named things keep their capitals ("Apple Notes Screenshot").
    - Dropped: trailing ALL-CAPS instructions, bare "with image" requests, and noise brackets like (organic), (dash), (GDS).
-   - Any other bracket becomes a comma qualifier ("Listicle (greentext)" → "Listicle, greentext"), flagged.
+   - Brackets, from his real Caulen Oct Wk2 doc: a single format noun merges with no comma ("Short form (listicle)" → "Short-form listicle"); a bracket describing a "+ asset" is dropped ("Short form + image (notes-style doc)" → "Short-form + image"). Any other bracket becomes a comma qualifier ("Listicle (greentext)" → "Listicle, greentext"). All flagged.
+   - "LF" → "long-form", "MF" → "medium-form"; a leading "A"/"An" is dropped ("A short-form post with …" → "Short-form post with …"); "plus" between words → "+" (Teddy Oct Wk1: "One-line hook + a doc-screenshot checklist"). All flagged.
+   - An X article vehicle is written `(Article)` whatever its qualifiers ("X Article (long form, sectioned, 10–15K characters)"), flagged.
+   - A comma that is in the sheet's own VEHICLE stays ("Short form, personal anecdote + take" → "Short-form, personal anecdote + take").
    - Straight double quotes become curly (`“hack”`).
 8. **Numbers.** Numbers run 1, 2, 3 … over the lines written, not the sheet's topic numbers.
 9. **Per-client habits** (`CLIENTS` in `entries.py`, chosen by `"client"`):
@@ -108,7 +115,7 @@ LONGFORMS                                   (H1, bold)
              "vehicle": "Longform (X/LI)", "perspective": "Operator in his 30s ... personally.",
              "status": "KEPT", "struck": false, "check": null,
              "vehicle_override": null, "posts_override": null, "perspective_override": null,
-             "extra_posts": []}]}
+             "objective": "Engagement ...", "other_tab_label": null, "extra_posts": []}]}
 ```
 
 - Copy `vehicle`, `perspective` and `label` exactly as the sheet has them, including bullets and line breaks. The script does all the cleaning.
@@ -123,10 +130,10 @@ LONGFORMS                                   (H1, bold)
    - Keep docs titled exactly `<Name> - <Mon> - Week <n>`, trimming a trailing space. Drop suffixed siblings: (Snipes), (Snipe), (Design Request), (Design Requests), (Quick Response), (Quick response posts), (Topic N), (Ad Hoc Post), Longforms.
    - Take the latest batch by the month and week in its title ("Oct - Week 1" beats "Sept - Week 5"; never last week's number plus one). Use createdTime only to break a tie or to tell years apart across a December → January change. In Loom 2 (0:38–0:50) he picks "Mason L. - Oct - Week 1" this way: "go to the most recent batch, I think it is October Week 1".
    - The shared copy there usually belongs to writing@mogulmedia.ca; Jeremiah's own draft of the same week sits in his My Drive. Either works as the source, since everything under LONGFORMS is deleted. Prefer the Content-folder copy, as in the Loom.
-   - If two docs share a title (Ben K has two "Oct - Week 1"), take the newer one.
+   - If two docs share a title (Ben K has two "Oct - Week 1"), take the one created last (createdTime).
 2. **Copy.** Call `copy_file` with `{"fileId": <last week>, "title": "<Name> - <Mon> - Week <N>", "parentId": <My Drive root id>}`. Then call `get_file_metadata` on the new ID and check the parent and the title.
    - Comments and sharing don't carry over, which is what the Copy dialog does with its boxes unticked.
-3. **Read the copy.** Call `read_doc` on the NEW id. A result over about 50K characters is saved as `{"content": {...}}`; the script unwraps it. A smaller one (a new skeleton, a short doc) comes back inline: write it to a file in the scratchpad yourself before running the script.
+3. **Read the copy.** Call `read_doc` on the NEW id. A result over about 50K characters is saved as `{"content": {...}}`; the script unwraps it. A smaller one comes back inline: if it's short, write it to a scratchpad file; if it's too long to copy faithfully (a filled 40K doc, Caulen), write the cut-down `subset` form instead (see `longform_batch.py`'s docstring: documentId, revisionId, tabId, bodyEnd and the header, Media Folder, anything between, and LONGFORMS paragraphs exactly as read), after checking with `read_file_content` that there is one Media Folder line and one LONGFORMS. The subset gives the identical batch (`tests/test_copy_batch.py`).
 4. **Build the batch.** Run `python3 -I scripts/longform_batch.py <saved read> "<Name> - Week <N> - <Mon>" lines.json`. It:
    - finds the header, the Media Folder line and the LONGFORMS heading itself, and stops if the doc doesn't have exactly one of each or has more than one tab;
    - deletes everything after LONGFORMS except the body's final newline;
@@ -136,7 +143,7 @@ LONGFORMS                                   (H1, bold)
    - replaces the old header text last, so its length can't shift the other ranges;
    - prints `{"documentId","requests","writeControl"}`. `writeControl.requiredRevisionId` comes from the read, so Google refuses the whole batch if the doc changed in between.
 5. **Send it** with `update_doc`. It is one atomic call: if it fails, nothing changed. Read the copy again and rebuild; never resend stale indexes.
-6. **Verify** with `read_doc` again:
+6. **Verify** with `read_doc` again and `python3 -I scripts/verify_doc.py <read> lines.json --header "<header>"` (or `--md` on `read_file_content` when the read is too long to save). It checks:
    - the header is the new text;
    - the Media Folder paragraph has no richLink or link;
    - the body holds no `inlineObjectElement`;

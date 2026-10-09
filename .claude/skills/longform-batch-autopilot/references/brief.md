@@ -35,10 +35,10 @@ What each clause means here:
    - Paragraph 1: "Each topic has three parts: the **Original brief** copied from the topic sheet, **From the call** (what {Strategist} and {Client first name} actually said, with timestamps), and a **Note** that marks it KEPT, PIVOT, or NOT DISCUSSED and says what was kept, changed, or left open. Call pivots override the topic sheet."
    - Paragraph 2: "Transcript quotes are {Client first name}'s words as transcribed. Where the transcription is clearly garbled, the likely word is in brackets and marked as a reading, not a fact."
    - Then the status table: `| # | Topic | Vehicle | Status |`. One row per topic. Status in the vocabulary below.
-     - **Topic:** the sheet title in its casing on the sheet ("Being Stupid in Your 60s" if that's how it reads). For a pivot, `<sheet title> → "<new angle>"`, e.g. `Revenue Screenshot → "The real story of my brand"`.
+     - **Topic:** the sheet title. For a pivot, `<sheet title> → "<new angle>"`, e.g. `Revenue Metric Screenshot → "The real story of my brand"`.
      - **Vehicle:** as written on the sheet, or as changed on the call. No post count here (", 2 posts" goes in the Note and the Original brief).
 2. `## Batch header (from the topic sheet)`
-   - A bullet list with bold labels: **Client:**, **Week:**, **Strategist:**, **Platforms:**, **Call:** (`{Client} x {Strategist}, {d Mon yyyy}`).
+   - A bullet list with bold labels: **Client:**, **Week:**, **Strategist:**, **Platforms:**, **Call:** (`{Client} x {Strategist}, {d Mon yyyy}`). Only these; no transcript link or other fields. A problem with the sheet itself (a broken Client Brain link) goes in the run summary, not here.
    - Then a paragraph `**Client goal:** …` (verbatim).
    - Then `**Hypothesis (verbatim from sheet):**` with bullets `*Last week:*`, `*This week:*`, `*We expect:*`.
    - If a pivot changes a line of the hypothesis, add one plain sentence saying which line. Example: "Note: the Topic 2 and Topic 5 pivots change two lines of this hypothesis (…). Kyle hasn't restated the hypothesis."
@@ -47,6 +47,7 @@ What each clause means here:
    1. **The Note, first, directly under the heading:** `**Note: <STATUS>.** <one or two plain sentences, usually quoting the strategist's verdict>`. Example: `Kyle: "That's perfect."`
       - For a PIVOT, add bullets with bold labels: `**Kept:**`, `**Changed:**`, `**Killed:**`, `**Not stated on the call:**`.
       - If the strategist left a comment on this topic in the sheet, add `**{Strategist}'s comment on the sheet:** "<comment>"`, and say whether the call confirmed it, changed it, or didn't touch it.
+        - Check when it was posted. A comment posted during the call (its time minus the call's start falls inside the call) records what was said at that minute: tie it to that moment, e.g. Kyle's "Make a pivot to long-form for this week" on Mason's T2, posted 16:28 into the call, right as he said "I'll get the team to pivot to that" [16:29].
    2. `### Original brief (topic sheet)`: a bullet list with bold labels, word for word:
       - **Type:** A / A, 2 posts / B
       - **Angle & description:**
@@ -55,9 +56,9 @@ What each clause means here:
       - **Vehicle inspiration:** the link. If the sheet or the linked post gives the author, hook or stats, add them in one line (e.g. "Jacob's revenue post, 499 likes, 71 comments"). Don't guess what a link holds if you can't open it.
       - **Objective:**
       - **Perspective:**
-      - Type B: then `**Initial draft direction (verbatim from sheet):**` and the whole draft in a ```markdown code block, one line per sheet paragraph and no blank lines between them. `read_file_content` flattens a cell's line breaks into runs of spaces, so take the draft's line structure from `read_doc` on the Topics doc.
+      - Type B: then `**Initial draft direction (verbatim from sheet):**` and the whole draft in a ```markdown code block. The words are verbatim, one line per sheet paragraph; the sheet's empty paragraphs are dropped, as in his real briefs. `read_file_content` flattens a cell's line breaks into runs of spaces, so take the draft's line structure from `read_doc` on the Topics doc.
    3. `### From the call`: paragraphs that open with a bold label and a timestamp range, e.g. `**The stupid (Q1) [09:16–10:51]:**`, followed by bullets of near-verbatim quotes.
-      - Timestamps are `[MM:SS]` or `[MM:SS–MM:SS]` (en dash), taken from the transcript. One range per paragraph covers the exchange; quotes under it are condensed with ellipses ("Everyone likes to... flex. …") rather than one timestamp per sentence.
+      - Timestamps are `[MM:SS]` or `[MM:SS–MM:SS]` (en dash), taken from the transcript. A range starts at the start time of its first quoted sentence. One range per paragraph covers the exchange; quotes under it are condensed with ellipses ("Everyone likes to... flex. …") rather than one timestamp per sentence.
       - Garbled words are marked like `[likely "TAM", reading]`. A garbled line that adds nothing to the topic is left out, above all one that could read as offensive.
       - A name the client or the perspective says stays unnamed (a former brand, a person) is written as a bracketed role, e.g. `[former ecom brand, named on the call]`, never spelled out.
       - A topic the call never reached gets one plain sentence: "Nothing on <what the questions asked>."

@@ -11,7 +11,7 @@ Jason; see references/longform-doc.md). TOPICS.json:
 {
   "client": "Mason L.",                  # longform doc name; loads the per-client settings in CLIENTS
   "platforms": "X, LinkedIn",            # the topic sheet's PLATFORMS row
-  "call": true,                          # false when there is no transcript: every topic goes in
+  "call": true,                          # false with no transcript and no brief: Type B in, Type A out
   "expected_posts": null,                # the brief's total post count, if it states one (checked)
   "topics": [                            # sheet order; a freeform "Topic 0" first if the sheet has one
     {"n": 1, "type": "A",                # "A" / "B"; null for a freeform topic (treated as B)
@@ -26,6 +26,8 @@ Jason; see references/longform-doc.md). TOPICS.json:
      "posts_override": null,             # only when the CALL changed the post count
      "perspective_override": null,       # a label, when the sheet has no PERSPECTIVE (freeform / new post)
      "merged_into": null,                # topic number this one was folded into (human call; flagged)
+     "objective": null,                  # OBJECTIVE field; "snipe" / "quick response" in it is flagged
+     "other_tab_label": null,            # the same topic's header label on the other tab (e.g. Strategy says "Snipe")
      "no_cta": null, "li_vehicle": null, # Ben: value tweet with no DM CTA / LinkedIn format from a FOR LINKEDIN note
      "extra_posts": []}                  # posts the strategist asked for in a sheet comment or on the call:
                                          #   {"perspective": "Chad mentality", "vehicle": null, "same_material": false,
@@ -109,14 +111,33 @@ def norm_vehicle(v, cfg, notes):
         if new != v:
             notes.append("screenshot relabelled %r -> %r (this client's habit): confirm" % (v, new))
         v = new
-    if re.search(r"\([^()]*\)", v):
-        notes.append("vehicle qualifier in brackets turned into a comma: %r" % v)
-    v = re.sub(r"\s*\(([^()]*)\)", r", \1", v).strip(" ,")
+    # abbreviations he never writes in a line
+    new = re.sub(r"\bLF\b", "long-form", v)
+    new = re.sub(r"\bMF\b", "medium-form", new)
+    new = re.sub(r"^(an?)\s+(?=\S)", "", new, flags=re.I)              # "A short-form post..." -> "short-form post..."
+    new = re.sub(r"(?<=\w)\s+plus\s+(?=\w)", " + ", new, flags=re.I)   # Teddy Oct Wk1: "hook plus a ..." -> "hook + a ..."
+    if new != v:
+        notes.append("vehicle wording tidied %r -> %r: confirm" % (v, new))
+        v = new
+    # brackets (Caulen Oct Wk2, his real doc): a single format noun merges ("Short form (listicle)" ->
+    # "Short-form listicle"); a bracket describing a "+ asset" is dropped ("Short form + image
+    # (notes-style doc)" -> "Short-form + image"); any other bracket becomes a comma qualifier, flagged
+    def bracket(m):
+        inner, before = m.group(1).strip(), v[:m.start()]
+        if inner.lower() in FMT:
+            return " " + inner.lower()
+        if re.search(r"\+\s*[^+()]+$", before):
+            notes.append("bracket after a '+ asset' dropped: (%s): confirm" % inner)
+            return ""
+        notes.append("vehicle qualifier in brackets turned into a comma: (%s): confirm" % inner)
+        return ", " + inner
+    v = re.sub(r"\s*\(([^()]*)\)", bracket, v).strip(" ,")
+    v = re.sub(r"\s{2,}", " ", v)
     v = v[:1].upper() + v[1:] if v else v
     return curl_double(lower_fmt(v))
 
 
-QT_AFTER = re.compile(r"(?:\bthen\b|\+|\band\b),?\s+(?:a\s+)?(?:[\w-]+\s+){0,4}?(quote[\s-]?tweet|QT)\b", re.I)
+QT_AFTER = re.compile(r"(?:\bthen\b|\+|\band\b|\bwith\b),?\s+(?:a\s+)?(?:[\w-]+\s+){0,4}?(quote[\s-]?tweet|QT)\b", re.I)
 
 
 def article_pieces(plat, text, notes):
@@ -124,6 +145,9 @@ def article_pieces(plat, text, notes):
     as in Keval Oct Wk2. Returns None when `text` is not an X article."""
     t = text.strip()
     if plat in ("X", "X/LI") and re.match(r"^(X\s+)?article\b", t, re.I) and (plat == "X" or t[:1] in "Xx"):
+        rest = QT_AFTER.split(re.sub(r"^(X\s+)?article\b", "", t, flags=re.I))[0].strip(" ,.")
+        if rest:
+            notes.append("X article vehicle %r written as (Article), qualifier dropped: confirm" % t)
         if QT_AFTER.search(t):
             notes.append("X article + QT %r: wrapper given its own number, as in Keval's doc: confirm" % t)
             return [("X", "Article"), "WRAPPER"]
@@ -170,7 +194,12 @@ def split_pieces(vehicle, plat_default, cfg, notes):
 
 
 def perspective_text(p, cfg, notes):
-    p = re.sub(r"\s+", " ", (p or "").strip())
+    p = (p or "").strip()
+    cut = re.split(r"\x0b\s*\x0b|\n\s*\n|\x0b\n|\n\x0b", p, maxsplit=1)
+    if len(cut) > 1 and cut[1].strip():
+        notes.append("PERSPECTIVE ran on into other text after a blank line; cut there: %r..." % cut[1].strip()[:60])
+        p = cut[0]
+    p = re.sub(r"\s+", " ", p.replace("\x0b", " ").strip())
     if cfg.get("perspective_mode") == "drop_last_sentence":
         s = re.split(r"(?<=\.)\s+(?=[A-Z])", p)
         if len(s) > 1:
@@ -185,6 +214,8 @@ def perspective_text(p, cfg, notes):
     if p2 != p:
         notes.append("perspective brackets flattened: %r" % p2)
     p = p2
+    if re.search(r"\.[\"”']$", p):             # ...as "tools like." -> ...as "tools like"
+        return p[:-2] + p[-1]
     return p[:-1] if p.endswith(".") else p
 
 
@@ -301,6 +332,8 @@ def build(data):
                 entries.append({"topic": tn, "line": "%d - (X) - (%s) - (Article wrapper)" % (n, persp)})
 
     def persp_or_label(t, raw, tn):
+        if t.get("perspective_override"):
+            notes.append("T%s perspective is a label, not the sheet's PERSPECTIVE: %r, confirm" % (tn, t["perspective_override"]))
         p = perspective_text(raw, cfg, notes) if raw else ""
         if not p:
             p = (t.get("title") or "").strip().rstrip(".")
@@ -320,6 +353,15 @@ def build(data):
             vehicle = t.get("vehicle_override") or t.get("vehicle") or ""
             if t.get("vehicle_override"):
                 notes.append("T%s vehicle set on the call: %r" % (tn, vehicle))
+            if t.get("posts_override"):
+                notes.append("T%s post count set on the call: %s" % (tn, t["posts_override"]))
+            if int(t.get("posts") or 1) > 1 and t.get("extra_posts"):
+                problems.append("T%s has a header count (%s posts) and extra posts too: a comment naming each post's "
+                                "subject is not extra posts, check for double counting" % (tn, t.get("posts")))
+            snipe_hint = " ".join(str(t.get(k) or "") for k in ("objective", "other_tab_label"))
+            if re.search(r"\b(snipe|quick\s*response)\b", snipe_hint, re.I):
+                problems.append("T%s may be a snipe/quick response (%s): kept in LONGFORMS, confirm or move it to "
+                                "its own doc" % (tn, snipe_hint.strip()[:80]))
             if not vehicle.strip():
                 vehicle = "Long-form promo" if re.search(r"promo", t.get("title") or "", re.I) else "Long-form"
                 notes.append("T%s has no VEHICLE: used %r, confirm" % (tn, vehicle))

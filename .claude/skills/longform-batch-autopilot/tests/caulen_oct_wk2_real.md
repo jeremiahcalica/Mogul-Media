@@ -1,0 +1,35 @@
+# Tab 1  
+
+# **Caulen F. - Week 2 - Oct**
+
+# **Media Folder:** 
+
+# **LONGFORMS**
+
+## **1 - (X/LI) - (Marketing problems) - (Long-form)**
+
+  
+
+## **2 - (X/LI) - (Founder milestones) - (Short-form listicle)**
+
+  
+
+## **3 - (X/LI) - (Founder milestones) - (Short-form listicle)**
+
+  
+
+## **4 - (X/LI) - (Founder milestones) - (Short-form listicle)**
+
+  
+
+## **5 - (X/LI) - (Operator observation) - (Short-form + image)**
+
+  
+
+## **6 - (X) - (An operator who spent 15 years behind the scenes explaining why he's on X now. The motive is giving operators the information he wished he had, never attention or getting rich. Credit stays plural for anything Brello did, and the post never touches how it gets written or posted) - (Short-form, personal anecdote + take)**
+
+  
+
+## **7 - (X) - (An operator who spent 15 years behind the scenes explaining why he's on X now. The motive is giving operators the information he wished he had, never attention or getting rich. Credit stays plural for anything Brello did, and the post never touches how it gets written or posted) - (Short-form, personal anecdote + take)**
+
+  

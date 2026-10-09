@@ -3,5 +3,5 @@
 2.2 - (LI) - (Operator take, reader-identity position, comparison) - (Long-form)
 3 - (X/LI) - (Authority, operator take, named system) - (Long-form listicle)
 4 - (X/LI) - (Authority, operator take, named system) - (Sectioned how-to listicle + infographic)
-5 - (X/LI) - (Authority, operator take, named system) - (One-line hook plus a doc-screenshot checklist)
+5 - (X/LI) - (Authority, operator take, named system) - (One-line hook + a doc-screenshot checklist)
 6 - (X/LI) - (Authority, operator take, named system) - (Medium-form “hack” post)

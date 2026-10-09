@@ -26,6 +26,18 @@ def load(path):
         d = d["content"]
         if isinstance(d, str):
             d = json.loads(d)
+    if isinstance(d, dict) and d.get("subset"):
+        # A read_doc result that came back inline, too big to save whole: copy only what the batch needs,
+        # exactly as read_doc gave it: {"subset": true, "documentId", "revisionId", "tabId", "bodyEnd",
+        #  "paragraphs": [header, Media Folder, anything between, LONGFORMS], each {"startIndex",
+        #  "endIndex", "namedStyleType", "elements": [the paragraph's elements as read]}}.
+        # First check with read_file_content that the doc has one Media Folder line and one LONGFORMS.
+        body = [{"startIndex": p["startIndex"], "endIndex": p["endIndex"],
+                 "paragraph": {"elements": p["elements"], "paragraphStyle": {"namedStyleType": p["namedStyleType"]}}}
+                for p in d["paragraphs"]]
+        body.append({"endIndex": d["bodyEnd"]})
+        d = {"documentId": d["documentId"], "revisionId": d["revisionId"],
+             "tabs": [{"tabProperties": {"tabId": d.get("tabId", "t.0")}, "documentTab": {"body": {"content": body}}}]}
     return d
 
 
@@ -123,6 +135,12 @@ def main():
     m_end, lf_start = media[0]["endIndex"], lf["startIndex"]
     if lf_start > m_end:
         reqs.append({"deleteContentRange": {"range": rng(m_end, lf_start)}})
+    # 5c. the label stays bold; the space and the paragraph mark after it are not (Mason's real Week 2 doc)
+    first = media[0]["paragraph"]["elements"][0]
+    label_at = first.get("textRun", {}).get("content", "").find(":")
+    if label_at >= 0 and first["startIndex"] + label_at + 1 < media[0]["endIndex"]:
+        reqs.append({"updateTextStyle": {"range": rng(first["startIndex"] + label_at + 1, media[0]["endIndex"]),
+                     "textStyle": {}, "fields": "bold"}})
     # 6. remove non-text elements (rich link / chip / image) from the Media Folder paragraph,
     #    keeping the label and its trailing space; done after all edits below it, highest first
     for el in sorted(media[0]["paragraph"]["elements"], key=lambda x: -x["startIndex"]):

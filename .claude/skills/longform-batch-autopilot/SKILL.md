@@ -1,6 +1,6 @@
 ---
 name: longform-batch-autopilot
-description: "Run Jeremiah's weekly post-call routine for Mogul Media clients: for every long-form batch in progress, pull the call transcript (Fireflies for Kyle's clients, Krisp for Devin's), write the post-call topic brief as a Claude Doc (KEPT / PIVOT / NOT DISCUSSED against the topic sheet), and set up the week's longform Google Doc in My Drive with one bold line per post. Use for 'run longforms', 'prep this week's long-form batches', 'brief from the call', 'pivots from the call', 'longform doc for <client>', 'Mason OCT WK2 longforms', a ClickUp Longforms link, and every scheduled autopilot run. Trigger even if he only gives a client name plus 'brief' or 'longform doc'."
+description: "Run Jeremiah's weekly post-call routine for Mogul Media clients: for every long-form batch in progress, pull the call transcript (Fireflies for Kyle's clients, Krisp for Devin's), write the post-call topic brief as a Claude Doc (KEPT / PIVOT / NOT DISCUSSED against the topic sheet), and set up the week's longform Google Doc in My Drive with one bold line per post. Use for 'run longforms', 'prep this week's long-form batches', 'brief from the call', 'pivots from the call', 'longform doc for Caulen', 'Mason OCT WK2 longforms', a ClickUp Longforms link, and every scheduled autopilot run. Trigger even if he only gives a client name plus 'brief' or 'longform doc'."
 ---
 
 # Longform Batch Autopilot (Mogul Media)

@@ -7,6 +7,7 @@
 - **Mode:** a fresh session on each fire, in the Cowork environment (like the Learning Pass routines), auto permission mode, model claude-opus-5-5, push notification on finish.
 - **Connectors:** Claude_Docs, ClickUp, Fireflies, Google_Drive, Google_Docs, Claude_Code_Remote. The last one sends the update request to the schedule chat.
 - **Needs:** the `longform-batch-autopilot` skill installed on the account (Save skill on the .skill file, or upload it in claude.ai › Customize › Skills).
+- **Where to create it:** in claude.ai's Routines page, or from a Cowork chat that has the connectors. A routine created from a Claude Code session gets no connectors: it would fire and do nothing (tried Oct 9, deleted). The "Longform prep autopilot" routine made from a Cowork chat on Oct 9 already has every connector, so pointing it at this prompt (and this schedule) is the quickest route.
 
 ## Prompt
 

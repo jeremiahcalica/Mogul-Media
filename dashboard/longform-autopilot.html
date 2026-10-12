@@ -159,6 +159,11 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   </header>
 
   <div id="pageBanner" class="banner bad" hidden></div>
+  <div id="connectBox" class="banner warn" hidden>
+    <p id="connectMsg"></p>
+    <div class="row"><button type="button" class="primary" id="connectBtn">Connect to your routines</button><button type="button" id="permsBtn" hidden>Open permissions</button></div>
+  </div>
+  <p class="hint mono" id="diag">Connection: checking…</p>
 
   <div class="grid">
     <section class="panel" aria-labelledby="runH">
@@ -350,6 +355,9 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   }
   function errText(e) {
     const code = (e && e.code) || "upstream_error";
+    return errBase(e, code) + (code === "page_check" ? "" : "  [" + code + "]");
+  }
+  function errBase(e, code) {
     const msg = (e && e.message) || String(e);
     switch (code) {
       case "needs_reauth": return "Claude Code Remote needs reconnecting: claude.ai › Settings › Connectors.";
@@ -682,6 +690,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     if (k === "pause" || k === "resume") { say("you", "›", t); if (k === "resume") { $("resumeConfirm").hidden = false; say("sys", " ", "Confirm in the Schedule panel."); } else toggle(false); return; }
     if (k === "stop") { say("you", "›", t); stopRun(); return; }
     if (/^(run (longforms|everyone|everything)|run longforms for everyone( due)?|everyone due)$/i.test(t)) { ask(null, "run everyone due"); return; }
+    if (!mcp) { say("you", "›", t); say("err", "!", "Not connected to your routines: " + $("diag").textContent.replace(/^Connection: /, "") + "."); return; }
     ask(t, t);
   }
   async function toggle(enable) {
@@ -724,10 +733,49 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
   renderRuns();
   say("sys", " ", "Type help for commands, or use the buttons above.");
 
+  let perms = null;
+  const diag = (t) => { $("diag").textContent = t; };
+  async function connect(fromClick) {
+    let st = "unknown";
+    try { if (perms) st = await perms.state("mcp:" + SERVER); } catch (e) { st = "unknown"; }
+    if (st === "denied") {
+      $("connectMsg").textContent = "Claude Code Remote is turned off for this page. Open permissions, allow it, then click Connect.";
+      $("connectBox").hidden = false; $("permsBtn").hidden = !perms;
+      diag("Connection: Claude Code Remote denied for this page");
+      return;
+    }
+    if (fromClick && perms && st === "prompt") {
+      try { const r = await perms.request(["mcp:" + SERVER]); st = (r && r["mcp:" + SERVER]) || st; } catch (e) {}
+    }
+    diag("Connection: connecting (permission " + st + ")…");
+    try {
+      const d = await call("get_trigger", { trigger_id: TRIGGER_ID });
+      if (!d || !d.trigger) throw { code: "tool_error", message: "get_trigger gave no routine back" };
+      renderTrigger(d.trigger);
+      $("connectBox").hidden = true;
+      diag("Connection: connected to Claude Code Remote");
+      watchTrigger();
+    } catch (e) {
+      $("connectMsg").textContent = "Couldn't read your routine: " + errText(e) + (fromClick ? "" : " Click Connect to allow Claude Code Remote for this page.");
+      $("connectBox").hidden = false; $("permsBtn").hidden = !perms;
+      diag("Connection: not connected · " + ((e && e.code) || "error") + (e && e.message ? " · " + String(e.message).slice(0, 200) : ""));
+    }
+  }
+  $("connectBtn").addEventListener("click", () => connect(true));
+  $("permsBtn").addEventListener("click", async () => {
+    try { await perms.manage(); } catch (e) { say("sys", " ", "Open the page's Permissions menu (top right of the artifact) and allow Claude Code Remote."); }
+    connect(true);
+  });
+
   (async () => {
-    const api = window.claude && window.claude.use ? await window.claude.use("mcp") : null;
+    const hasClaude = !!(window.claude && window.claude.use);
+    const api = hasClaude ? await window.claude.use("mcp") : null;
+    try { perms = hasClaude ? await window.claude.use("permissions") : null; } catch (e) { perms = null; }
     if (!api) {
-      $("pageBanner").textContent = "This view can't reach your routines. Open the page in claude.ai to run the autopilot from here.";
+      $("pageBanner").textContent = hasClaude
+        ? "This view can't use your connectors. Open the link in claude.ai in a desktop browser or the Claude desktop app, signed in as the routine's owner, then reload."
+        : "This copy of the page isn't running inside claude.ai, so it can't reach your routines. Open the link in claude.ai.";
+      diag("Connection: " + (hasClaude ? "connector access unavailable in this view" : "not inside claude.ai"));
       $("pageBanner").hidden = false;
       $("stateChip").textContent = "Offline"; $("stateChip").className = "chip idle";
       ["fName", "fCron", "fNext", "fLast"].forEach((id) => { $(id).textContent = "—"; });
@@ -736,7 +784,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     }
     mcp = api;
     setBusy(false);
-    watchTrigger();
+    connect(false);
   })();
 })();
 </script>

@@ -142,6 +142,7 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
 - **Granola (Josh C):** the call's transcript is pasted into **the third tab of the Topics doc**, after "Client strategy" and "Strategy" (Jeremiah, Oct 9). Use that tab whatever it is named. `read_file_content` flattens tabs, so read the doc with `read_doc` and take the tab by position, then check it really holds a transcript (speaker names, timestamps or dialogue). Any Topics doc with such a tab counts as having a transcript.
   - In the tab, "Me" is Josh (he records), "Kyle Meng" is Kyle and "Them" is anyone else. There are no timestamps: use brief.md's no-timestamp variant. The tab's "Date:" line is the call date.
 - **No call link and no transcript tab:** no transcript. If a sheet comment or a task comment says a call happened ("Instructions given on call", Lior, Oct 9), say so: "call happened, transcript link missing: ask <Strategist> for it".
+  - Exception: when every topic on the sheet is Type B (Lior's usually are: "For Lior, we usually / only have type B topics… sometimes we have transcripts, sometimes we don't", Oct 12), the transcript changes nothing in the doc. Say it in one run-log line, not as a to-do or a push line (`references/clients.md` › Lior).
 - **Kyle's PDF:** Kyle also attaches the transcript as a PDF (`<TITLE>-<hash>.pdf`). Jeremiah skips it and goes to the Fireflies link (Loom 1, 1:48–1:55), so don't use it.
 - **Fallback:** if the Fireflies fetch fails, use the transcript text Kyle sometimes pastes into the task's "Google Drive / Google Docs" field. It starts `<Speaker> - 00:00` and ends "Transcribed by https://fireflies.ai/". Flag that you did.
 
@@ -239,7 +240,7 @@ Follow `references/longform-doc.md`. In short:
   - Every OPEN sheet comment goes in the summary and the run log as a to-do: topic, author, last-modified Manila time and text. When it pivots a topic that has a line, add "line kept as the sheet has it, confirm" (Devin on Teddy T4 "Rework to keep focus around Teddy Answer"). When the topic is out, add "applies if you add the line" (Devin on Josh D T3 "PIVOT TO PUNCHY 'update' Vts").
   - Every tab disagreement and strategist gate from Step 4.1 goes in the summary too (Lior Oct Wk2).
 - **Schedule-row notes** ("add a post he shared here as a long-form if there's room") never add lines. They go in the summary as a to-do.
-- **Snipes and quick responses** have their own docs, which this skill doesn't make. List them in the summary ("Keval T1 snipe: goes in the (Snipes) doc").
+- **Snipes and quick responses** have their own docs, which this skill doesn't make; they never go in the main batch (Jeremiah, Oct 12: "for snipes, yes, we don't include them in the main batch"). List them in the summary ("Keval T1 snipe: goes in the (Snipes) doc").
   - Call the sibling doc by last week's exact suffix: Teddy has used "(Snipe)", "(Snipes)" and "(Quick Response)".
   - If this week's Snipes doc already exists, say so; don't raise a "Snipes or QR doc?" question (Josh C Oct Wk2).
 

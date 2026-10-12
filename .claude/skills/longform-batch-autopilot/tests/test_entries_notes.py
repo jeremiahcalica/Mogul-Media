@@ -54,7 +54,8 @@ for call in (True, False):
              {"n": 3, "type": "B", "other_tab_type": "A", "client_question": True},
              {"n": 4, "type": "A", "client_question": True}, {"n": 5, "type": "B", "other_tab_type": "B"}],
             client="Lior P.", strategist="Kyle", call=call)
-    check("type clash call=%s" % call, o["problems"] == [
+    clash = [p for p in o["problems"] if "usually all Type B" not in p]   # Lior's own Type A flag is tested below
+    check("type clash call=%s" % call, clash == [
         "T1 type clash: Client strategy says Type A, Strategy tab says Type B: line follows Client strategy, confirm with Kyle",
         "T2 type clash: Client strategy says Type B, the box asks Lior a question: line follows Client strategy, confirm with Kyle",
         "T3 type clash: Client strategy says Type B, Strategy tab says Type A and the box asks Lior a question: line follows "
@@ -293,6 +294,11 @@ o = run([{"n": 1, "status": "NOT DISCUSSED"}], sheet_default=True)
 check("sheet default ignored with a call", lines(o) == [] and o["from_sheet"] == [] and len(o["would_be"]) == 1, o)
 o = run([{"n": 1, "status": None}], call=False)
 check("no sheet default: Type A out", lines(o) == [] and o["from_sheet"] == [] and len(o["would_be"]) == 1, o)
+
+# Lior's topics are usually all Type B (Jeremiah, Oct 12): a Type A one is flagged; Type B go in with or without a call
+o = run([{"n": 1, "type": "B", "status": None}, {"n": 2, "type": "A", "status": None}], client="Lior P.", call=False)
+check("lior type b", lines(o) == ["1 - (X) - (P1) - (Long-form)"]
+      and any(p.startswith("T2 is Type A, but Lior's topics are usually all Type B") for p in o["problems"]), o)
 
 shutil.rmtree(tmp)
 print("ok     entries_notes" if not fails else "FAIL   entries_notes (%d)" % len(fails))

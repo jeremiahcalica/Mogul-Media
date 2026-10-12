@@ -90,7 +90,8 @@ CLIENTS = {
     "Abdul F.": {"drop_photo_suffix": True, "thread_li": "Long-form listicle", "doc_ss_as": "Apple Notes"},
     "Ben K.": {"split_cta_posts": True},
     "Joshua C.": {"promo_split": True},
-    "Lior P.": {"platforms": "X"},
+    # Lior: X only; his topics are usually all Type B, with or without a transcript (Jeremiah, Oct 12)
+    "Lior P.": {"platforms": "X", "usually_type_b": True},
     "Zarak A.": {"platforms": "X"},
 }
 
@@ -543,6 +544,9 @@ def build(data):
 
     for t in data["topics"]:
         tn = t.get("n")
+        if cfg.get("usually_type_b") and not t.get("freeform") and type_letter(t.get("type")) == "A":
+            problems.append("T%s is Type A, but %s's topics are usually all Type B: check the sheet's type%s"
+                            % (tn, who, "" if call else " (no transcript, so it is left out)"))
         ok, why = included(t, call, notes, problems, sheet_default)
         would = not ok and why in (NO_CALL_A, NOT_ANSWERED_A, NOT_DISCUSSED_A, UNKNOWN_A, MIXED_A)
         clash = (ok or would) and type_clash(t, who, strategist)

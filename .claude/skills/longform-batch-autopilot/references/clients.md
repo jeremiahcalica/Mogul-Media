@@ -55,7 +55,9 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
   - He pastes his own written-out answer into each topic box right after PERSPECTIVE. The perspective ends at the blank line; the rest goes in the brief as his written-out answer.
   - His ledger ("Keval Shah — Client Feedback Ledger") gives the agency as "$2.5M/year" where sheets say "$2M": flag the clash, don't settle it. Some H2s sit inside article bodies; match entry lines with `^✅?\d+(\.\d+)? - \(`.
 - **Lior:** calls are titled "Reut Amariyo and Kyle Meng". He is X only, so every line is `(X)` and threads never split.
-  - Kyle's Longforms task carries only the Topics doc link (OCT WK2: no Fireflies link, no PDF), though a call happened. Where his call links get posted is still to be confirmed with Jeremiah; until then a run says "call happened, transcript link missing: ask Kyle".
+  - His topics are usually all Type B, and sometimes there is a transcript, sometimes not (Jeremiah, Oct 12: "For Lior, we usually / only have type B topics… sometimes we have transcripts, sometimes we don't"). Type B needs no answers, so his doc is the same either way: make it straight from the sheet. With a transcript, write the brief as usual. Without one, no brief, and a missing link is not a to-do: one run-log line ("Lior: no transcript this week; all Type B, doc from the sheet"), nothing in the push.
+  - A Type A topic on his sheet is unusual: `entries.py` flags it as a problem. With no transcript it stays out, with its would-be line, like any Kyle client's.
+  - Kyle's Longforms task can carry only the Topics doc link (OCT WK2: no Fireflies link, no PDF, though Kyle wrote "Instructions given on call").
   - Topics can be killed by strikethrough alone.
   - Freeform "Topic 7" / "Topic 8" notes sit under the tables.
 - **Jason:** perspectives drop their last sentence; Doc SS becomes "Apple Notes SS". A "✅Topic 0 - <title>" with a "Vehicle:" line can open the sheet.

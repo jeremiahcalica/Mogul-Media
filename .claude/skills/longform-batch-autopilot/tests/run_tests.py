@@ -7,7 +7,8 @@ when they were made (Nathan's first batch; Ben's statuses come from Jeremiah's r
 the value tweet rule from his real Oct Wk1 doc, where 'Value tweet ">" Listicle' stayed one X/LI line).
 Replace each with his real lines once he writes that week. type_a_rule and type_a_no_transcript are
 synthetic cases for Jeremiah's Oct 9 rule: a Type A topic gets a line only if the call answered it (not
-discussed, killed or unanswered = no line; no transcript = Type B only).
+discussed, killed or unanswered = no line; no transcript = Type B only). type_a_sheet_default is his Oct 12
+exception for Devin's pod: no Krisp transcript, so every topic comes from the sheet, Type A included.
 Then every tests/test_*.py runs: the doc batches, the read-back and quote checks, and
 test_entries_notes.py (the notes, problems and would-be lines entries.py prints beside the lines).
 Run: python3 -I tests/run_tests.py"""

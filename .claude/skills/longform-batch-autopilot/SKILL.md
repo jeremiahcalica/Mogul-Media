@@ -29,7 +29,7 @@ Every client follows the same setup, so the pipeline below works for all of them
   - The run log is not touched.
 - **Brief only / doc only:** "brief only for Keval", "doc only for Nathan C". The one-client run, stopping after Step 4 (no doc; Step 5.7 still fills the brief's Longform doc section) or skipping Step 4 (no brief). A doc-only run takes the statuses from an existing brief for that client-week; with none, it works as with no transcript (Type B in, Type A out and listed) and says so.
 - **Dry run:** "dry run for everyone due", "dry run for Caulen". Do the reads (Steps 1–3, and `entries.py` on the sheet when there is one) and report what each client would get: brief or not and why, the lines, what is left out, every problem and gate.
-  - Statuses for `entries.py`: an existing brief's (Step 5.3). With a transcript and no brief, judge each topic's status as Step 4 would, from the transcript, without writing a brief, and mark the lines "provisional". With no transcript, `"call": false`.
+  - Statuses for `entries.py`: an existing brief's (Step 5.3). With a transcript and no brief, judge each topic's status as Step 4 would, from the transcript, without writing a brief, and mark the lines "provisional". With no transcript, `"call": false` (plus `"sheet_default": true` for Devin's pod, Step 5.3).
   - Write nothing at all: no schedule chat message, no brief, no doc, no run log entry.
 - **Dashboard run:** the routine's prompt ends with a section that starts with the line `[dashboard-run]`. Jeremiah typed or clicked that instruction on his dashboard, and for that run it replaces "everyone due". Read it as if he had typed it here; it picks one of the modes above, or asks a question about the queue (answer it from the reads; write nothing).
   - The dashboard stamps its section with a line `Valid until: <ISO time>`, 10 minutes after it wrote it. If that time has passed when the run starts, or the section has no such line, ignore the section, run everyone due, and say in the summary that a stale dashboard instruction was ignored (audit, Oct 10).
@@ -138,7 +138,7 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
   1. Claude in Chrome tools (a run on his Mac): `references/chrome-mode.md` § Krisp.
   2. Krisp tools loaded: find the meeting by title and date and read its transcript.
   3. A My Drive folder "Autopilot Transcripts": a file whose title has the client's name or the Krisp slug, modified after the task went in progress, read with `read_file_content`.
-  - If none is there, note "Krisp not set up" once per run, not per client. Each Devin client then has no transcript, so no new brief (a brief that already exists still gives the statuses, Step 5.3). With no brief at all, make its doc anyway; its push line reads "<client>: doc made without brief (Krisp)" (Teddy Oct Wk2).
+  - If none is there, note "Krisp not set up" once per run, not per client. Each Devin client then has no transcript, so no new brief (a brief that already exists still gives the statuses, Step 5.3). With no brief at all, make its doc from the topic sheet: every topic as the sheet has it, Type A included, and Jeremiah trims it as he goes through the call himself (Jeremiah, Oct 12: "maybe what we do is default to the doc of the topic sheet, then I'll manually edit it as I go through it"). Its push line reads "<client>: doc from the topic sheet (Krisp), check T<n>, T<n> against the call", naming the Type A topics.
 - **Granola (Josh C):** the call's transcript is pasted into **the third tab of the Topics doc**, after "Client strategy" and "Strategy" (Jeremiah, Oct 9). Use that tab whatever it is named. `read_file_content` flattens tabs, so read the doc with `read_doc` and take the tab by position, then check it really holds a transcript (speaker names, timestamps or dialogue). Any Topics doc with such a tab counts as having a transcript.
   - In the tab, "Me" is Josh (he records), "Kyle Meng" is Kyle and "Them" is anyone else. There are no timestamps: use brief.md's no-timestamp variant. The tab's "Date:" line is the call date.
 - **No call link and no transcript tab:** no transcript. If a sheet comment or a task comment says a call happened ("Instructions given on call", Lior, Oct 9), say so: "call happened, transcript link missing: ask <Strategist> for it".
@@ -147,7 +147,7 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
 
 Fix nothing in the transcript. Fireflies drops some profanity and mis-hears jargon (e.g. "Dubai" for media buying, "big ham" for big TAM). Quotes keep the words as transcribed, and a likely reading goes in brackets marked as a reading.
 
-**No transcript means no brief.** "It doesn't make sense to push the topic brief PDF to Claude and ask for pivots since there's no transcript" (Jeremiah, Oct 9). Still read the topic sheet (Step 4.1) and make the longform doc (Step 5) straight away: every Type B topic as the sheet has it, and no Type A topic, because nothing shows the call answered it (Jeremiah, Oct 9: Type B is "retained as-is regardless of whether there's a call or not"; Type A "that wasn't answered in the call however must be removed"). List each Type A topic left out in the summary, with its `would_be` line from `entries.py`, so he can add it if the call did answer it (Step 7).
+**No transcript means no brief.** "It doesn't make sense to push the topic brief PDF to Claude and ask for pivots since there's no transcript" (Jeremiah, Oct 9). Still read the topic sheet (Step 4.1) and make the longform doc (Step 5) straight away. For Devin's pod (Krisp), the doc follows the sheet, Type A included (Krisp bullet above). For everyone else: every Type B topic as the sheet has it, and no Type A topic, because nothing shows the call answered it (Jeremiah, Oct 9: Type B is "retained as-is regardless of whether there's a call or not"; Type A "that wasn't answered in the call however must be removed"). List each Type A topic left out in the summary, with its `would_be` line from `entries.py`, so he can add it if the call did answer it (Step 7).
 
 ## Step 4: Write the brief (only with a transcript)
 
@@ -204,6 +204,7 @@ Follow `references/longform-doc.md`. In short:
    - **A comment that isn't on a topic** but asks for an extra post (Devin's "EXRA – turn this newsletter into an article with Doc SS QT" on the Client Brain link, Josh D) becomes a freeform topic, `"freeform": true`, numbered with the next integer after the last sheet topic. Its `perspective_override` is a short 1–3 word subject, like Jeremiah's "Trybe" for Josh D's newsletter (his Oct Wk1 doc). Its vehicle is the comment's format in sentence case ("X article + Doc SS QT"). Flag it.
    - If a brief for this client-week already exists (Jeremiah's or an earlier run's), take each topic's status from it and leave `"call": true`, even when this run has no transcript. Posts the brief lists outside the sheet with no vehicle set get no line; put them in the summary as "add lines?" (Ben's inner-circle offer, Oct Wk2).
    - With no transcript and no brief, set `"call": false`: Type B topics go in, Type A topics stay out and are listed.
+   - Devin's pod (Krisp) with no transcript and no brief: also set `"sheet_default": true`. Type A topics then go in as the sheet has them too, and `entries.py` lists their lines in `from_sheet` (Jeremiah, Oct 12: "maybe what we do is default to the doc of the topic sheet, then I'll manually edit it as I go through it"). A brief that exists still wins: its statuses, `"call": true`, no `sheet_default`.
    - Run `scripts/entries.py topics.json`. It applies every line rule and prints the lines, what it left out and why, `would_be` (the line each Type A topic left out would get, numbered "?"), `notes` and `problems`:
      - numbering, post counts, X/LI splits and wording;
      - snipes and quick responses left out;
@@ -257,13 +258,14 @@ List the differences in the summary as suggestions. Never edit a doc that alread
 
 1. **Run log.** Find "Longform Autopilot — Run Log" in the Artifact list. Create it on the first run: title, byline, then the sections.
    - Insert one section at the top per run: `## <date, time> Manila`, then one bullet per client with its brief link, doc link, transcript route, lines added, and flags: every `problems` item, open-comment to-dos, tab disagreements and gates, and assignment doubts (a client the schedule gives him but ClickUp or Slack gives someone else, except where `references/clients.md` says the schedule settles it, as for Keval; with the source: "Teddy: confirm he's still yours (Arooba, Oct 7: moving to Ymarie)").
+   - In each client's bullet, under "Check against the call": every `from_sheet` line (Devin's pod docs made from the sheet), so Jeremiah knows which lines the call may not have answered.
    - In each client's bullet, under "Type A left out": every `would_be` line from `entries.py`, as printed, so Jeremiah can paste it if the call did answer it. A topic with the client's written answer on the sheet adds "answered in writing? add line?" (`references/longform-doc.md`).
    - Then one bullet each for the clients skipped and why. A client whose doc is waiting for its transcript gets only its one line (Step 2.3).
 2. **Final message.** In a scheduled run it becomes his push notification. Keep it to 8 lines or fewer:
    - `<n> briefs, <n> docs made.`
    - One line naming every new doc to star: "Star these: Mason, Caulen, …". Every new doc needs starring, so a line per doc overflowed 8 lines with 9 clients (audit, Oct 10).
    - A separate line only for a client with a problem or a doubt, e.g.:
-     - "Josh D: doc made without brief (Krisp)"
+     - "Josh D: doc from the topic sheet (Krisp), check T1, T2, T3 against the call"
      - "Teddy: confirm he's still yours (Arooba, Oct 7)". An assignment doubt keeps its source, as in the run log.
      - "Caulen: add the extra post from the schedule note?"
    - The run log link.

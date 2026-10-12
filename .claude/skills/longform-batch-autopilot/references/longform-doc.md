@@ -49,6 +49,7 @@ LONGFORMS                                   (H1, bold)
    | Folded into another topic (`merged_into`, only when the brief says so) | No, flagged |
    | **No transcript and no brief**, Type B | **Yes** (Type B needs no answers, call or no call) |
    | **No transcript and no brief**, Type A | **No**, listed in the summary: nothing shows the call answered it (Jeremiah, Oct 9) |
+   | **No transcript and no brief**, Type A, **Devin's pod** (Krisp) | **Yes**, as the sheet has it (`"sheet_default": true`), listed in the summary under "Check against the call"; Jeremiah trims the doc as he goes through the call (Oct 12: "maybe what we do is default to the doc of the topic sheet, then I'll manually edit it as I go through it") |
    | Type A, KEPT / PIVOT / COVERED / RESOLVED / BLOCKED whose status also says the call never reached or answered it ("KEPT as written. Not discussed on the call", Ben K Oct Wk2 T1's wording; "PIVOT — unanswered"). A gap inside it ("Question 2 was not asked") doesn't count. | No, flagged in `problems`, listed with its would-be line (audit, Oct 10) |
    | KEPT, PIVOT, KILLED and REPLACED (keeps its slot), COVERED ("already touched on"), BLOCKED (answers given, still this batch, waiting on an asset or sign-off), RESOLVED | Yes |
    | NOT DISCUSSED, Type B. "Skipped on call" counts here: it means not reached ("it's already skipped in the call itself", Jeremiah, Oct 9, 22:51) | Yes |

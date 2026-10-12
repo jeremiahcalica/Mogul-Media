@@ -284,6 +284,16 @@ check("final pass", lines(o) == ["1 - (X/LI) - (P1) - (Long-form)", "2 - (X/LI) 
       and [w["topic"] for w in o["would_be"]] == [7, 8]
       and any("T10 status" in p and "line kept" in p for p in o["problems"]), o)
 
+# Devin's pod, no transcript (Jeremiah, Oct 12): sheet_default keeps Type A from the sheet, listed in from_sheet;
+# it does nothing when there was a call, and Kyle's no-transcript runs (no sheet_default) still leave Type A out
+o = run([{"n": 1, "status": None}, {"n": 2, "type": "B", "status": None}], call=False, sheet_default=True)
+check("sheet default", lines(o) == ["1 - (X/LI) - (P1) - (Long-form)", "2 - (X/LI) - (P2) - (Long-form)"]
+      and o["from_sheet"] == [{"topic": 1, "lines": ["1 - (X/LI) - (P1) - (Long-form)"]}] and o["would_be"] == [], o)
+o = run([{"n": 1, "status": "NOT DISCUSSED"}], sheet_default=True)
+check("sheet default ignored with a call", lines(o) == [] and o["from_sheet"] == [] and len(o["would_be"]) == 1, o)
+o = run([{"n": 1, "status": None}], call=False)
+check("no sheet default: Type A out", lines(o) == [] and o["from_sheet"] == [] and len(o["would_be"]) == 1, o)
+
 shutil.rmtree(tmp)
 print("ok     entries_notes" if not fails else "FAIL   entries_notes (%d)" % len(fails))
 sys.exit(1 if fails else 0)

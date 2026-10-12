@@ -64,6 +64,7 @@ All on Oct 9 2026, Manila time, unless the row says otherwise. His words are ver
 | 23:49 | "Do you think building a dashboard where I can just click somewhere to run it (like a mini terminal) works too?" | A click-to-run dashboard with a typed-instruction box. | `dashboard/longform-autopilot.html`; `routines/longform-batch-autopilot.md` § Dashboard runs |
 | 23:56 | "the Claude Doc that I was pointing at earlier (where the content batches are due) is there right? this?" | Confirmed: the schedule chat's "Next Week: Topics and Content Batches" doc is the queue. | `SKILL.md` Step 1 |
 | Oct 10, 00:04 | "it is updated weekly so keep that in mind… Apply the queued fixes, and write the decision log… Point the existing routine at the skill and keep it paused. Build the dashboard. Send you the updated skill file to save." | The schedule doc changes every week (new dates in its title): read it fresh every run and take the latest week's doc. Skill + the existing routine (paused) + dashboard, in that order. | `SKILL.md` Step 1.1; `clients.md`; `loom-rules.md`; routine; dashboard |
+| Oct 12 | "since we are not able to download the Krisp transcript, maybe what we do is default to the doc of the topic sheet, then I'll manually edit it as I go through it" | Devin's pod (Krisp) with no transcript and no brief: the doc gets every topic as the sheet has it, Type A included, and he trims it while going through the call. The summary lists those Type A lines under "Check against the call". Kyle's clients keep the Oct 9 rule (Type A out without a transcript). A brief that exists still decides. | `SKILL.md` Step 3, 5.3, 7; `longform-doc.md` inclusion table; `entries.py` `sheet_default` / `from_sheet`; `tests/type_a_sheet_default_*`; `clients.md`; `loom-rules.md` |
 
 ## Design decisions and why
 
@@ -105,13 +106,13 @@ Until he answers, each is handled as described and flagged in the run summary.
 | 2 | Mason's "No $ numbers": all copy, or only revenue figures? His Wk2 brief flagged none. | Mason | One summary line per run |
 | 3 | Josh D T5 is labelled QUOTE TWEET but its objective says "This is the broad TOF snipe": Snipes doc or LONGFORMS? | Josh D | Kept in LONGFORMS, flagged "may be a snipe" |
 | 4 | Where do Lior's call links get posted? Oct Wk2 had none, though Kyle wrote "Instructions given on call". | Lior | "call happened, transcript link missing: ask Kyle" |
-| 5 | Krisp: finish the connector (claude.ai › Customize › Connectors › Krisp), or create a My Drive "Autopilot Transcripts" drop folder? | Devin's clients | Put off ("ignore the Krisp first"); docs made without a brief |
+| 5 | Krisp: finish the connector (claude.ai › Customize › Connectors › Krisp), or create a My Drive "Autopilot Transcripts" drop folder? | Devin's clients | Put off ("ignore the Krisp first"); docs made from the topic sheet, Type A included, for him to trim (Oct 12) |
 | 6 | Kyle's bare "2 posts" comment (Josh C T4): two identical lines, or 4A + 4B with the second left out until its vehicle is set? | Josh C | Two identical lines, flagged |
 | 7 | Vehicle wording: expand "LF" to "Long-form" (Teddy)? Drop a leading "A " (Josh D)? Is a quote tweet of the batch's own article an "Article wrapper" line (Lior T3, Nathan T1)? | Teddy, Josh D, Lior, Nathan | All done, each flagged "confirm" |
 | 8 | Copy each client's Claude-project memory rules (Caulen's "9 figures", plural credit, Brello not the agency, not the DR copywriter) into a Drive file in their Client Info folder that every run reads? | Caulen | Hard-coded in `clients.md` |
 | 9 | Is Teddy still his? Arooba wrote on Oct 7 he's moving to Ymarie; the schedule doc still gives him to Jeremiah. | Teddy | Processed, with "confirm he's still yours" |
 | 10 | His Josh brief quotes each inspo post's hook from the sheet's screenshots. Should the autopilot read them too? | Josh C | "inspo screenshot not read" |
-| 11 | Confirm: with no transcript, Type A topics stay out (listed with their would-be line) rather than in with a "check" flag. His 22:52 message reached the chat seven seconds before that exact question was asked. | All no-transcript clients | Out and listed |
+| 11 | Confirm: with no transcript, Type A topics stay out (listed with their would-be line) rather than in with a "check" flag. His 22:52 message reached the chat seven seconds before that exact question was asked. | Kyle's no-transcript clients (Lior); Devin's pod is settled the other way (Oct 12 row) | Out and listed |
 | 12 | Confirm the schedule: 9:52 AM and 9:52 PM Manila, every day. | Routine | That schedule, paused |
 | 13 | Ben's long X vehicles ("Thread with headline image", "Quote tweet with 2 doc-screenshot images") vs his shorter "Thread", "GDS/quote tweet of article"; Lior's bracket qualifier next to "+ asset" (T4, T7). | Ben K, Lior | Sheet wording, not flagged |
 | 14 | How often should a run ask the schedule chat for a refresh? In Loom 1 you ask each time you start; the routine runs twice a day. | Routine | Only in everyone-due runs, when the doc is stale or over a day old (design 25) |
@@ -145,7 +146,7 @@ Links to every test doc and brief are in the session transcript; the docs are li
 ## Known limits
 
 - **Starring:** the cloud connectors can't star a file. Runs list new docs under "Star these" (Chrome mode on his Mac can star).
-- **Krisp:** no working route yet (open question 5). Devin's clients get docs without briefs unless a brief already exists.
+- **Krisp:** no working route yet (open question 5). Devin's clients get no brief unless one already exists; their docs follow the topic sheet, Type A included, and he trims them (Oct 12).
 - **Claude-project memory:** invisible to a run (open question 8).
 - **Inspo screenshots:** not read (open question 10).
 - **Deleting:** the connectors can't trash files; test outputs must be removed by hand.

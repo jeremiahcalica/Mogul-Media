@@ -1,0 +1,9 @@
+{"_source": "synthetic: Jeremiah, Oct 12, Devin's pod with no Krisp transcript: 'default to the doc of the topic sheet, then I'll manually edit it as I go through it'",
+ "client": "Test", "strategist": "Devin", "platforms": "X, LinkedIn", "call": false, "sheet_default": true,
+ "topics": [
+  {"n": 1, "type": "TYPE A", "title": "a", "vehicle": "Long-form", "perspective": "P1."},
+  {"n": 2, "type": "TYPE B", "title": "b", "vehicle": "Thread (X/LI)", "perspective": "P2."},
+  {"n": 3, "type": "TYPE A", "label": "Snipe", "title": "c", "vehicle": "Quote tweet", "perspective": "P3."},
+  {"n": 4, "type": "TYPE A", "title": "d", "vehicle": "Long-form", "perspective": "P4.", "struck": true},
+  {"n": 5, "type": "TYPE A", "posts": 2, "title": "e", "vehicle": "Medium-form", "perspective": "P5."},
+  {"n": 6, "type": "TYPE B", "title": "f", "vehicle": "Long-form", "perspective": "P6."}]}

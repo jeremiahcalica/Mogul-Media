@@ -3,8 +3,13 @@
 
 Usage: python3 -I entries.py TOPICS.json
 Prints {"entries": [{"topic", "line"}], "left_out": [{"topic", "why"}],
-        "would_be": [{"topic", "lines", "why"}], "notes": [...], "problems": [...]}.
-Write the doc with the lines; put every note, problem and would-be line in the run summary.
+        "would_be": [{"topic", "lines", "why"}], "from_sheet": [{"topic", "lines"}], "notes": [...], "problems": [...]}.
+Write the doc with the lines; put every note, problem, would-be and from-sheet line in the run summary.
+
+from_sheet: with "sheet_default" (Devin's pod, no transcript, no brief), every Type A topic gets its line
+straight from the sheet, and Jeremiah trims the doc as he goes through the call himself ("default to the doc
+of the topic sheet, then I'll manually edit it as I go through it", Oct 12). These are those lines, so the
+summary can list what to check against the call.
 
 would_be: each Type A topic left out for want of answers (no transcript, NOT ANSWERED, NOT DISCUSSED, a
 status it can't read or that also says not discussed; never a killed, struck, ❌, snipe, merged, parked or
@@ -31,6 +36,8 @@ Jason; see references/longform-doc.md). TOPICS.json:
   "platforms": "X, LinkedIn",            # the topic sheet's PLATFORMS row
   "call": true,                          # false with no transcript and no brief: Type B in, Type A out;
                                          #   missing is a problem (treated as true)
+  "sheet_default": false,                # with "call": false, Devin's pod (Krisp): Type A in too, as the
+                                         #   sheet has it, listed in from_sheet (Jeremiah, Oct 12)
   "expected_posts": null,                # the brief's total post count, if it states one (checked)
   "topics": [                            # sheet order; a freeform "Topic 0" first if the sheet has one
     {"n": 1, "type": "A",                # "A" / "B" ("Type B", "TYPE A  2 POSTS" read the same); null for a
@@ -300,6 +307,7 @@ def status_norm(s):
 NO_CALL_A = "Type A, no transcript to show the call answered it"
 NOT_ANSWERED_A = "Type A, not answered on the call"
 NOT_DISCUSSED_A = "Type A, not discussed on the call (no answers to write from)"
+SHEET_A = "no transcript: Type A taken from the sheet (Devin's pod), check it against the call"
 UNKNOWN_A = "Type A, status not recognised (nothing shows the call answered it)"
 MIXED_A = "Type A, status also says not discussed / not answered (nothing shows the call answered it)"
 # a whole-topic "not discussed" after an answered status word: "KEPT as written. Not discussed on the call"
@@ -332,7 +340,7 @@ def topic_type(t, problems=None):
     return typ
 
 
-def included(t, call, notes, problems):
+def included(t, call, notes, problems, sheet_default=False):
     label, veh = t.get("label") or "", t.get("vehicle") or ""
     tn = t.get("n")
     # a snipe can show in the label, the sheet's or the call's vehicle ("Snipe (QT)", "Quote tweet snipe",
@@ -350,6 +358,10 @@ def included(t, call, notes, problems):
         # Jeremiah, Oct 9: Type B stays regardless of the call; a Type A topic needs the call's answers
         if typ.startswith("B"):
             return True, "no transcript: Type B needs no answers"
+        if sheet_default:
+            # Devin's pod: Krisp can't be read, so the doc follows the sheet and Jeremiah trims it (Oct 12)
+            notes.append("T%s is Type A, taken from the sheet with no transcript: check it against the call" % tn)
+            return True, SHEET_A
         notes.append("T%s is Type A and there is no transcript: left out; add its line if the call answered it" % tn)
         return False, NO_CALL_A
     s = status_norm(t.get("status"))
@@ -425,7 +437,8 @@ def build(data):
     call = data.get("call", True)
     who = (data.get("client") or "").split(" ")[0] or "the client"
     strategist = data.get("strategist") or "the strategist"
-    entries, left_out, would_be, notes, problems = [], [], [], [], []
+    entries, left_out, would_be, from_sheet, notes, problems = [], [], [], [], [], []
+    sheet_default = bool(data.get("sheet_default")) and not call
     if "call" not in data:
         problems.append('no "call" key: assumed the call happened; set it')
     numbers_from = itertools.count(1)
@@ -530,7 +543,7 @@ def build(data):
 
     for t in data["topics"]:
         tn = t.get("n")
-        ok, why = included(t, call, notes, problems)
+        ok, why = included(t, call, notes, problems, sheet_default)
         would = not ok and why in (NO_CALL_A, NOT_ANSWERED_A, NOT_DISCUSSED_A, UNKNOWN_A, MIXED_A)
         clash = (ok or would) and type_clash(t, who, strategist)
         if clash:
@@ -538,7 +551,10 @@ def build(data):
         if t.get("inferred") and (ok or would):
             notes.append("T%s %s: inferred, not on the sheet: confirm" % (tn, t["inferred"]))
         if ok:
-            entries += [{"topic": tn, "line": l} for l in topic_lines(t, tn, numbers_from, notes, problems)]
+            got = [{"topic": tn, "line": l} for l in topic_lines(t, tn, numbers_from, notes, problems)]
+            entries += got
+            if why == SHEET_A:
+                from_sheet.append({"topic": tn, "lines": [e["line"] for e in got]})
         else:
             left_out.append({"topic": tn, "why": why})
         if would:
@@ -553,7 +569,10 @@ def build(data):
                 left_out.append({"topic": "%s+" % tn, "why": SNIPE_WHY})   # an extra snipe goes in the Snipes doc too
                 continue
             if ok:
-                entries += [{"topic": "%s+" % tn, "line": l} for l in extra_lines(t, x, numbers_from, notes, problems)]
+                got = [{"topic": "%s+" % tn, "line": l} for l in extra_lines(t, x, numbers_from, notes, problems)]
+                entries += got
+                if why == SHEET_A:
+                    from_sheet[-1]["lines"] += [e["line"] for e in got]
                 continue
             # a left-out Type A topic's extra post needs the call's answers too: no real number
             left_out.append({"topic": "%s+" % tn, "why": "extra post on T%s, left out with it (%s)" % (tn, why)})
@@ -566,7 +585,8 @@ def build(data):
     for e in entries:
         if "()" in e["line"]:
             problems.append("empty slot in line: %r" % e["line"])
-    return {"entries": entries, "left_out": left_out, "would_be": would_be, "notes": notes, "problems": problems}
+    return {"entries": entries, "left_out": left_out, "would_be": would_be, "from_sheet": from_sheet,
+            "notes": notes, "problems": problems}
 
 if __name__ == "__main__":
     print(json.dumps(build(json.load(open(sys.argv[1]))), ensure_ascii=False, indent=1))

@@ -9,7 +9,7 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
 
 - **Drive MASTER FILE:** `13oJ5I0-1B2tJVEu6Oy3ybAtmkZj-gwf4`
   - POD 2 (Kyle M Team): `1sS6qkBs0RkUERQdx0e6wgpbSTrrecHGR`, strategist Kyle (Kyle Meng, ClickUp 120211600). Calls recorded on **Fireflies**.
-  - POD 1 (Devin Team): `1ic67mJ6FyTzSZkwCROilV2YKN5yIVK-j`, strategist Devin (Devin Downs, ClickUp 88679247). Calls recorded on **Krisp**.
+  - POD 1 (Devin Team): `1ic67mJ6FyTzSZkwCROilV2YKN5yIVK-j`, strategist Devin (Devin Downs, ClickUp 88679247). Calls recorded on **Krisp**, which a run can't read yet. With no transcript and no brief, the doc follows the topic sheet, Type A included, and Jeremiah trims it (Oct 12).
 - **Jeremiah's My Drive root:** `0APF3ebrWaXbcUk9PVA`. Confirm with `get_file_metadata` `fileId "root"`.
 - **ClickUp:** workspace `9015589795`, space `90152587982`. Each client has a folder `<PREFIX> | INTERNAL` with a list `CONTENT WRITING`. Tasks are named `<PREFIX> | <MON> WK<N> | Longforms`, with siblings `| New Topics` and `| Design Request`. Jeremiah is ClickUp user 306644176.
 - **Schedule doc:** a Claude Doc titled `Next Week: Topics and Content Batches (<dates>)`. The schedule chat updates it every week and the dates in the title change ("it is updated weekly so keep that in mind", Jeremiah, Oct 9). Known: artifact `5dSKyoafmKQJ93gw67JPi2` (claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b), "(Oct 12–16)" on Oct 9. SKILL.md Step 1.1 opens it and checks the Artifact list for a newer one.

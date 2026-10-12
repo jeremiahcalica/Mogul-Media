@@ -18,7 +18,7 @@ This automates the weekly post-call routine shown in two Looms on Oct 9 2026, fo
 Rules that come from your messages rather than the Looms:
 - **Top rule:** a Type A topic gets a line only if the call answered it. Type B topics stay unless killed.
 - **No transcript:** no brief, but the longform doc is made straight away with every Type B topic. Each Type A topic is left out and listed with the line it would get.
-- **Krisp, Devin's clients:** put off for now ("ignore the Krisp first"). A run uses a Krisp route only if one is set up.
+- **Krisp, Devin's clients:** put off for now ("ignore the Krisp first"). With no transcript, their doc follows the topic sheet, Type A included, and you trim it as you go through the call; the summary lists the Type A lines to check (Oct 12).
 - **The schedule doc** is updated every week; each run reads it fresh.
 - **New client:** with no earlier doc (Nathan C), the doc is built from an empty Google Doc with the same styles as the copied docs (never an HTML import, which breaks Clear formatting).
 

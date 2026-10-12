@@ -1,0 +1,273 @@
+<title>Longform Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Instrument+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: one column. A status line, then the terminal (output, prompt, examples), then help. */
+:root {
+  --bg: #f3f5f8; --ink: #18202c; --muted: #5b6577; --line: #d9dee6; --accent: #0d6a6a;
+  --term: #121821; --term-ink: #d6dde8; --term-dim: #7f8a9c; --term-accent: #5fd0c2; --ok: #1d7a4c; --bad: #b3261e;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0d1117; --ink: #e5e9f0; --muted: #97a1b2; --line: #263040; --accent: #4fc4b6;
+    --term: #090c11; --term-ink: #d6dde8; --term-dim: #7a8597; --term-accent: #5fd0c2; --ok: #4cc38a; --bad: #f0736b; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0d1117; --ink: #e5e9f0; --muted: #97a1b2; --line: #263040; --accent: #4fc4b6;
+  --term: #090c11; --term-ink: #d6dde8; --term-dim: #7a8597; --term-accent: #5fd0c2; --ok: #4cc38a; --bad: #f0736b; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); padding: 0 16px; }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 28px 40px; display: grid; gap: 16px; }
+h1 { font: 600 26px/1.2 var(--sans); margin: 0; }
+.status { font: 13px/1.5 var(--mono); color: var(--muted); margin: 6px 0 0; overflow-wrap: anywhere; }
+.status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button { font: 600 14px/1 var(--sans); border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--ink); padding: 9px 12px; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.term { background: var(--term); color: var(--term-ink); border-radius: 10px; overflow: hidden; min-width: 0; }
+.out { font: 13px/1.6 var(--mono); padding: 14px 16px; height: clamp(240px, 46vh, 460px); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.out .dim { color: var(--term-dim); } .out .you { color: var(--term-accent); } .out .err { color: #f58d86; } .out .ok { color: #6fdca2; }
+.prompt { display: flex; gap: 10px; align-items: center; padding: 10px 12px 10px 16px; border-top: 1px solid rgba(127,138,156,.3); }
+.prompt span { color: var(--term-accent); font: 600 15px var(--mono); }
+.prompt input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--term-ink); font: 14px var(--mono); padding: 6px 0; }
+.prompt input::placeholder { color: var(--term-dim); }
+.prompt input:focus-visible { outline: none; }
+.prompt button { font: 600 13px/1 var(--mono); background: var(--term-accent); color: #062420; border-color: var(--term-accent); }
+.prompt button.confirm { background: #f3b55a; border-color: #f3b55a; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; }
+.chips button { font: 12px/1 var(--mono); color: var(--term-dim); border: 1px dashed rgba(127,138,156,.5); border-radius: 6px; padding: 6px 9px; }
+.chips button:hover { color: var(--term-ink); border-color: var(--term-accent); }
+details { font-size: 14px; color: var(--muted); }
+details summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+details p { margin: 8px 0; max-width: 70ch; }
+pre { font: 12px/1.5 var(--mono); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>
+
+<main class="wrap">
+  <header>
+    <h1>Longform Terminal</h1>
+    <p class="status" id="status">Checking the connection to your routine…</p>
+    <div class="row" style="margin-top:8px"><button type="button" id="connect" hidden>Connect</button></div>
+  </header>
+
+  <section class="term" aria-label="Terminal">
+    <div class="out" id="out" role="log" aria-live="polite"></div>
+    <form class="prompt" id="form" autocomplete="off">
+      <span aria-hidden="true">›</span>
+      <input id="cmd" type="text" aria-label="Instruction" placeholder="e.g. dry run for everyone due">
+      <button type="submit" id="run">Run</button>
+    </form>
+    <div class="chips">
+      <button type="button" data-q="dry run for everyone due">dry run for everyone due</button>
+      <button type="button" data-q="run everyone due">run everyone due</button>
+      <button type="button" data-q="test flight for Mason">test flight for Mason</button>
+      <button type="button" data-q="longforms for Caulen">longforms for Caulen</button>
+      <button type="button" data-q="brief only for Keval">brief only for Keval</button>
+    </div>
+  </section>
+
+  <details id="help">
+    <summary>If it won't connect</summary>
+    <p>Run it from any Claude chat instead: copy the instruction and paste it into a new chat. The skill is on your account, so it does the same run there.</p>
+    <div class="row"><button type="button" id="copy">Copy instruction</button><span id="copied" class="status"></span></div>
+    <p>What this page sees (send me a screenshot of this if it won't connect):</p>
+    <pre id="debug">…</pre>
+  </details>
+</main>
+
+<script>
+(() => {
+  const TRIGGER = "trig_01KHnmqSHRLJhaURiFFbgoyG";
+  const SERVER = "Claude Code Remote";
+  const SEP = "\n\n---\n[dashboard-run]\n";
+  const SECTION = /\n+(?:-{3}\n)?\[dashboard-run\][ \t]*\n/;   // only on a line of its own; the prompt mentions it in a sentence
+  const $ = (id) => document.getElementById(id);
+  const debug = { insideClaude: !!(window.claude && window.claude.use), mcp: "loading", permission: "?", servers: null, lastError: null };
+  let mcp = null, perms = null, armed = null, armTimer = null, busy = false, stopWatch = null, seen = new Set();
+
+  // ---------- output ----------
+  const t = () => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Manila", hour: "2-digit", minute: "2-digit" }).format(new Date());
+  function print(text, cls) {
+    const out = $("out");
+    const line = document.createElement("div");
+    if (cls) line.className = cls;
+    line.textContent = t() + "  " + text;
+    out.append(line);
+    out.scrollTop = out.scrollHeight;
+  }
+  function status(text, cls) { $("status").textContent = text; $("status").className = "status" + (cls ? " " + cls : ""); }
+  function showDebug() { $("debug").textContent = JSON.stringify(debug, null, 2); }
+
+  // ---------- calls ----------
+  function json(r) {
+    let p = r && (r.payload !== undefined ? r.payload : (r.content || []).map((b) => b.text || "").join("\n"));
+    if (p && typeof p === "object") return p;
+    p = String(p || "");
+    const i = p.indexOf("{");
+    if (i < 0) return null;
+    let depth = 0, inStr = false, esc = false;
+    for (let j = i; j < p.length; j++) {
+      const c = p[j];
+      if (inStr) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') inStr = false; continue; }
+      if (c === '"') inStr = true; else if (c === "{") depth++;
+      else if (c === "}" && --depth === 0) { try { return JSON.parse(p.slice(i, j + 1)); } catch (e) { return null; } }
+    }
+    return null;
+  }
+  async function call(tool, input) {
+    try { return json(await mcp.callTool(SERVER, tool, input, { cache: false })); }
+    catch (e) {
+      debug.lastError = { tool, code: e && e.code, message: e && e.message };
+      showDebug();
+      throw e;
+    }
+  }
+  const why = (e) => ((e && e.code) || "error") + (e && e.message ? ": " + e.message : "");
+
+  // ---------- connect ----------
+  async function connect(asked) {
+    if (!mcp) return;
+    try { if (perms) debug.permission = await perms.state("mcp:" + SERVER); } catch (e) { debug.permission = "unknown"; }
+    if (asked && perms && debug.permission !== "granted") {
+      try { const r = await perms.request(["mcp:" + SERVER]); debug.permission = (r && r["mcp:" + SERVER]) || debug.permission; } catch (e) {}
+    }
+    showDebug();
+    status("Connecting…");
+    try {
+      const d = await call("get_trigger", { trigger_id: TRIGGER });
+      const tr = d && d.trigger;
+      if (!tr) throw { code: "no_routine", message: "get_trigger returned no routine" };
+      const p = (tr.derived_state && tr.derived_state.prompt) || "";
+      const sched = tr.enabled ? "schedule on" : "schedule paused";
+      const last = tr.last_run && tr.last_run.fired_at ? ", last run " + new Date(tr.last_run.fired_at).toLocaleString("en-US", { timeZone: "Asia/Manila" }) : ", no runs yet";
+      status("Connected to \"" + tr.name + "\" (" + sched + last + ")" + (p.includes("longform-batch-autopilot") ? "" : ". Warning: its prompt doesn't load the skill"), "ok");
+      $("connect").hidden = true;
+      debug.connected = true; showDebug();
+    } catch (e) {
+      status("Not connected: " + why(e) + ". Click Connect and allow Claude Code Remote.", "bad");
+      $("connect").hidden = false;
+      $("help").open = true;
+    }
+  }
+
+  // ---------- run ----------
+  async function run(cmd) {
+    busy = true; $("run").disabled = true;
+    const everyone = /^(run )?(longforms|everyone( due)?|everything)$|^run everyone due$|^run longforms$/i.test(cmd.trim());
+    print("› " + cmd, "you");
+    let base = null;
+    try {
+      const d = await call("get_trigger", { trigger_id: TRIGGER });
+      const now = (d && d.trigger && d.trigger.derived_state && d.trigger.derived_state.prompt) || "";
+      const m = SECTION.exec(now);
+      base = m ? now.slice(0, m.index) : now;
+      if (!base.includes("longform-batch-autopilot")) { base = null; throw { code: "wrong_prompt", message: "the routine's prompt doesn't load the longform skill, so nothing was started" }; }
+      if (now !== base) { await call("update_trigger", { trigger_id: TRIGGER, prompt: base }); print("Removed an old instruction from the routine's prompt.", "dim"); }
+      let fired;
+      if (everyone) {
+        fired = await call("fire_trigger", { trigger_id: TRIGGER });
+      } else {
+        const until = new Date(Date.now() + 10 * 60000).toISOString();
+        const p = base + SEP + "Valid until: " + until + "\nJeremiah started this run from his dashboard. For this run only, his instruction below replaces \"everyone due\". Every limit above still applies, and a dry run writes nothing.\n\n" + cmd;
+        try {
+          await call("update_trigger", { trigger_id: TRIGGER, prompt: p });
+          const chk = await call("get_trigger", { trigger_id: TRIGGER });
+          if (!chk || !chk.trigger || chk.trigger.derived_state.prompt !== p) throw { code: "not_saved", message: "the instruction didn't save, so nothing was started" };
+          fired = await call("fire_trigger", { trigger_id: TRIGGER });
+        } finally {
+          try { await call("update_trigger", { trigger_id: TRIGGER, prompt: base }); }
+          catch (e) { print("Couldn't put the routine's normal prompt back (" + why(e) + "). It expires in 10 minutes anyway; run any command to clean it up.", "err"); }
+        }
+      }
+      const sid = fired && fired.session_id;
+      if (!sid) throw { code: "no_session", message: "the routine started but gave no session id" };
+      const url = "https://claude.ai/code/" + String(sid).replace(/^cse_/, "session_");
+      print("Started. Watch it here or open it in Claude: " + url, "ok");
+      print("New output shows below about every 30 seconds. A full run takes a while; the summary also arrives as a notification.", "dim");
+      watch(sid);
+    } catch (e) {
+      print("Didn't start: " + why(e), "err");
+      if (!debug.connected) $("help").open = true;
+    } finally {
+      busy = false; $("run").disabled = false;
+    }
+  }
+
+  function watch(sid) {
+    if (stopWatch) stopWatch();
+    seen = new Set();
+    stopWatch = mcp.watchTool(SERVER, "list_events", { session_id: sid, kinds: ["assistant", "result"], limit: 100 }, (ev) => {
+      if (ev.type === "error") { print("Couldn't read the run's output: " + why(ev.error), "err"); return; }
+      const d = json(ev.result);
+      const data = (d && (d.ccr || d).data) || [];
+      for (const e of data) {
+        const body = e.assistant || e.result || {};
+        const id = body.uuid || e.created_at;
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const c = body.internal_anthropic_catchall || {};
+        if (e.result) { print(c.is_error ? "Stopped with an error." : "Finished. Its summary is above and in your notifications.", c.is_error ? "err" : "ok"); continue; }
+        for (const b of (c.message && c.message.content) || []) {
+          if (b.type === "text" && b.text && b.text.trim()) print(b.text.trim());
+          else if (b.type === "tool_use") print("· " + String(b.name || "tool").replace(/^mcp__(.+?)__/, "$1 › ").replace(/_/g, " "), "dim");
+        }
+      }
+    }, { refetchInterval: 30000, cache: { staleTime: 0, gcTime: 300000 } });
+  }
+
+  // ---------- wiring ----------
+  $("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const cmd = $("cmd").value.trim();
+    if (!cmd || busy) return;
+    if (!mcp || !debug.connected) { print("› " + cmd, "you"); print("Not connected yet. Click Connect above, or use \"If it won't connect\" below.", "err"); return; }
+    if (armed !== cmd) {
+      armed = cmd;
+      $("run").textContent = "Confirm"; $("run").className = "confirm";
+      print("Click Confirm to start: \"" + cmd + "\"" + (/dry run/i.test(cmd) ? " (writes nothing)" : " (makes briefs and docs; skips what exists)"), "dim");
+      clearTimeout(armTimer);
+      armTimer = setTimeout(() => { armed = null; $("run").textContent = "Run"; $("run").className = ""; }, 10000);
+      return;
+    }
+    armed = null; clearTimeout(armTimer); $("run").textContent = "Run"; $("run").className = "";
+    $("cmd").value = "";
+    run(cmd);
+  });
+  $("cmd").addEventListener("input", () => { if (armed) { armed = null; $("run").textContent = "Run"; $("run").className = ""; } });
+  document.querySelectorAll(".chips button").forEach((b) => b.addEventListener("click", () => { $("cmd").value = b.dataset.q; $("cmd").focus(); }));
+  $("connect").addEventListener("click", () => connect(true));
+  $("copy").addEventListener("click", async () => {
+    const cmd = $("cmd").value.trim() || "dry run for everyone due";
+    const text = "Use the longform-batch-autopilot skill: " + cmd;
+    try { await navigator.clipboard.writeText(text); $("copied").textContent = "Copied: " + text; }
+    catch (e) { $("copied").textContent = text + "  (select and copy this)"; }
+  });
+
+  print("Type an instruction (or pick one below) and press Run, then Confirm.", "dim");
+  print("Devin's pod with no Krisp transcript: the doc follows the topic sheet, Type A included. Lior: doc from the sheet either way. Snipes stay out of the main batch.", "dim");
+  showDebug();
+
+  (async () => {
+    if (!debug.insideClaude) {
+      debug.mcp = "no window.claude"; showDebug();
+      status("This page isn't running inside claude.ai, so it can't reach your routine. Open the link in claude.ai.", "bad");
+      $("help").open = true;
+      return;
+    }
+    try { mcp = await window.claude.use("mcp"); } catch (e) { mcp = null; debug.mcpError = String(e); }
+    try { perms = await window.claude.use("permissions"); } catch (e) { perms = null; }
+    debug.mcp = mcp ? "available" : "not available in this view";
+    if (mcp) { try { const l = await mcp.listTools(); debug.servers = (l.servers || []).map((s) => ({ server: s.server, auth: s.authStatus, tools: (s.tools || []).length })); } catch (e) { debug.servers = "listTools failed: " + why(e); } }
+    showDebug();
+    if (!mcp) {
+      status("This view can't use your connectors. Open the link in claude.ai in a desktop browser or the Claude desktop app, then reload.", "bad");
+      $("help").open = true;
+      return;
+    }
+    connect(false);
+  })();
+})();
+</script>

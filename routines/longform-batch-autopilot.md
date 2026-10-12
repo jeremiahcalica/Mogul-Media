@@ -17,7 +17,7 @@
 
 ## Dashboard runs
 
-The dashboard (`dashboard/longform-autopilot.html`, published at https://claude.ai/artifact/C5SUVeCGaTJVnDAT4QMMZR) starts runs by hand:
+The terminal (`dashboard/longform-terminal.html`, published at https://claude.ai/artifact/33LxHpXdvHM3puJdA3bhrf; it replaced the first dashboard, `dashboard/longform-autopilot.html`) starts runs by hand:
 1. It reads the routine's prompt and refuses to go on unless it is this prompt (it names the skill). It appends a section, `---`, a line `[dashboard-run]`, a line `Valid until: <now + 10 minutes>`, and the instruction ("Test flight for Mason.", "Dry run for everyone due: …", or whatever was typed), saves it, and reads it back.
 2. Only if the read-back matches, it fires the routine; the new session starts with that prompt.
 3. It always puts the prompt back as it was, even when a step failed. If that fails too, it shows "Restore the normal prompt", and it removes any leftover section before its next run. A leftover section that slipped through expires after 10 minutes: a scheduled run then ignores it and runs everyone due.

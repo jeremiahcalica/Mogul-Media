@@ -179,7 +179,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
               <option>Mason</option><option>Josh C</option><option>Keval</option><option>Caulen</option><option>Lior</option>
               <option>Abdul</option><option>Jason</option><option>Shane</option><option>Michael K</option><option>Zarak</option>
             </optgroup>
-            <optgroup label="Devin · Krisp">
+            <optgroup label="Devin · Krisp (doc from the sheet)">
               <option>Ben K</option><option>Teddy</option><option>Josh D</option><option>Marco</option><option>Nathan C</option>
             </optgroup>
           </select>
@@ -569,6 +569,11 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     let why = dry ? "A dry run reads everything and reports what it would make. It writes nothing."
       : "It can write the post-call brief, copy and fill this week's longform doc in your My Drive, and add to the run log. It skips anything already made.";
     if (cmd && /test flight/i.test(cmd)) why += " Test flight: titles start with [Autopilot test].";
+    // the client rules a run will apply, so the confirm says what to expect (Jeremiah, Oct 12)
+    const devin = /\b(ben k|teddy|josh d|marco|nathan c?)\b/i;
+    if (cmd && devin.test(cmd) && !dry) why += " Devin's pod: with no Krisp transcript there is no brief, and the doc follows the topic sheet, Type A included, for you to trim; the summary lists the Type A lines to check.";
+    if (cmd && /\blior\b/i.test(cmd) && !dry) why += " Lior: his topics are usually all Type B, so his doc comes from the sheet with or without a transcript.";
+    if (!dry) why += " Snipes and quick responses stay out of the main batch.";
     const live = $("runChip").className.includes("live") || runStillGoing(trig);
     if (live) why += " A run is still going. Starting another can make the same brief or doc twice; wait for it unless you're sure.";
     $("confirmWhy").textContent = why;
@@ -664,6 +669,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; max-widt
     "  brief only for Keval        no doc",
     "  doc only for Nathan C       no brief",
     "  dry run for everyone due    reads everything, writes nothing",
+    "Devin's pod with no Krisp transcript: the doc follows the topic sheet, Type A included. Lior: doc from the sheet either way.",
     "Built in: status, pause, resume, stop, clear, help.",
   ];
   async function terminal(text) {

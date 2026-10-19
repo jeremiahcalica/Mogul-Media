@@ -5,6 +5,14 @@ fixes are applied; hand edits that no rule can predict are excluded. Exceptions:
 ben_k_oct_wk2 are provisional snapshots of the script's own output, since neither week had a real doc
 when they were made (Nathan's first batch; Ben's statuses come from Jeremiah's real Oct 8 brief, and
 the value tweet rule from his real Oct Wk1 doc, where 'Value tweet ">" Listicle' stayed one X/LI line).
+ben_k_oct_wk3 is the same kind of snapshot, from his real Oct Wk3 brief, and it holds the two rules that
+week added: a "Kept, on hold for Trey" status is ON HOLD, so T2 gets no line, and a platform bracket
+carrying a build instruction still splits, so T8's "(LinkedIn, built natively)" gives an X and an LI line.
+nathan_c_oct_wk3 and marco_oct_wk3 are snapshots from their real Oct Wk3 briefs, holding that week's other
+rules: "X article plus a doc-screenshot QT" gives an Article and an Article wrapper line, a LinkedIn note on
+the sheet sets the LI vehicle through li_vehicle, "Kept, blocked" waiting on the client's answer is NOT
+ANSWERED (so Nathan's Type A T1 drops out), and a count that opens the vehicle ("2 short-form posts, one ad
+each", Marco T2) gives that many lines, each reading singular.
 Replace each with his real lines once he writes that week. type_a_rule and type_a_no_transcript are
 synthetic cases for Jeremiah's Oct 9 rule: a Type A topic gets a line only if the call answered it (not
 discussed, killed or unanswered = no line; no transcript = Type B only). type_a_sheet_default is his Oct 12

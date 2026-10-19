@@ -112,11 +112,22 @@ def size_warn(styles):
     return diffs
 
 
-def check_read(doc, lines, header):
+def check_read(doc, lines, header, want_tab=None):
     res = []
     tabs = doc.get("tabs") or []
-    res.append(("one tab", len(tabs) == 1, "%d tabs" % len(tabs)))
-    tab = tabs[0]["documentTab"] if tabs else doc
+    idx = 0
+    if tabs and want_tab:
+        # An extra tab carried over from last week's copy, which the API cannot delete (Lior Oct Wk3):
+        # check the named skeleton tab and warn about the rest, instead of failing the whole doc.
+        ids = [t["tabProperties"]["tabId"] for t in tabs]
+        if want_tab not in ids:
+            return [("tab %s present" % want_tab, False, ", ".join(ids))]
+        idx = ids.index(want_tab)
+        res.append(("one tab", None if len(tabs) != 1 else True,
+                    "%d tabs, checking %s; delete the extra tab by hand" % (len(tabs), want_tab)))
+    else:
+        res.append(("one tab", len(tabs) == 1, "%d tabs" % len(tabs)))
+    tab = tabs[idx]["documentTab"] if tabs else doc
     content = tab["body"]["content"]
     body = [c for c in content if "paragraph" in c]
     styles = {s["namedStyleType"]: s for s in tab.get("namedStyles", {}).get("styles", [])}
@@ -189,6 +200,9 @@ def main():
     header = None
     if "--header" in a:
         i = a.index("--header"); header = a[i + 1]; del a[i:i + 2]
+    want_tab = None
+    if "--tab" in a:
+        i = a.index("--tab"); want_tab = a[i + 1]; del a[i:i + 2]
     md = "--md" in a
     if md:
         a.remove("--md")
@@ -200,7 +214,8 @@ def main():
         doc = load(src)
         if isinstance(doc, dict) and (doc.get("minimal") or doc.get("subset")):
             doc = from_short(doc)
-        res = [("read form", False, doc)] if isinstance(doc, str) else check_read(doc, lines, header)
+        res = ([("read form", False, doc)] if isinstance(doc, str)
+               else check_read(doc, lines, header, want_tab))
     for name, ok, detail in res:
         tag = "WARN" if ok is None else "ok  " if ok else "FAIL"
         print("%s  %s%s" % (tag, name, ("  (" + detail + ")") if detail and not ok else ""))

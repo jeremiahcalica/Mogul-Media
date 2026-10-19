@@ -65,6 +65,9 @@ def para_text(p):
 def main():
     args = sys.argv[1:]
     style = "HEADING_2"
+    want_tab = None
+    if "--tab" in args:
+        i = args.index("--tab"); want_tab = args[i + 1]; del args[i:i + 2]
     if "--entry-style" in args:
         i = args.index("--entry-style"); style = args[i + 1]; del args[i:i + 2]
     doc_path, new_header, entries_path = args
@@ -72,10 +75,20 @@ def main():
     auto = re.fullmatch(r"auto:([A-Za-z]+):(\d+)", new_header)
     entries = json.load(open(entries_path))
     tabs = doc.get("tabs")
-    if tabs and len(tabs) != 1:
-        sys.exit("expected exactly one tab, found %d" % len(tabs))
-    tab_id = tabs[0]["tabProperties"]["tabId"] if tabs else None
-    body = (tabs[0]["documentTab"]["body"] if tabs else doc["body"])["content"]
+    # One tab is the rule. A copied doc can carry an extra tab from last week (Lior's "ARTICLE" tab,
+    # Oct Wk3), and the Docs API cannot delete a tab, so --tab names the skeleton tab to build and
+    # leaves the others untouched. Every location and range already carries this tabId.
+    if tabs and len(tabs) != 1 and not want_tab:
+        sys.exit("expected exactly one tab, found %d (pass --tab <tabId> to build one of them)"
+                 % len(tabs))
+    idx = 0
+    if tabs and want_tab:
+        ids = [t["tabProperties"]["tabId"] for t in tabs]
+        if want_tab not in ids:
+            sys.exit("tab %r not in this doc: %s" % (want_tab, ", ".join(ids)))
+        idx = ids.index(want_tab)
+    tab_id = tabs[idx]["tabProperties"]["tabId"] if tabs else None
+    body = (tabs[idx]["documentTab"]["body"] if tabs else doc["body"])["content"]
     paras = [c for c in body if "paragraph" in c]
 
     header = paras[0]

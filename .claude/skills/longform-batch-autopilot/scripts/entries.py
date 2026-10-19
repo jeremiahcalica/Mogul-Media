@@ -95,8 +95,11 @@ CLIENTS = {
     "Zarak A.": {"platforms": "X"},
 }
 
+# A platform bracket may carry a build instruction after a comma or semicolon: "(LinkedIn, built
+# natively)" (Ben K Oct Wk3 T8). The instruction is dropped and noted; digits are excluded so a post
+# count ("(X and LinkedIn, 2 posts)") still falls through to COUNT instead of being swallowed.
 TAG = re.compile(r"\s*\(\s*(X\s*(?:/|&|\+|and)\s*(?:LI|LinkedIn)|(?:LI|LinkedIn)\s*(?:/|&|\+|and)\s*X"
-                 r"|X|LI|LinkedIn|Twitter)\s*\)\s*", re.I)
+                 r"|X|LI|LinkedIn|Twitter)\s*(?:[,;]\s*(?P<extra>[^()\d]*?)\s*)?\)\s*", re.I)
 SEP = re.compile(r"\s+/\s+|(?<=\))\s*[/,;·]\s*|\s+·\s+|\n+")
 PREFIX = re.compile(r"^\s*[•\-*]?\s*\**\s*(X|Twitter|LI|LinkedIn)\s*\**\s*[:\-–]?\s*\**\s+", re.I)
 ASSET_TAG = re.compile(r"[\s.,-]*\bwith\s+(?:an?\s+)?images?\s*\(\s*(?:X|LI|LinkedIn)\s*\)", re.I)
@@ -109,6 +112,7 @@ FMT = {"thread", "threads", "listicle", "listicles", "infographic", "image", "im
        "screenshot", "post", "posts", "tweet", "carousel", "video", "checklist", "hook", "article", "graphic",
        "diagram", "reply", "list", "lists", "lines", "promo"}
 WORDN = {"two": 2, "three": 3, "four": 4}
+LEAD_COUNT = re.compile(r"^\s*(?:(\d+)|(two|three|four))\s+(?P<mid>(?:[\w-]+\s+)*?)posts?\b", re.I)
 
 
 def tag_norm(s):
@@ -186,7 +190,10 @@ def norm_vehicle(v, cfg, notes):
     return curl_double(lower_fmt(v))
 
 
-QT_AFTER = re.compile(r"(?:\bthen\b|\+|\band\b|\bwith\b),?\s+(?:a\s+)?(?:[\w-]+\s+){0,4}?(quote[\s-]?tweet|QT)\b", re.I)
+# "plus" reads as "+" in a vehicle (longform-doc.md rule 7), so it introduces a wrapper too:
+# "X article plus a doc-screenshot QT" (Nathan C Oct Wk3 T6)
+QT_AFTER = re.compile(r"(?:\bthen\b|\+|\bplus\b|\band\b|\bwith\b),?\s+(?:a\s+)?"
+                      r"(?:[\w-]+\s+){0,4}?(quote[\s-]?tweet|QT)\b", re.I)
 
 
 def article_pieces(plat, text, notes):
@@ -204,6 +211,15 @@ def article_pieces(plat, text, notes):
     return None
 
 
+def note_tag_extra(m, notes):
+    """Flag a build instruction dropped from inside a platform bracket ("(LinkedIn, built natively)")."""
+    extra = (m.groupdict().get("extra") or "").strip()
+    if extra:
+        note = "instruction dropped from the platform bracket: '%s': confirm" % extra
+        if note not in notes:
+            notes.append(note)
+
+
 def split_pieces(vehicle, plat_default, cfg, notes):
     """-> (pieces, count). pieces = [(platform, vehicle)]; a "WRAPPER" item adds an X article wrapper number."""
     parts = [p for p in SEP.split(vehicle) if p.strip() and p.strip() not in ("•", "-", "*")]
@@ -212,6 +228,8 @@ def split_pieces(vehicle, plat_default, cfg, notes):
         return article_pieces(plat, text, notes) or [(plat, norm_vehicle(text, cfg, notes))]
     tagged = [(TAG.search(p), p) for p in parts]
     if len(parts) > 1 and all(m for m, _ in tagged):
+        for m, _ in tagged:
+            note_tag_extra(m, notes)
         return [x for m, p in tagged for x in piece(tag_norm(m.group(1)), TAG.sub(" ", p))], None
     prefixed = [PREFIX.match(p) for p in parts]
     if len(parts) > 1 and all(prefixed):
@@ -223,11 +241,21 @@ def split_pieces(vehicle, plat_default, cfg, notes):
         plat, v = "X/LI", PLAT_PHRASE.sub("", v)
     m = TAG.search(v)
     if m:
+        note_tag_extra(m, notes)
         plat, v = tag_norm(m.group(1)), TAG.sub(" ", v).strip()
     c = COUNT.search(v)
     if c:
         count = int(c.group(1)) if c.group(1) else WORDN.get(c.group(2).lower()) or int(c.group(2))
         v = v[:c.start()]
+    if count is None:
+        # A count can open the vehicle instead of trailing it: "2 short-form posts, one ad each"
+        # (Marco B Oct Wk3 T2). It sets the number of lines, so each line's vehicle reads singular.
+        lc = LEAD_COUNT.match(v)
+        if lc:
+            count = int(lc.group(1)) if lc.group(1) else WORDN[lc.group(2).lower()]
+            v = lc.group("mid") + "post" + v[lc.end():]
+            notes.append("vehicle count '%s' gives %d lines; each line's vehicle reads singular: confirm"
+                         % (lc.group(0).strip(), count))
     plat = plat or plat_default
     base = v.strip()
     if re.match(r"^X\s+article\b", base, re.I):
@@ -271,6 +299,13 @@ def perspective_text(p, cfg, notes):
 def status_norm(s):
     s = re.sub(r"\*", "", (s or "")).strip()
     s = re.sub(r"^(NOTE|STATUS)\s*:\s*", "", s, flags=re.I).upper()
+    # A brief can keep a topic and park it in the same breath: "Kept, on hold for Trey" (Ben K Oct Wk3 T2,
+    # questions sent to Trey) or "Kept, blocked. He couldn't answer live" (Nathan C Oct Wk3 T1). The parking
+    # word decides, so drop a leading answered word that only introduces it. "Kept, blocked" with nothing
+    # waiting on an answer still reads BLOCKED (answered, waiting on an asset), which keeps its line.
+    s = re.sub(r"^(KEPT|ANSWERED|GO|DRAFTABLE|READY)\b[\s,.;:–—-]+"
+               r"(?:(?:BUT|AND|NOW|THEN|STILL)\b[\s,]*)?"
+               r"(?=(ON HOLD|BLOCKED|PARKED|NOT ANSWERED|UNANSWERED|DEFERRED)\b)", "", s)
     table = [
         (r"^KILLED\b.*\bREPLAC", "PIVOT"),
         # anchored: "KILLED (already covered in last week's post)" is KILLED, not COVERED (audit, Oct 10)

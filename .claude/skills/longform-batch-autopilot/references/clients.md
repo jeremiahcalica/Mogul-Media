@@ -12,7 +12,7 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
   - POD 1 (Devin Team): `1ic67mJ6FyTzSZkwCROilV2YKN5yIVK-j`, strategist Devin (Devin Downs, ClickUp 88679247). Calls recorded on **Krisp**, which a run can't read yet. With no transcript and no brief, the doc follows the topic sheet, Type A included, and Jeremiah trims it (Oct 12).
 - **Jeremiah's My Drive root:** `0APF3ebrWaXbcUk9PVA`. Confirm with `get_file_metadata` `fileId "root"`.
 - **ClickUp:** workspace `9015589795`, space `90152587982`. Each client has a folder `<PREFIX> | INTERNAL` with a list `CONTENT WRITING`. Tasks are named `<PREFIX> | <MON> WK<N> | Longforms`, with siblings `| New Topics` and `| Design Request`. Jeremiah is ClickUp user 306644176.
-- **Schedule doc:** a Claude Doc titled `Next Week: Topics and Content Batches (<dates>)`. The schedule chat updates it every week and the dates in the title change ("it is updated weekly so keep that in mind", Jeremiah, Oct 9). Known: artifact `5dSKyoafmKQJ93gw67JPi2` (claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b), "(Oct 12–16)" on Oct 9. SKILL.md Step 1.1 opens it and checks the Artifact list for a newer one.
+- **Schedule doc:** a Claude Doc titled `Next Week: Topics and Content Batches (<dates>)`. The schedule chat updates it every week and the dates in the title change ("it is updated weekly so keep that in mind", Jeremiah, Oct 9). Known: artifact `HkpTzXjmF4gWqRRvo9Uz1F` (claude.ai/code/artifact/87b073c6-870c-40df-a85e-b4212748d5ca), "(Oct 19–23)" on Oct 19. SKILL.md Step 1.1 opens it and checks the Artifact list for a newer one.
 - **Schedule chat:** "Client topic batch and long-form schedule", pinned in claude.ai.
   - Cowork session `cse_01VT4cAcAw8Wrd4LPaCmyNiQ` (claude.ai/chat/f6da90a8-f5ac-80f7-905d-050254f551d3).
   - Bypass permissions, his usual model. It refreshes the doc from Slack and ClickUp when asked.
@@ -34,7 +34,7 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
 | Ben K | BEN K | Devin | Ben K. | Ben K. | Ben K. | `1YWQ8qF4n3sU6hcfGCPdVeGhhZLjPED5e` | `1EevVodfNeQHT0qdHWXIexkxsYsMIJKqw` | `1TGrmHuENr19hW9RprZO1mfu6Fd3fHS1_` |
 | Teddy | TEDDY | Devin | Teddy T. | Teddy T. | Teddy T. | `1BSW_ukz05qyUTDDze0qHs0UgFaLNV95m` | `18hrCHizlOUtzlryGWw-LcawyvNNPO8eg` | `12rpupzdU8HtvAaXpwibvCAWWAX77rMYS` |
 | Josh D | JOSH D | Devin | Josh D. | Josh D. | Josh D. | `1oaGHaMJbhX9C0vdEEaDIoaPQz4g479g7` | `1t9Q2aNk0MYtoREM0LHGfKNddOwaTMV_M` | `1kb8QtomLcEgSdNmhw98TNXlRgI0qorIn` |
-| Marco | MARCO | Devin | Marco B. | Marco B. | Marco B. | `1YCqqTRlU92RCOGBGlVElLUGdF1KP6Cfj` | `1QykvIQ6gvjZBq3iSftVDfFgJycp_jqoy` | `1Z9U2-AUec_9Zou3B0b_Jkd--_AbJunIq` |
+| Marco | MARCO | Devin | Marco B. | Marco B. | Marco B. | `1YCqqTRlU92RCOGBGlVElLUGdF1KP6Cfj` | `1_092r7OiFUYhudY3UR6Yw2gWjnjrdRow` (was `1QykvIQ6gvjZBq3iSftVDfFgJycp_jqoy`, which holds no weekly docs; corrected Oct 19) | `1Z9U2-AUec_9Zou3B0b_Jkd--_AbJunIq` |
 | Nathan C | NATHAN C (folder NATHAN; next-week tasks say "NATHAN") | Devin | Nathan C. | Nathan C. | (none yet) | `1D3z_7gjfP0A6Jkb6vcEMSk6GnnuQuccv` | `1LjQtm1TaEU7yxhZ0LzqsdTkw1fiUSuSZ` | `1BNcC5pomnIS10VXdiBHZ7ZSCY3AVbZeS` |
 
 ## Per-client notes
@@ -65,13 +65,16 @@ Each client goes by several names: one in the schedule doc, one in ClickUp, one 
   - "+ photo" is dropped from vehicles; a thread's LinkedIn half is "Long-form listicle".
 - **Keval:** "X article, then quote tweet" gives an Article line plus an Article wrapper line. Value-tweet lines copy the sheet's PERSPECTIVE and VEHICLE like any topic (Oct Wk2 happened to read `(Client win) - (Value tweet screenshot)`; it is not a habit).
 - **Shane:** repurposed long-forms. His Topics folder sits under Account Report.
+  - His sheet is named `Shane - OCT Wk<n> - Topics`, and the ClickUp task name can lag a week behind it (OCT WK3 sheet against a SHANE | OCT WK2 | Longforms task, Oct 19). The sheet sets the week.
+  - **His calls can be on tl;dv, not Fireflies.** On Oct 19 Jeremiah attached the transcript to the Longforms task himself as `meeting_transcript_<id>.md` and posted the `tldv.io/app/meetings/<id>/` link. A ClickUp attachment is the MD download the Looms ask for, so use it when it is there: `clickup_get_task` with `include ["attachments"]`, then `clickup_download_task_attachment` and fetch the returned URL at once (it is single-use and expires in about 5 minutes). From a cloud session the attachment host `t9015589795.p.clickup-attachments.com` must be allowed by the environment's network policy, or the download is refused.
+  - Every topic on his sheet can be Type A (all four were, Oct Wk3), so with no transcript his doc would have no lines at all. Don't write an empty doc: report it and leave the doc unmade.
 - **Zarak:** X only, so the default platform is `(X)`. Last day is Oct 25.
 - **Ben K:**
   - His shared docs carry last week's "Quick Response Post" block above LONGFORMS. The batch script deletes it.
   - His Topics doc has a stale STRATEGY tab (tabId `t.0`; in OCT WK2 it sits second). Always pick CLIENT STRATEGY by name.
   - He splits CTA posts into X and LI. Value tweets stay one X/LI line unless a FOR LINKEDIN note gives a LinkedIn format (his Oct Wk1 doc: T8's value tweet unsplit).
   - His snipes and quick responses go in separate "(Snipes) " and "(Quick response posts) " docs; those titles end in a space.
-- **Nathan C:** new client, first batch OCT WK2. There is no earlier longform doc, so build it as a new empty doc (`references/longform-doc.md`, Exceptions; never an HTML import). Devin reviews it Tuesday evening, Jeremiah finalizes by Wednesday morning.
+- **Nathan C:** his first batch was OCT WK2, built as a new empty doc because nothing earlier existed. From OCT WK3 on there is a doc to copy, so he is an ordinary client; keep the new-doc route (`references/longform-doc.md`, Exceptions; never an HTML import) only for a client with no earlier doc at all. Devin reviews Tuesday evening, Jeremiah finalizes by Wednesday morning.
   - Another "Nathan" is in Drive (Nathan Snell, nCino / Rayleon). Never use his files (Nathan Oct Wk2 flight).
 - **Teddy:** Devin's Oct 7 EOD moves his writing to Ymarie, and Arooba wrote in the group DM (Oct 7): "we're gonna be moving teddy from you to ymarie". The schedule doc still gives the batch to Jeremiah, so follow it, and put "Teddy: confirm he's still yours (Arooba, Oct 7)" in the summary until that's settled.
   - His Topic 1 is usually a Quick Response or Snipe ("bring 2–3 recent wins"), which goes in its own doc, not LONGFORMS. He has used "(Snipe)", "(Snipes)" and "(Quick Response)": name it with last week's exact suffix.

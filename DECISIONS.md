@@ -10,7 +10,7 @@ Start here before changing anything. This file holds every rule Jeremiah set, th
 | What actually runs | The skill installed on Jeremiah's claude.ai account, from `dist/longform-batch-autopilot.skill`. A change in the repo does nothing until it is repackaged and reinstalled |
 | The schedule | Routine "Longform Batch Autopilot" (`trig_01KHnmqSHRLJhaURiFFbgoyG`), 9:52 AM and 9:52 PM Manila, paused until Jeremiah turns it on. Its prompt is in `routines/longform-batch-autopilot.md` |
 | The terminal | https://claude.ai/artifact/33LxHpXdvHM3puJdA3bhrf ("Longform Terminal"), built from `dashboard/longform-terminal.html`: type an instruction, Run, Confirm, and watch the run's output. It replaced the first dashboard (https://claude.ai/artifact/C5SUVeCGaTJVnDAT4QMMZR, `dashboard/longform-autopilot.html`), which Jeremiah couldn't get to work (Oct 12). To change it, edit the file and republish to the same link |
-| The queue | The Claude Doc "Next Week: Topics and Content Batches (…)", kept by the pinned chat "Client topic batch and long-form schedule" (Cowork session `cse_01VT4cAcAw8Wrd4LPaCmyNiQ`). Jeremiah: "it is updated weekly". So far the chat has started a new doc each week ("(Oct 5–9)", then "(Oct 12–16)"); a run reads the one with the latest title dates, fresh every time. Known doc: https://claude.ai/code/artifact/257af056-867b-41ed-98ea-64cc1f8a1a8b (also https://claude.ai/artifact/5dSKyoafmKQJ93gw67JPi2) |
+| The queue | The Claude Doc "Next Week: Topics and Content Batches (…)", kept by the pinned chat "Client topic batch and long-form schedule" (Cowork session `cse_01VT4cAcAw8Wrd4LPaCmyNiQ`). Jeremiah: "it is updated weekly". So far the chat has started a new doc each week ("(Oct 5–9)", "(Oct 12–16)", "(Oct 19–23)"); a run reads the one with the latest title dates, fresh every time. Known doc: https://claude.ai/artifact/HkpTzXjmF4gWqRRvo9Uz1F (also https://claude.ai/code/artifact/87b073c6-870c-40df-a85e-b4212748d5ca) |
 | What each run did | The Claude Doc "Longform Autopilot — Run Log", made on the first real run, plus the push notification |
 | Where the rules came from | `sops/loom-nuances.md` (every nuance in the two Looms, with evidence), `sops/loom-timelines.md`, `sops/source/` (his mini-SOPs and the Loom transcripts) |
 
@@ -99,6 +99,25 @@ All on Oct 9 2026, Manila time, unless the row says otherwise. His words are ver
 26. **The push stays within 8 lines:** new docs share one "Star these: …" line, clients get their own line only for a problem or a doubt, and the rest is in the run log. A test flight or dry run may print its report above the summary.
 27. **A test flight is authorized to write `[Autopilot test]` copies even when the real brief and doc exist,** with no run log entry; the routine prompt says so, or the run's own write list would refuse it.
 
+## Rules added on the Oct 19 run (Oct Wk3)
+
+These are mechanics, not new decisions of Jeremiah's: each applies a rule he had already set to a wording
+the scripts could not read, and each comes from a real case in that run. He still has to check the output.
+Golden cases `ben_k_oct_wk3`, `nathan_c_oct_wk3` and `marco_oct_wk3` hold them.
+
+| What the run hit | What was wrong | The rule now | Lives in |
+|---|---|---|---|
+| Ben K T2, "Kept, on hold for Trey" (questions sent to Trey's sales team); Nathan C T1, "Kept, blocked" where he couldn't answer live | `status_norm` reads only the first word, so both read KEPT and got lines, though the inclusion table puts ON HOLD out and a BLOCKED-waiting-on-an-answer status under NOT ANSWERED | A leading answered word that only introduces a parking word is dropped, so the parking word decides: "Kept, on hold …" is ON HOLD, "Kept, blocked … waiting on his answer" is NOT ANSWERED, and "Kept, but blocked on an asset" stays BLOCKED (in) | `scripts/entries.py` `status_norm` |
+| Ben K T8, `Thread with a headline image (X); longform with the same image (LinkedIn, built natively)` | the platform bracket carried a build instruction, so `TAG` didn't match it, the X/LI split failed and one line held both halves | A platform bracket may carry an instruction after a comma or semicolon; the instruction is dropped and flagged. Digits are excluded so a post count still falls through to `COUNT` | `scripts/entries.py` `TAG`, `note_tag_extra` |
+| Nathan C T6, `X article plus a doc-screenshot QT.` | "plus" was not one of the connectors `QT_AFTER` knew, so the wrapper line was dropped as a qualifier | "plus" reads as "+" in a vehicle (`longform-doc.md` rule 7), so it introduces an Article wrapper line like "then" and "+" | `scripts/entries.py` `QT_AFTER` |
+| Marco B T2, `2 short-form posts, one ad each` | `COUNT` only reads a count that trails the vehicle, so the count stayed in the text and both lines read "2 short-form posts", which reads as four | A count that opens the vehicle sets the number of lines too, and each line's vehicle reads singular. Flagged | `scripts/entries.py` `LEAD_COUNT` |
+| Lior P's Oct Wk2 doc carries a second tab, "ARTICLE", so the copy did too | `longform_batch.py` stops on more than one tab, and the Docs API cannot delete a tab, so his doc could not be written at all | `--tab <tabId>` names the skeleton tab to build and leaves the others alone (every location and range already carries the tabId); `verify_doc.py --tab` checks that tab and warns about the extra one instead of failing. Without `--tab` the one-tab rule still holds. The run says to delete the extra tab by hand | `scripts/longform_batch.py`, `scripts/verify_doc.py` |
+| Shane H: every topic on the sheet was Type A, two of them snipes, and the transcript could not be read | the Type A rule left no lines, so the doc would have had an empty LONGFORMS | With no line to write, don't write the doc: report it and leave it unmade. An empty doc is worse than none, since he would have to redo it once the transcript is in | `references/clients.md` › Shane |
+
+Also corrected from that run: the schedule doc for the week (`HkpTzXjmF4gWqRRvo9Uz1F`), Marco's Content folder in
+`clients.md` (the listed one holds no weekly docs), Nathan C no longer being a first batch, and Shane's sheet
+setting the week when his ClickUp task name lags behind it.
+
 ## Open questions for Jeremiah
 
 Until he answers, each is handled as described and flagged in the run summary.
@@ -119,6 +138,10 @@ Until he answers, each is handled as described and flagged in the run summary.
 | 12 | Confirm the schedule: 9:52 AM and 9:52 PM Manila, every day. | Routine | That schedule, paused |
 | 13 | Ben's long X vehicles ("Thread with headline image", "Quote tweet with 2 doc-screenshot images") vs his shorter "Thread", "GDS/quote tweet of article"; Lior's bracket qualifier next to "+ asset" (T4, T7). | Ben K, Lior | Sheet wording, not flagged |
 | 14 | How often should a run ask the schedule chat for a refresh? In Loom 1 you ask each time you start; the routine runs twice a day. | Routine | Only in everyone-due runs, when the doc is stale or over a day old (design 25) |
+| 15 | Shane's calls are on **tl;dv**, not Fireflies, and on Oct 19 you attached the transcript MD to the ClickUp task yourself. Is that the route from now on for him (and anyone else)? A cloud run can read a ClickUp attachment only if the environment's network policy allows `t9015589795.p.clickup-attachments.com`. | Shane | Attachment route coded and used when reachable; this run was blocked, so no doc and no brief |
+| 16 | Ben's three coaching-launch topics (L-A, L-B, L-C) were answered on the call but carry no vehicle, and the launch plan doc wasn't shared with the brief. Add lines for them? | Ben K | No lines; listed in the run log |
+| 17 | Ben T1: the STRATEGY section says Type A and the client-facing one says Type B. It decides whether the topic gets a line at all (Type A + not discussed = out). | Ben K | Type A, as the brief's own numbering has it: out, with its would-be line |
+| 18 | Josh C: Kyle asked on Oct 17 (schedule note) for a YouTube promo post in this batch, but no topic for it is on the sheet. A sheet topic, or a freeform line? | Josh C | Not added; listed in the run log |
 
 Settled without him, from his own real outputs (say if any is wrong): an off-angle answer that is accepted is PIVOT (angle); waiting on someone else's assets is NOT ANSWERED, so no line (his "On hold"); an answer the client wrote on the sheet after the call doesn't add a line (it is listed); Ben's value tweets stay one X/LI line.
 
@@ -164,7 +187,7 @@ Links to every test doc and brief are in the session transcript; the docs are li
 
 ## IDs
 
-- Routine `trig_01KHnmqSHRLJhaURiFFbgoyG`; schedule chat `cse_01VT4cAcAw8Wrd4LPaCmyNiQ` (claude.ai/chat/f6da90a8-f5ac-80f7-905d-050254f551d3); schedule doc `5dSKyoafmKQJ93gw67JPi2` = `257af056-867b-41ed-98ea-64cc1f8a1a8b` (the Oct 5–9 week's was `WhJtVnjwL4ztCovnEGmGX8`).
+- Routine `trig_01KHnmqSHRLJhaURiFFbgoyG`; schedule chat `cse_01VT4cAcAw8Wrd4LPaCmyNiQ` (claude.ai/chat/f6da90a8-f5ac-80f7-905d-050254f551d3); schedule doc `HkpTzXjmF4gWqRRvo9Uz1F` = `87b073c6-870c-40df-a85e-b4212748d5ca` (Oct 19–23; earlier weeks: `5dSKyoafmKQJ93gw67JPi2` = `257af056-867b-41ed-98ea-64cc1f8a1a8b` for Oct 12–16, `WhJtVnjwL4ztCovnEGmGX8` for Oct 5–9).
 - My Drive root `0APF3ebrWaXbcUk9PVA`; ClickUp workspace `9015589795`, space `90152587982`; Jeremiah 306644176, Kyle 120211600, Devin 88679247. Every client's folders: `references/clients.md`.
 - His real outputs used as references: Mason brief `6WmBeLB5ZDBBsAHFG1QENx`, Mason Wk2 doc `167ngEIEU_hgNP-ML1vPBL_NslV7YtK5InF9wQ4s3jOc`, Josh Chin brief `21DpTAV3tTyyz33eKihwL7`, Ben K brief `HSaC73NTFvCt2iT9AMZ1tR`, Caulen Wk2 doc `1b1KiVovf-lHQOztKJMdZ6uv6sXIoid56Df0_7YPTMNg`, Teddy Oct Wk1 brief `Q97rUVTeXVtur3t96zH7wy`.
 - Branch `claude/quirky-gates-shi8bl` of `jeremiahcalica/Mogul-Media`.

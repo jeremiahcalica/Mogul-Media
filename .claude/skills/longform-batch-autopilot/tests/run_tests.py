@@ -17,7 +17,10 @@ josh_c_oct_wk3 holds the per-topic `include` override: he had no transcript, so 
 Topics 3 and 4 out, then he asked for Topic 4 back ("we need to include topic 4", Oct 19). T4 is in and
 numbered first, T3 stays out with its would-be line, and the two snipes stay out, since `include` cannot
 bring back a killed, struck, snipe, merged, parked or on-hold topic.
-Replace each with his real lines once he writes that week. type_a_rule and type_a_no_transcript are
+shane_oct_wk3 is from his real Oct Wk3 brief and holds two more: a VEHICLE still written "TBD" on the sheet
+is a problem, not a note (the line ships carrying TBD until someone picks the vehicle), and a topic the
+strategist asked for on the call but that is not on the sheet comes in as a freeform topic numbered after the
+sheet's last. Replace each with his real lines once he writes that week. type_a_rule and type_a_no_transcript are
 synthetic cases for Jeremiah's Oct 9 rule: a Type A topic gets a line only if the call answered it (not
 discussed, killed or unanswered = no line; no transcript = Type B only). type_a_sheet_default is his Oct 12
 exception for Devin's pod: no Krisp transcript, so every topic comes from the sheet, Type A included.

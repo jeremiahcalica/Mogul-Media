@@ -143,6 +143,7 @@ For each queued client, work in a folder `<client>_<mon>wk<n>/` and keep a short
   - In the tab, "Me" is Josh (he records), "Kyle Meng" is Kyle and "Them" is anyone else. There are no timestamps: use brief.md's no-timestamp variant. The tab's "Date:" line is the call date.
 - **No call link and no transcript tab:** no transcript. If a sheet comment or a task comment says a call happened ("Instructions given on call", Lior, Oct 9), say so: "call happened, transcript link missing: ask <Strategist> for it".
   - Exception: when every topic on the sheet is Type B (Lior's usually are: "For Lior, we usually / only have type B topics… sometimes we have transcripts, sometimes we don't", Oct 12), the transcript changes nothing in the doc. Say it in one run-log line, not as a to-do or a push line (`references/clients.md` › Lior).
+- **A transcript Jeremiah hands over** (uploaded into the chat, or saved to the scratchpad): use it as it stands, like any other route. He did this for Shane on Oct 19 after the ClickUp attachment host was refused. Say which file it was in the run log.
 - **Kyle's PDF:** Kyle also attaches the transcript as a PDF (`<TITLE>-<hash>.pdf`). Jeremiah skips it and goes to the Fireflies link (Loom 1, 1:48–1:55), so don't use it.
 - **Fallback:** if the Fireflies fetch fails, use the transcript text Kyle sometimes pastes into the task's "Google Drive / Google Docs" field. It starts `<Speaker> - 00:00` and ends "Transcribed by https://fireflies.ai/". Flag that you did.
 

@@ -554,6 +554,12 @@ def build(data):
         if not vehicle.strip():
             vehicle = "Long-form promo" if re.search(r"promo", t.get("title") or "", re.I) else "Long-form"
             notes.append("T%s has no VEHICLE: used %r, confirm" % (tn, vehicle))
+        # The sheet can hold the vehicle open until the client answers ("TBD (based on Shane's answer)",
+        # Shane H Oct Wk3 T3). That is an empty slot like any other, so it is a problem, not a note: the
+        # line ships with TBD in it until the vehicle is picked.
+        if re.match(r"\s*TBD\b", vehicle, re.I) and not t.get("vehicle_override"):
+            problems.append("T%s VEHICLE is still %r on the sheet: the line carries TBD, pick the vehicle"
+                            % (tn, vehicle.strip()))
         if t.get("freeform"):
             notes.append("freeform extra post T%s (%s): confirm" % (tn, persp))
             if not isinstance(tn, int):

@@ -7,6 +7,8 @@ Usage: check_quotes.py TRANSCRIPT BRIEF.md [--sheet SHEET.txt ...] [--json]
                 the first one may start "Sentences: "; H:MM:SS past the hour.
               - Kyle's pasted form (the task's "Google Drive / Google Docs" field): a "<Speaker> - MM:SS" line,
                 then that turn's text, ending "Transcribed by https://fireflies.ai/"; page headers are dropped.
+              - tl;dv markdown export: "**[MM:SS.mmm] Speaker:** text" lines; a segment runs to the next
+                one's start, since the export gives no end time.
               - untimed (Granola, the Topics doc's third tab): "Me: ...", "Them: ...", "Kyle Meng: ..." lines,
                 or a "Speaker:" line followed by its text. Lines above "Transcript:" are the header.
   BRIEF.md    the brief, markdown or plain text.
@@ -146,6 +148,15 @@ def parse_transcript(text):
             for m in (ff.match(l.strip()) for l in text.splitlines()) if m]
     if len(segs) >= 2:
         return "Fireflies", segs
+    # tl;dv markdown export (Shane's calls, Oct Wk3): "**[MM:SS.mmm] Speaker:** text", one line per segment.
+    # A segment runs to the next one's start, since the export gives no end time.
+    tld = re.compile(r"\*\*\[(%s)(?:\.(\d{1,3}))?\]\s*([^:\]]{1,80}?):\*\*\s?(.*)$" % TS)
+    segs = [{"start": tsec(m.group(1)), "end": None, "speaker": m.group(3).strip(), "text": m.group(4)}
+            for m in (tld.match(l.strip()) for l in text.splitlines()) if m]
+    if len(segs) >= 2:
+        for a, b in zip(segs, segs[1:] + [None]):
+            a["end"] = max(a["start"], b["start"]) if b else a["start"] + 120
+        return "tl;dv", segs
     # Kyle's paste: page headers, footers and page numbers sit inside the text
     t = re.sub(r"Transcribed by https?://fireflies\.ai/?(\s*\d+\s*/\s*\d+)?", "\n", text)
     t = re.sub(r"Meeting Title:[^\n]*?(?:\n\s*)?Meeting created at:[^\n]*?\d{1,2}:\d{2}\s*[AP]M(\s*\d+\s*/\s*\d+)?",

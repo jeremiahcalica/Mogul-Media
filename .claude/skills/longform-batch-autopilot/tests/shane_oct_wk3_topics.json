@@ -1,0 +1,81 @@
+{
+ "client": "Shane H.",
+ "strategist": "Kyle",
+ "platforms": "X, LinkedIn",
+ "call": true,
+ "expected_posts": null,
+ "topics": [
+  {
+   "n": 1,
+   "type": "A",
+   "label": "SNIPE",
+   "title": "Snipe: The Value Stack Is Dead",
+   "posts": 1,
+   "vehicle": "Snipe (X/LI)",
+   "perspective": "An operator who sells a high-ticket program through YouTube and sales calls, answering from what he actually does. Never a jab at Hormozi. Even if Shane agrees, it should read as \"copies stopped working,\" not \"Hormozi ruined offers.\"",
+   "status": "KEPT (snipe). Asked at 00:11 and answered through to 06:52, but the transcript keeps only the first line of the answer.",
+   "struck": false,
+   "check": null,
+   "objective": "Comments. The inspo pulled 103 bookmarks and 14 replies on 140 likes (14.3K views) within a day.",
+   "extra_posts": []
+  },
+  {
+   "n": 2,
+   "type": "A",
+   "label": "SNIPE",
+   "title": "Snipe: AI Becomes the Chauffeur",
+   "posts": 1,
+   "vehicle": "Snipe (X/LI)",
+   "perspective": "An operator who uses AI in his channel and business every day. Practical, not hype, and no \"AI replaces creators\" doom. No jab at Greg.",
+   "status": "NOT DISCUSSED",
+   "struck": false,
+   "check": null,
+   "objective": "Comments. Within hours, the inspo pulled 96 replies and 119 bookmarks on 579 likes (29.4K views), about 1 reply for every 6 likes.",
+   "extra_posts": []
+  },
+  {
+   "n": 3,
+   "type": "A",
+   "label": null,
+   "title": "YouTube's Two Decades Without a Rival",
+   "posts": 1,
+   "vehicle": "TBD (based on Shane's answer)",
+   "perspective": "Someone who built his business on YouTube, giving a grounded view from inside the platform. No dunking on other platforms or creators.",
+   "status": "KEPT. Answered in full from 07:18.",
+   "struck": false,
+   "check": null,
+   "objective": "Reach + comments. The source post pulled 249K likes and 829 replies (5.5M views), so the debate is already live.",
+   "extra_posts": []
+  },
+  {
+   "n": 4,
+   "type": "A",
+   "label": null,
+   "title": "The 4 Types of Buyers in Shane's Program",
+   "posts": 1,
+   "vehicle": "One-line hook + Notes-style screenshot, numbered types (X/LI)",
+   "perspective": "A founder describing the people who buy from him, with respect. These buyers are his ICP, so no type should read as a dig at prospects. If one is a \"don't sell to them\" type like the inspo's Cynic, frame it as \"not a fit,\" not as an insult.",
+   "status": "NOT DISCUSSED",
+   "struck": false,
+   "check": null,
+   "objective": "Saves. The inspo pulled 86 bookmarks on 136 likes (19.3K views), so bookmarks run at about two-thirds of likes.",
+   "extra_posts": []
+  },
+  {
+   "n": 5,
+   "type": null,
+   "label": null,
+   "freeform": true,
+   "title": "Channel breakdown: Bluesense Digital",
+   "posts": 1,
+   "vehicle": "Channel breakdown (X)",
+   "perspective": null,
+   "perspective_override": "Bluesense Digital breakdown",
+   "status": "NEW. Wiz asked for it on the call and Shane did the breakdown (12:35-24:04).",
+   "struck": false,
+   "check": null,
+   "objective": "Revive the channel-breakdown series on his X account.",
+   "extra_posts": []
+  }
+ ]
+}

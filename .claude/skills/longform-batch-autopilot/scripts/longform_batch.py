@@ -65,6 +65,9 @@ def para_text(p):
 def main():
     args = sys.argv[1:]
     style = "HEADING_2"
+    keep_media = "--keep-media-folder" in args
+    if keep_media:
+        args.remove("--keep-media-folder")
     want_tab = None
     if "--tab" in args:
         i = args.index("--tab"); want_tab = args[i + 1]; del args[i:i + 2]
@@ -168,23 +171,27 @@ def main():
     # 5c. the label stays bold; the space and the paragraph mark after it are not (Mason's real Week 2 doc)
     first = media[0]["paragraph"]["elements"][0]
     label_at = first.get("textRun", {}).get("content", "").find(":")
-    if label_at >= 0 and first["startIndex"] + label_at + 1 < media[0]["endIndex"]:
+    if not keep_media and label_at >= 0 and first["startIndex"] + label_at + 1 < media[0]["endIndex"]:
         reqs.append({"updateTextStyle": {"range": rng(first["startIndex"] + label_at + 1, media[0]["endIndex"]),
                      "textStyle": {}, "fields": "bold"}})
     # 6. remove non-text elements (rich link / chip / image) from the Media Folder paragraph,
-    #    keeping the label and its trailing space; done after all edits below it, highest first
-    for el in sorted(media[0]["paragraph"]["elements"], key=lambda x: -x["startIndex"]):
-        if "textRun" not in el:
-            reqs.append({"deleteContentRange": {"range": rng(el["startIndex"], el["endIndex"])}})
-        elif el["textRun"].get("textStyle", {}).get("link"):
-            # plain hyperlinked text (no chip): delete the linked text itself
-            reqs.append({"deleteContentRange": {"range": rng(el["startIndex"], el["endIndex"]
-                         - (1 if el["textRun"]["content"].endswith("\n") else 0))}})
+    #    keeping the label and its trailing space; done after all edits below it, highest first.
+    #    --keep-media-folder leaves whatever is on that line alone: on a RERUN of a doc someone has
+    #    since filled in, the chip is wanted, and stripping it would undo their work (Josh C Oct Wk3,
+    #    rerun to add Topic 4, by which time the folder chip was in).
+    if not keep_media:
+        for el in sorted(media[0]["paragraph"]["elements"], key=lambda x: -x["startIndex"]):
+            if "textRun" not in el:
+                reqs.append({"deleteContentRange": {"range": rng(el["startIndex"], el["endIndex"])}})
+            elif el["textRun"].get("textStyle", {}).get("link"):
+                # plain hyperlinked text (no chip): delete the linked text itself
+                reqs.append({"deleteContentRange": {"range": rng(el["startIndex"], el["endIndex"]
+                             - (1 if el["textRun"]["content"].endswith("\n") else 0))}})
     # 6b. the label keeps one trailing space ("Media Folder: "), as in the real docs, even when
     #     the chip was already gone
     m_text = para_text(media[0])
     has_obj = any("textRun" not in el for el in media[0]["paragraph"]["elements"])
-    if not has_obj and m_text.endswith(":\n"):
+    if not keep_media and not has_obj and m_text.endswith(":\n"):
         mloc = {"index": media[0]["endIndex"] - 1}
         if tab_id:
             mloc["tabId"] = tab_id

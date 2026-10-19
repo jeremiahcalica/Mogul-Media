@@ -112,7 +112,7 @@ def size_warn(styles):
     return diffs
 
 
-def check_read(doc, lines, header, want_tab=None):
+def check_read(doc, lines, header, want_tab=None, keep_media=False):
     res = []
     tabs = doc.get("tabs") or []
     idx = 0
@@ -155,7 +155,12 @@ def check_read(doc, lines, header, want_tab=None):
     res.append(("header", ok, repr(ptext(hd))))
     mf_ok = (ptext(mf) == "Media Folder: \n" and all("textRun" in e for e in mf["paragraph"]["elements"])
              and not any(e["textRun"].get("textStyle", {}).get("link") for e in mf["paragraph"]["elements"]))
-    res.append(("Media Folder emptied (label + one space, no chip or link)", mf_ok, repr(ptext(mf))))
+    if keep_media:
+        # a rerun of a doc someone has since filled in: the chip is theirs and stays (Josh C Oct Wk3)
+        res.append(("Media Folder left as it was (label intact, chip kept)",
+                    ptext(mf).startswith("Media Folder:") or None, repr(ptext(mf))))
+    else:
+        res.append(("Media Folder emptied (label + one space, no chip or link)", mf_ok, repr(ptext(mf))))
     res.append(("LONGFORMS", ptext(lf) == "LONGFORMS\n", repr(ptext(lf))))
     rest = body[3:]
     want = []
@@ -171,7 +176,7 @@ def check_read(doc, lines, header, want_tab=None):
     return res
 
 
-def check_md(md, lines, header):
+def check_md(md, lines, header, keep_media=False):
     rows = [r.strip() for r in md.splitlines() if r.strip()]
     unb = lambda r, lvl: re.fullmatch(r"#{%d}\s+\*\*(.*)\*\*\s*(.*)" % lvl, r)
     # read_file_content opens with the tab's title as an unbolded H1 ("# Tab 1", "# Content", Josh C Oct Wk2);
@@ -182,8 +187,12 @@ def check_md(md, lines, header):
     h = unb(rows[0], 1) if rows else None
     res.append(("header", bool(h) and (not header or h.group(1) == header), rows[0] if rows else ""))
     m = unb(rows[1], 1) if len(rows) > 1 else None
-    res.append(("Media Folder emptied", bool(m) and m.group(1) == "Media Folder:" and not m.group(2),
-                rows[1] if len(rows) > 1 else ""))
+    if keep_media:
+        res.append(("Media Folder left as it was (label intact, chip kept)",
+                    (bool(m) and m.group(1) == "Media Folder:") or None, rows[1] if len(rows) > 1 else ""))
+    else:
+        res.append(("Media Folder emptied", bool(m) and m.group(1) == "Media Folder:" and not m.group(2),
+                    rows[1] if len(rows) > 1 else ""))
     res.append(("LONGFORMS", len(rows) > 2 and rows[2] == "# **LONGFORMS**", rows[2] if len(rows) > 2 else ""))
     got = []
     for r in rows[3:]:
@@ -200,6 +209,9 @@ def main():
     header = None
     if "--header" in a:
         i = a.index("--header"); header = a[i + 1]; del a[i:i + 2]
+    keep_media = "--keep-media-folder" in a
+    if keep_media:
+        a.remove("--keep-media-folder")
     want_tab = None
     if "--tab" in a:
         i = a.index("--tab"); want_tab = a[i + 1]; del a[i:i + 2]
@@ -209,13 +221,13 @@ def main():
     src, lines_path = a
     lines = json.load(open(lines_path))
     if md:
-        res = check_md(open(src).read(), lines, header)
+        res = check_md(open(src).read(), lines, header, keep_media)
     else:
         doc = load(src)
         if isinstance(doc, dict) and (doc.get("minimal") or doc.get("subset")):
             doc = from_short(doc)
         res = ([("read form", False, doc)] if isinstance(doc, str)
-               else check_read(doc, lines, header, want_tab))
+               else check_read(doc, lines, header, want_tab, keep_media))
     for name, ok, detail in res:
         tag = "WARN" if ok is None else "ok  " if ok else "FAIL"
         print("%s  %s%s" % (tag, name, ("  (" + detail + ")") if detail and not ok else ""))

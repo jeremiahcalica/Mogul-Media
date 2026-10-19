@@ -13,6 +13,10 @@ rules: "X article plus a doc-screenshot QT" gives an Article and an Article wrap
 the sheet sets the LI vehicle through li_vehicle, "Kept, blocked" waiting on the client's answer is NOT
 ANSWERED (so Nathan's Type A T1 drops out), and a count that opens the vehicle ("2 short-form posts, one ad
 each", Marco T2) gives that many lines, each reading singular.
+josh_c_oct_wk3 holds the per-topic `include` override: he had no transcript, so the Type A rule left
+Topics 3 and 4 out, then he asked for Topic 4 back ("we need to include topic 4", Oct 19). T4 is in and
+numbered first, T3 stays out with its would-be line, and the two snipes stay out, since `include` cannot
+bring back a killed, struck, snipe, merged, parked or on-hold topic.
 Replace each with his real lines once he writes that week. type_a_rule and type_a_no_transcript are
 synthetic cases for Jeremiah's Oct 9 rule: a Type A topic gets a line only if the call answered it (not
 discussed, killed or unanswered = no line; no transcript = Type B only). type_a_sheet_default is his Oct 12

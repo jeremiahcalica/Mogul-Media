@@ -60,6 +60,12 @@ Jason; see references/longform-doc.md). TOPICS.json:
      "inferred": null,                   # what was inferred rather than read: "vehicle and post count from the
                                          #   heading" (Ben K Oct Wk2 T7, no VEHICLE field); flagged
      "merged_into": null,                # topic number this one was folded into (human call; flagged)
+     "include": null,                    # true: Jeremiah asked for this topic by name, so it gets its line
+                                         #   even though the rule leaves it out for want of answers (no
+                                         #   transcript, NOT ANSWERED, NOT DISCUSSED, an unreadable status, or
+                                         #   a status that also says not discussed). Josh C Oct Wk3 T4: "we
+                                         #   need to include topic 4". It can't bring back a killed, struck,
+                                         #   ❌, snipe, merged, parked or on-hold topic; flagged either way
      "objective": null,                  # OBJECTIVE field; "snipe" / "quick response" in it is flagged
      "other_tab_label": null,            # the same topic's header label on the other tab (e.g. Strategy says "Snipe")
      "other_tab_type": null,             # "A" / "B": the Strategy tab's raw list type, when it differs (Lior Oct Wk2)
@@ -582,8 +588,19 @@ def build(data):
         if cfg.get("usually_type_b") and not t.get("freeform") and type_letter(t.get("type")) == "A":
             problems.append("T%s is Type A, but %s's topics are usually all Type B: check the sheet's type%s"
                             % (tn, who, "" if call else " (no transcript, so it is left out)"))
+        n_notes, n_probs = len(notes), len(problems)
         ok, why = included(t, call, notes, problems, sheet_default)
         would = not ok and why in (NO_CALL_A, NOT_ANSWERED_A, NOT_DISCUSSED_A, UNKNOWN_A, MIXED_A)
+        if would and t.get("include"):
+            # Jeremiah asked for this topic by name, though the rule leaves it out for want of answers
+            # ("For Joshua C can we do a rerun? We need to include topic 4", Oct 19). Only these reasons
+            # can be overridden: a killed, struck, ❌, snipe, merged, parked or on-hold topic stays out.
+            # The "left out" lines this topic just produced no longer hold, so they go.
+            notes[n_notes:] = [x for x in notes[n_notes:] if "left out" not in x]
+            problems[n_probs:] = [x.replace("left out, check", "in because you asked for it, check")
+                                  for x in problems[n_probs:]]
+            notes.append("T%s is in because you asked for it (%s): confirm" % (tn, why))
+            ok, would, why = True, False, "asked for: " + why
         clash = (ok or would) and type_clash(t, who, strategist)
         if clash:
             problems.append(clash)

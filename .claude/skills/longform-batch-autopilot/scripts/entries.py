@@ -52,7 +52,11 @@ Jason; see references/longform-doc.md). TOPICS.json:
      "perspective": "Operator ... personally.",   # PERSPECTIVE field, verbatim
      "status": "KEPT",                   # the brief's status, as written; normalised here
      "struck": false, "check": null,     # whole topic struck through on the sheet / "✅" or "❌" on its header
-     "vehicle_override": null,           # only when the CALL settled a new vehicle
+     "vehicle_override": null,           # only when the CALL settled a new vehicle, or vehicle_override_source
+                                         #   names where else it came from
+     "vehicle_override_source": null,    # where vehicle_override came from when the call did not settle it: "the
+                                         #   series' own vehicle; not stated on the call" (Mason Oct Wk3 T2, whose
+                                         #   sheet VEHICLE died with the brief it belonged to); named in its note
      "posts_override": null,             # only when the call or a strategist comment changed the post count
      "posts_override_source": null,      # where posts_override came from: "Kyle's sheet comment \"2 posts\"" (Josh C
                                          #   Oct Wk2 T4); named in its note, else the note says "set on the call"
@@ -74,6 +78,10 @@ Jason; see references/longform-doc.md). TOPICS.json:
                                          #   unless the topic is out for another reason: killed, struck, snipe...)
      "written_answer": null,             # the client's own written answer on the sheet, in short: "RECENT WINS JOSH
                                          #   SENT + image" (Josh D Oct Wk2 T3); flagged when a Type A topic is left out
+     "number_from_sheet": null,          # true: the strategist numbered this freeform topic on the sheet himself, so
+                                         #   n is his number even when it isn't an integer (Kyle's "✅Topic 0.1" and
+                                         #   "✅Topic 0.2" above Caulen's Oct Wk3 tables). Never set it for a number
+                                         #   the run chose
      "freeform": false,                  # a "Topic 0" or EXTRA post outside the sheet tables: n stays an integer (an
                                          #   EXTRA takes the next number after the sheet topics), type null, and
                                          #   perspective_override a 1-3 word subject ("Trybe", Josh D Oct Wk1); flagged
@@ -119,6 +127,9 @@ FMT = {"thread", "threads", "listicle", "listicles", "infographic", "image", "im
        "diagram", "reply", "list", "lists", "lines", "promo"}
 WORDN = {"two": 2, "three": 3, "four": 4}
 LEAD_COUNT = re.compile(r"^\s*(?:(\d+)|(two|three|four))\s+(?P<mid>(?:[\w-]+\s+)*?)posts?\b", re.I)
+# A thread, on its own or carrying a modifier the LinkedIn half keeps too ("Thread with a photo",
+# Keval Oct Wk4 T6): LinkedIn has no threads, so it splits like a bracketed one.
+THREAD_MOD = re.compile(r"^(?:an?\s+)?threads?\b(?P<mod>\s*(?:\+|with\b|,).*)?$", re.I)
 
 
 def tag_norm(s):
@@ -267,8 +278,14 @@ def split_pieces(vehicle, plat_default, cfg, notes):
     if re.match(r"^X\s+article\b", base, re.I):
         return article_pieces("X", base, notes), count
     if plat == "X/LI":
-        if re.fullmatch(r"(an?\s+)?thread", base, re.I) or re.search(r"\([^()]*\bthread\b[^()]*\)", base, re.I):
-            return [("X", "Thread"), ("LI", cfg.get("thread_li", "Long-form"))], count
+        tm = THREAD_MOD.match(base)
+        if tm or re.search(r"\([^()]*\bthread\b[^()]*\)", base, re.I):
+            mod = (tm.groupdict().get("mod") or "") if tm else ""
+            li = cfg.get("thread_li", "Long-form")
+            if mod:
+                notes.append("%r has no platform: split X/LI, and the LinkedIn half reads %r "
+                             "(LinkedIn has no threads): confirm" % (base, li + mod))
+            return [("X", "Thread" + mod), ("LI", li + mod)], count
         if cfg.get("promo_split") and re.search(r"\bpromo\b", base, re.I):
             nv = norm_vehicle(base, cfg, notes)
             notes.append("promo split into X and LI (this client's habit)")
@@ -535,7 +552,9 @@ def build(data):
         persp = persp_or_label(t, raw_p, tn, notes, problems)
         vehicle = t.get("vehicle_override") or t.get("vehicle") or ""
         if t.get("vehicle_override"):
-            notes.append("T%s vehicle set on the call: %r" % (tn, vehicle))
+            src = t.get("vehicle_override_source")
+            notes.append("T%s vehicle %r from %s: confirm" % (tn, vehicle, src) if src
+                         else "T%s vehicle set on the call: %r" % (tn, vehicle))
         if t.get("posts_override"):
             src = t.get("posts_override_source")
             notes.append("T%s post count %s from %s: confirm" % (tn, t["posts_override"], src) if src
@@ -562,7 +581,7 @@ def build(data):
                             % (tn, vehicle.strip()))
         if t.get("freeform"):
             notes.append("freeform extra post T%s (%s): confirm" % (tn, persp))
-            if not isinstance(tn, int):
+            if not isinstance(tn, int) and not t.get("number_from_sheet"):
                 problems.append("T%s freeform topic number should be an integer, the next after the sheet topics" % tn)
             label = t.get("perspective_override") or ("" if t.get("perspective") else persp)
             if len(label.split()) > 3:

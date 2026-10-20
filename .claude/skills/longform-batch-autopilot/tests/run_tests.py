@@ -17,6 +17,18 @@ josh_c_oct_wk3 holds the per-topic `include` override: he had no transcript, so 
 Topics 3 and 4 out, then he asked for Topic 4 back ("we need to include topic 4", Oct 19). T4 is in and
 numbered first, T3 stays out with its would-be line, and the two snipes stay out, since `include` cannot
 bring back a killed, struck, snipe, merged, parked or on-hold topic.
+mason_oct_wk3 and caulen_oct_wk3 are snapshots from Jeremiah's own Oct 19 briefs for those weeks, and they hold
+the rules a killed-and-replaced slot needs: a topic whose brief the call killed while keeping the slot for a new,
+answered subject is a PIVOT, not KILLED, so it keeps its line (Mason T2's screenshot became a new age-series entry,
+Caulen T1's tagged shoutout became CEO executive-compensation coaching, Caulen T3's partner betrayal became "trust
+your numbers"). What the sheet wrote for the dead brief does not carry: Mason T2's vehicle comes from the series
+through vehicle_override_source (the call never stated it) and its "2 POSTS" count dies with the brief. Caulen also
+holds Kyle's own freeform numbering: "✅Topic 0.1" and "✅Topic 0.2" above the tables are his numbers, so
+number_from_sheet keeps them instead of demanding integers.
+keval_oct_wk4 is from his real Oct Wk4 sheet, with no call: it holds that a bare thread carrying a modifier splits
+like a bracketed one, because LinkedIn has no threads, so T6's "Thread with a photo" gives an X thread and a
+LinkedIn "Long-form with a photo"; and that a Type A topic stays out without a transcript even when the client
+pasted his whole answer on the sheet (T1's "$230k/month and I:" list), flagged for Jeremiah to add.
 shane_oct_wk3 is from his real Oct Wk3 brief and holds two more: a VEHICLE still written "TBD" on the sheet
 is a problem, not a note (the line ships carrying TBD until someone picks the vehicle), and a topic the
 strategist asked for on the call but that is not on the sheet comes in as a freeform topic numbered after the

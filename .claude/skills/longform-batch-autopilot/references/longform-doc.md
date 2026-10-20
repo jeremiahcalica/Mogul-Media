@@ -121,6 +121,7 @@ LONGFORMS                                   (H1, bold)
              "vehicle": "Longform (X/LI)", "perspective": "Operator in his 30s ... personally.",
              "status": "KEPT", "struck": false, "check": null,
              "vehicle_override": null, "posts_override": null, "perspective_override": null,
+             "vehicle_override_source": null, "number_from_sheet": null,
              "objective": "Engagement ...", "other_tab_label": null, "extra_posts": []}]}
 ```
 
@@ -128,8 +129,8 @@ LONGFORMS                                   (H1, bold)
 - `type` is the header's A or B. "Type B" and "TYPE A  2 POSTS" read the same as "B" and "A" (the sheet header reads "TOPIC N | TYPE B"). A sheet topic with no type, or one the script can't read, goes in `problems`: none counts as B, an unreadable one as A. A freeform topic or a NEW post has `type` null, which counts as B.
 - Always set `call`. Without it the script assumes the call happened and says so in `problems`.
 - Read the VEHICLE field, not the italic vehicle in the topic's header row.
-- Use `vehicle_override` and `posts_override` only when the call (or, for a post count, a strategist's sheet comment, with `posts_override_source`) clearly settled a new vehicle or post count, not when it was only floated (Josh T4 "listable format"). The script lists every override in `notes`.
-- The optional keys `inferred`, `other_tab_type`, `client_question`, `posts_override_source`, `written_answer` and `freeform` are described in SKILL.md Step 5.3.
+- Use `vehicle_override` and `posts_override` only when the call (or, for a post count, a strategist's sheet comment, with `posts_override_source`) clearly settled a new vehicle or post count, not when it was only floated (Josh T4 "listable format"). The script lists every override in `notes`. Where the call killed a topic's brief but kept its slot, nothing the sheet wrote for the dead brief carries over, and the override's source is named with `vehicle_override_source` or `posts_override_source` (Mason Oct Wk3 T2).
+- The optional keys `inferred`, `other_tab_type`, `client_question`, `posts_override_source`, `vehicle_override_source`, `written_answer`, `freeform` and `number_from_sheet` are described in SKILL.md Step 5.3.
 - Save the printed `entries[].line` values as a JSON list (`lines.json`) for the next step. Put every `notes`, `problems`, `left_out` and `would_be` item in the run summary.
 
 ## The copy and the edit, step by step

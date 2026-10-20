@@ -124,6 +124,18 @@ Also corrected from that run: the schedule doc for the week (`HkpTzXjmF4gWqRRvo9
 `clients.md` (the listed one holds no weekly docs), Nathan C no longer being a first batch, and Shane's sheet
 setting the week when his ClickUp task name lags behind it.
 
+## Rules added on the Oct 20 rerun (Mason, Caulen, Keval)
+
+Same kind as the Oct 19 rows: mechanics for wordings the scripts could not read, each from a real case in
+that run. Golden cases `mason_oct_wk3`, `caulen_oct_wk3` and `keval_oct_wk4` hold them.
+
+| What the run hit | What was wrong | The rule now | Lives in |
+|---|---|---|---|
+| Mason L T2, Caulen F T1 and T3: the call killed the topic's whole brief but kept its slot for a new subject the client then answered in full ("We could pivot topic two to being stupid. Being stupid as an ecom brand owner in your 20s", Kyle, 03:12; "Let's not do it then… Let's just frame it from a general angle", Kyle, 11:57) | `status_norm` reads "KILLED" and drops the topic, and `include` cannot bring a killed one back, so a slot the client had answered would have had no line at all | A killed-and-replaced slot is a PIVOT, not KILLED: the subject changed, the call answered it, so it keeps its line. Write the status as the pivot it is and say in it what was killed | `topics.json` statuses (no code change) |
+| Mason L T2: the sheet's `VEHICLE  Value tweet + screenshot` and `2 POSTS` belonged to the killed screenshot brief, and his brief says they "can't carry this". The call never said what replaces them | `vehicle_override` existed only for a vehicle the call settled, and its note reads "vehicle set on the call", which would have been untrue | `vehicle_override_source` names where a vehicle came from when the call did not settle it, and the note names that source instead ("the series' own vehicle; not stated on the call"). It mirrors `posts_override_source`, which already covered the post count | `scripts/entries.py` |
+| Caulen F: Kyle wrote "✅Topic 0", "✅Topic 0.1" and "✅Topic 0.2" above the tables himself | the freeform check demands an integer "the next after the sheet topics" (from Josh D's EXTRA comments), so Kyle's own 0.1 and 0.2 came back as problems telling Jeremiah to renumber Kyle's sheet | `number_from_sheet: true` keeps the strategist's own number, whatever it is. Never set it for a number the run chose; an invented fractional number is still a problem | `scripts/entries.py` |
+| Keval S T6, `VEHICLE  Thread with a photo`, no platform bracket | only a bare "Thread" split X/LI, so the modifier form stayed one X/LI line and LinkedIn was handed a "Thread with a photo", which LinkedIn has no such thing as | A thread carrying a trailing modifier splits like a bracketed one and the LinkedIn half keeps the modifier: "Thread with a photo" gives `(X) Thread with a photo` and `(LI) Long-form with a photo`, as Josh C's sheet writes it out by hand. Flagged. A leading qualifier ("Numbered thread") is untouched, having no real case yet | `scripts/entries.py` `THREAD_MOD` |
+
 ## Open questions for Jeremiah
 
 Until he answers, each is handled as described and flagged in the run summary.
@@ -148,6 +160,9 @@ Until he answers, each is handled as described and flagged in the run summary.
 | 16 | Ben's three coaching-launch topics (L-A, L-B, L-C) were answered on the call but carry no vehicle, and the launch plan doc wasn't shared with the brief. Add lines for them? | Ben K | No lines; listed in the run log |
 | 17 | Ben T1: the STRATEGY section says Type A and the client-facing one says Type B. It decides whether the topic gets a line at all (Type A + not discussed = out). | Ben K | Type A, as the brief's own numbering has it: out, with its would-be line |
 | 18 | Josh C: Kyle asked on Oct 17 (schedule note) for a YouTube promo post in this batch, but no topic for it is on the sheet. A sheet topic, or a freeform line? | Josh C | Not added; listed in the run log |
+| 19 | Keval writes his own answer into each topic box on the sheet, so a Type A topic of his can be fully answered in writing with no call. Oct Wk4 T1 carries his whole "$230k/month and I:" list, ready to post. The settled rule (from Josh D's "RECENT WINS JOSH SENT", a pointer rather than an answer) leaves it out and asks. Should a complete written answer count as answered for him? | Keval | Out, with "answered in writing? add its line?" and the would-be line |
+| 20 | Mason T3's lead magnet: the call settled what the post is (a Gamma "Ultimate Guide to Black Friday") but Kyle is waiting on Mason's decks, so the post can't be drafted yet. Taken as answered (it has a line), unlike Nathan C's "Kept, blocked", where the blocker was the client's answer itself. Confirm that split: the answer blocks a topic, a missing asset does not. | Mason, Nathan C | Line shipped, blocker flagged |
+| 21 | Keval's Oct Wk4 sheet promises things its Topics tab doesn't hold: the hypothesis says "two Doc SS masterclasses" (there is one) and "a giveaway" (Strategy item 6, "Ask him if he has any giveaways he wants to do", has no topic box). Chase Kyle, or run the 7 topics as written? | Keval | The 7 as written; the gap listed |
 
 Settled without him, from his own real outputs (say if any is wrong): an off-angle answer that is accepted is PIVOT (angle); waiting on someone else's assets is NOT ANSWERED, so no line (his "On hold"); an answer the client wrote on the sheet after the call doesn't add a line (it is listed); Ben's value tweets stay one X/LI line.
 

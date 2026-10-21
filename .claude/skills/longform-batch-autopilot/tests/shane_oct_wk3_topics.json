@@ -59,7 +59,8 @@
    "struck": false,
    "check": null,
    "objective": "Saves. The inspo pulled 86 bookmarks on 136 likes (19.3K views), so bookmarks run at about two-thirds of likes.",
-   "extra_posts": []
+   "extra_posts": [],
+   "include": true
   },
   {
    "n": 5,

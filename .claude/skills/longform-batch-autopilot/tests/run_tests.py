@@ -34,7 +34,7 @@ written sheet answer (the "$230k/month and I:" list) answers it, and T8 is a top
 alone (item 7, the second of the two Doc SS masterclasses the hypothesis promises), so it comes in as a freeform
 topic numbered after the sheet's last. T5 also shows a hand edit outranking the sheet: its LinkedIn half reads
 Long-form listicle, as Jeremiah typed into the doc, not the sheet's Carousel.
-shane_oct_wk3 is from his real Oct Wk3 brief and holds two more: a VEHICLE still written "TBD" on the sheet
+shane_oct_wk3 was re-cut on Oct 21 too: T4, the one Type A the call never reached, is in on his say-so, and his four Strategy items do map onto his four boxes, so nothing lives on that tab alone the way Keval's item 7 does. It is from his real Oct Wk3 brief and holds two more: a VEHICLE still written "TBD" on the sheet
 is a problem, not a note (the line ships carrying TBD until someone picks the vehicle), and a topic the
 strategist asked for on the call but that is not on the sheet comes in as a freeform topic numbered after the
 sheet's last. Replace each with his real lines once he writes that week. type_a_rule and type_a_no_transcript are

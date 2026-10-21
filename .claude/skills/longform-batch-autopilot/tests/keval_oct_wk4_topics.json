@@ -18,7 +18,8 @@
    "check": null,
    "written_answer": "his full \"I'm now at $230k/month and I:\" list, pasted under PERSPECTIVE",
    "objective": "Comments + reach. The original pulled 221.1K views, 516 likes, 249 bookmarks and 61 comments.",
-   "extra_posts": []
+   "extra_posts": [],
+   "include": true
   },
   {
    "n": 2,
@@ -74,7 +75,9 @@
    "struck": false,
    "check": null,
    "objective": "Saves. The original pulled 647 bookmarks on 212 likes (41.1K views), about 3x as many bookmarks as likes.",
-   "extra_posts": []
+   "extra_posts": [],
+   "vehicle_override": "Thread (X) / Long-form listicle (LI)",
+   "vehicle_override_source": "your hand edit in the doc (Oct 21): the LinkedIn half reads Long-form listicle, not the sheet's Carousel"
   },
   {
    "n": 6,
@@ -102,6 +105,22 @@
    "struck": false,
    "check": null,
    "objective": "Reach + leads. The inspo article pulled 72K views and 157 likes, and articles are strong for lead flow.",
+   "extra_posts": []
+  },
+  {
+   "n": 8,
+   "type": null,
+   "freeform": true,
+   "label": null,
+   "title": "Thread repurpose as a Doc SS (Strategy tab item 7)",
+   "posts": 1,
+   "vehicle": "Doc screenshot, reusing the thread's visuals",
+   "perspective": null,
+   "perspective_override": "Thread repurpose",
+   "status": "NEW. On the Strategy tab only, item 7: \"Type B Repurpose this exact Thread and make a Doc SS using the same visuals in the Doc SS\", with a source post and no topic box on Client strategy. It is the second of the two Doc SS masterclasses the sheet's hypothesis promises.",
+   "struck": false,
+   "check": null,
+   "objective": null,
    "extra_posts": []
   }
  ]

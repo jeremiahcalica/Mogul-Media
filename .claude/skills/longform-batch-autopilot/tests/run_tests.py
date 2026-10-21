@@ -24,11 +24,16 @@ Caulen T1's tagged shoutout became CEO executive-compensation coaching, Caulen T
 your numbers"). What the sheet wrote for the dead brief does not carry: Mason T2's vehicle comes from the series
 through vehicle_override_source (the call never stated it) and its "2 POSTS" count dies with the brief. Caulen also
 holds Kyle's own freeform numbering: "✅Topic 0.1" and "✅Topic 0.2" above the tables are his numbers, so
-number_from_sheet keeps them instead of demanding integers.
+number_from_sheet keeps them instead of demanding integers. Both were re-cut on Oct 21, when Jeremiah said topics
+were missing: Caulen's T2, the one sheet topic with no green tick, is in on his say-so, so the sheet's ✅ set is not
+the last word on what the doc carries.
 keval_oct_wk4 is from his real Oct Wk4 sheet, with no call: it holds that a bare thread carrying a modifier splits
 like a bracketed one, because LinkedIn has no threads, so T6's "Thread with a photo" gives an X thread and a
-LinkedIn "Long-form with a photo"; and that a Type A topic stays out without a transcript even when the client
-pasted his whole answer on the sheet (T1's "$230k/month and I:" list), flagged for Jeremiah to add.
+LinkedIn "Long-form with a photo". Its Oct 21 re-cut holds two more: T1 is in on his say-so even though only his
+written sheet answer (the "$230k/month and I:" list) answers it, and T8 is a topic that lives on the Strategy tab
+alone (item 7, the second of the two Doc SS masterclasses the hypothesis promises), so it comes in as a freeform
+topic numbered after the sheet's last. T5 also shows a hand edit outranking the sheet: its LinkedIn half reads
+Long-form listicle, as Jeremiah typed into the doc, not the sheet's Carousel.
 shane_oct_wk3 is from his real Oct Wk3 brief and holds two more: a VEHICLE still written "TBD" on the sheet
 is a problem, not a note (the line ships carrying TBD until someone picks the vehicle), and a topic the
 strategist asked for on the call but that is not on the sheet comes in as a freeform topic numbered after the

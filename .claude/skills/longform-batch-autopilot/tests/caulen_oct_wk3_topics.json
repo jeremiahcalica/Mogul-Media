@@ -18,7 +18,7 @@
    "perspective_override": "Aggressive pace",
    "status": "NEW, ready to draft. Caulen pitched it himself at 00:00 (\"Maybe that's what, maybe that's a post we can use\"); all of it is kept.",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": null,
    "extra_posts": []
   },
@@ -35,7 +35,7 @@
    "perspective_override": "Speed",
    "status": "NEW, ready to draft. Kept: his line \"growth loves speed\" (02:43) and Kyle's McLaren aside (05:13).",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": null,
    "extra_posts": []
   },
@@ -52,7 +52,7 @@
    "perspective_override": "2027",
    "status": "NEW, ready to draft. Caulen answered with one clear idea, competing, and pitched the post shape himself at 22:22.",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": null,
    "extra_posts": []
   },
@@ -67,7 +67,7 @@
    "perspective_override": "A CEO telling 7-8 figure CEOs how to set executive pay, from what he is living through. The motive is helping CEOs, never money, and nobody is named",
    "status": "PIVOT (subject). The named, tagged shoutout was killed - Kyle: \"Let's not do it then... Let's just frame it from a general angle\" (11:57) - and the slot now carries the executive-compensation coaching Caulen gave at Jeremy's Mastermind (12:18-15:31), which he called good for CEO content himself.",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": "Exposure + association (a repost from the tagged person)",
    "extra_posts": []
   },
@@ -83,7 +83,8 @@
    "struck": false,
    "check": null,
    "objective": "Reach + engagement (aspirational, bookmarkable)",
-   "extra_posts": []
+   "extra_posts": [],
+   "include": true
   },
   {
    "n": 3,
@@ -95,7 +96,7 @@
    "perspective": "An operator who has seen inside dozens of brands, writing as a warning to other operators. Every person and company stays unnamed, so it reads as a lesson and never as gossip or a jab at anyone.",
    "status": "PIVOT (story). The trusted-partner betrayal was killed - \"I, I don't know of any\" (06:13) - and the story is now the business-killer he has lived and seen, bad data. Kyle signed off: \"That's exactly what I was looking for\" (09:22). The vehicle, the no-names rule and the save objective are kept.",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": "Saves. The inspo pulled 55 bookmarks on 107 likes (27.2K views), so people kept the lesson.",
    "extra_posts": []
   },
@@ -109,7 +110,7 @@
    "perspective": "An operator who spent his career behind the scenes, explaining why he's building a name of his own now. The motive is impact, never attention or getting rich, and credit stays plural for anything the companies did.",
    "status": "KEPT. The topic, the take, the perspective and the vehicle all stand; Kyle asked it at 16:02 and Caulen answered in full. Only the anecdote was swapped: the four founders he and his partner helped sell, which he flagged as \"the post right here\" (19:27).",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": "Comments. The inspo pulled 439 replies, 939 reposts and 820 bookmarks on 9K likes (615.1K views).",
    "extra_posts": []
   },
@@ -123,7 +124,7 @@
    "perspective": "An operator talking straight to other operators, in second person throughout. It keeps its punch, with any profanity censored, and reads as a diagnosis, never a jab at agencies or media buyers.",
    "status": "NOT DISCUSSED. Everything is kept; draft from Caulen's text message only.",
    "struck": false,
-   "check": null,
+   "check": "✅",
    "objective": "Comments. Bold takes are the account's comment engine on X: the private-planes take got 206 comments on 300 likes.",
    "extra_posts": []
   }

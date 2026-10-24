@@ -40,5 +40,8 @@ the same way, that tool needs "Always allow".
 - Target confirmed by Jeremiah 2026-10-24: "we can still use Notion imo, i'll
   experiment with it anyway". He is trying it rather than committed to it, so
   the first runs should expect to be told to change the format.
-- The database is flagged `locked` in its schema. Writing has not been tested
-  yet; if a create fails, that flag is the first thing to check.
+- The database is flagged `locked` in its schema, but page creation works:
+  the first row was written 2026-10-24 without error. The lock only affects
+  schema/view edits, which this routine never makes.
+- Date with time: pass `date:Due Date:start` as ISO with the Manila offset
+  (`2026-10-26T17:00:00+08:00`) and `date:Due Date:is_datetime: 1`.

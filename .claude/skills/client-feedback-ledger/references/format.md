@@ -25,6 +25,12 @@ Source: <doc link(s)> · Slack thread: <permalink, if any>
 <post text in [-removed-]{+added+} markup>
 ```
 
+- Under the Source line, add a Pass line saying which sources this section
+  covers:
+  - with a browser: `Pass: browser, <YYYY-MM-DD>. All sources.`
+  - without one: `Pass: connectors, <YYYY-MM-DD> (comments, replies, Slack text). Browser pass pending: version-history edits, suggestions, killed posts, net change, Slack images, Loom, call transcripts.`
+    `ledger.last_complete_batch()` looks for "browser pass pending", so keep
+    those words.
 - Leave out any empty table.
 - Feedback not tied to a post goes under "### Batch-level".
 - A post the client killed gets a line under its heading: "Killed: <heading>",

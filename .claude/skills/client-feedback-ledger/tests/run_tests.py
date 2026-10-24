@@ -70,6 +70,20 @@ check("last logged none", ledger.last_logged_batch("**Date:**\n* Source"), None)
 check("last logged agent format",
       ledger.last_logged_batch(mason_page + "## MASON | OCT WK1 — main doc\n"), (10, 1))
 
+partial = mason_page + """## MASON | OCT WK1 — main doc
+Source: x
+Pass: connectors, 2026-10-24. Browser pass pending: version history, suggestions.
+### LF 2
+| Oct 2 | ... |
+## MASON | OCT WK2 — Snipes
+Pass: connectors. Browser pass pending.
+"""
+check("complete skips pending", ledger.last_complete_batch(partial), (9, 5))
+check("logged still sees pending", ledger.last_logged_batch(partial), (10, 2))
+done = partial + "## MASON | OCT WK1 — main doc\nPass: browser, 2026-10-31.\n"
+check("complete after browser pass", ledger.last_complete_batch(done), (10, 1))
+check("complete on manual log", ledger.last_complete_batch(mason_page), (9, 5))
+
 if failures:
     print("FAILED")
     for f in failures:

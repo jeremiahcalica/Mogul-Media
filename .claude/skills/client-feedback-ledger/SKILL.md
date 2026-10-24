@@ -155,6 +155,16 @@ through Sept Wk 5 in edit tables, so his first run starts at Oct Wk 1.
   month's Week 1.
 - A month without a Week 5 simply has no Week 5 docs, so skip it.
 
+**[Added] Connector-only sections.** On 2026-10-24, with a deadline ("we were
+notified to start logging in the client feedback logs"), a cloud run logged
+comments and Slack text for all 13 clients without a browser. Each of those
+sections carries a line containing "Browser pass pending". When Chrome is
+available, find the starting point with `last_complete_batch(page_text)`. It
+ignores pending sections, so the browser pass goes back to them, however old
+they are. Ledger IDs stop the comments and Slack lines from being logged
+twice. When a pending batch is finished, append a section for it whose Pass
+line reads "Pass: browser, <date>".
+
 **[Added] Late feedback and retries.** Clients often comment on a batch after
 it was logged, and the retry rule in Stage 4 needs failed entries to come
 back. So also re-scan each batch **this agent logged in the last 4 weeks**:

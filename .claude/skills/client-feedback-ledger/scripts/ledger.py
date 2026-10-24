@@ -134,6 +134,33 @@ def last_logged_batch(page_text):
     return best
 
 
+PENDING_MARK = "browser pass pending"
+
+
+def last_complete_batch(page_text):
+    """Like last_logged_batch, but skips batches whose sections are all marked
+    "browser pass pending".
+
+    A connector-only pass (no version history yet) writes that marker. Those
+    sections must not move the starting point, or the browser pass would skip
+    past them and never read their version history.
+    """
+    sections = []  # [batch, has_pending_marker]
+    for line in page_text.splitlines():
+        if line.lstrip().startswith("#"):
+            b = parse_batch(line)
+            if b:
+                sections.append([b, False])
+                continue
+        if sections and PENDING_MARK in line.lower():
+            sections[-1][1] = True
+    complete = {}
+    for b, pending in sections:
+        complete[b] = complete.get(b, False) or not pending
+    done = [b for b, ok in complete.items() if ok]
+    return max(done, key=_order) if done else None
+
+
 def _order(b):
     # Feedback logs span Jun 2025 -> 2026; treat Jun-Dec as the earlier half of a
     # season only when compared within the same run. Month then week is enough

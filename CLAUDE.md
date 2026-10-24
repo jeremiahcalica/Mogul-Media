@@ -6,3 +6,13 @@ Before changing the longform autopilot, read `DECISIONS.md`. It records every ru
 - Run the tests before every commit: `python3 -I .claude/skills/longform-batch-autopilot/tests/run_tests.py`.
 - Never delete or recreate the routine `trig_01KHnmqSHRLJhaURiFFbgoyG` from Claude Code: a routine made here gets no connectors. Change it with `update_trigger`.
 - Jeremiah checks every output. Quote his words for rules, and cite the real case (client + week) a rule comes from.
+
+## Client Feedback Ledger (second automation)
+
+Read `FEEDBACK-LEDGER.md` before changing it. The skill is
+`.claude/skills/client-feedback-ledger/` and the packaged copy is
+`dist/client-feedback-ledger.skill`. It runs weekly on Jeremiah's Mac, not as a
+cloud routine. Test with `python3 -I .claude/skills/client-feedback-ledger/tests/run_tests.py`.
+
+The morning triage (`morning-triage/`) is the first agent built this way. Its
+roster.md is the source of truth for who is on the writing roster.

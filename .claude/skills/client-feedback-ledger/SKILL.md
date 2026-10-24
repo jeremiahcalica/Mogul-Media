@@ -199,6 +199,21 @@ c. If a persistent workspace exists, also save a plain-text snapshot of each act
   edits, so it never attributes a change by itself. It only shows where to look
   in version history.
 
+**[Added] No team fixes, ever.** Jeremiah, 2026-10-24: "we also can't include
+team fixes". On the reason for the log: "it's their thinking". This
+overrides two lines of the original prompt:
+- **"keep them in the net change"**: the Net change section is not written at
+  all, because it can't exist without team edits in it. Don't bring it back
+  unless he asks.
+- **"tag the change 'mixed version'"**: a change in a mixed version that can't
+  be attributed to the client by editor color is **not logged**. Count these
+  per batch in the run summary ("N mixed-version changes left out").
+- Anonymous edits: log one only when nothing in it points to the team. An
+  anonymous version that also carries team-style changes (scheduling notes,
+  "implemented", Jeremiah's known rewrites) is treated as mixed and left out.
+- Never fill the gap with a diff between two copies of a doc (Jeremiah's draft
+  vs the client-facing copy). It can't tell client changes from team changes.
+
 For each client edit, record:
 - date
 - the post it falls in (the nearest heading above it, e.g. LF2, 2.1, Snipe 3, QR 1)
@@ -209,10 +224,9 @@ A post the client killed is recorded as "Killed: <post heading>".
 
 For each post, also record the net change: the text when the batch went to the client compared with the current text, in the same markup.
 
-**[Added]** For the "sent" text, use the last version before the first client
-edit, read from version history, or a snapshot taken at "sent to client" if
-one exists. Make the markup with `scripts/ledger.py diff old.txt new.txt`; it
-round-trips exactly.
+**[Added] Not done.** Jeremiah, 2026-10-24: "we also can't include team fixes".
+A net change always contains team edits, so it is not written. See "No team
+fixes, ever" above.
 
 ### Stage 2: Comments and suggestions (Collector)
 Comments:

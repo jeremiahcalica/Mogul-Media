@@ -23,7 +23,7 @@ import ledger  # noqa: E402
 KIND_ORDER = ["main doc", "Snipes", "Quick response posts"]
 PASS_LINES = {
     "connectors": ("Pass: connectors, {date} (comments, replies, Slack text). Browser pass pending: "
-                   "version-history edits, suggestions, killed posts, net change, Slack images, Loom, "
+                   "version-history edits, suggestions, killed posts, Slack images, Loom, "
                    "call transcripts."),
     "browser": "Pass: browser, {date}. All sources.",
     # Slack text added to a batch whose doc feedback (version history, comments)

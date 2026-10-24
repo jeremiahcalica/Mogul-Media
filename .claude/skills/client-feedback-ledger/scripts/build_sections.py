@@ -26,6 +26,10 @@ PASS_LINES = {
                    "version-history edits, suggestions, killed posts, net change, Slack images, Loom, "
                    "call transcripts."),
     "browser": "Pass: browser, {date}. All sources.",
+    # Slack text added to a batch whose doc feedback (version history, comments)
+    # is already in the log. Not marked pending, so it doesn't send the browser
+    # pass back to this batch.
+    "slack-addendum": "Pass: connectors, {date} (Slack text only). This batch's doc feedback is already logged above.",
 }
 MIN_TEXT_MATCH = 25  # shorter text ("ok", "approved") is too common to match safely
 

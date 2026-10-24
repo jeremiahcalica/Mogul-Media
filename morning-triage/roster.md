@@ -39,6 +39,7 @@ So:
 | Phil R. | SA-TOPICS | _TO FILL_ | #internal-phil ‡ | PHIL \| INTERNAL › CONTENT WRITING (`1200780000001073`) ✓ | active |
 | Shane H. | BOTH | Kyle † | #internal-shane-hummus ‡ | SHANE \| INTERNAL › CONTENT WRITING (`901507172439`) ✓ | active |
 | Teddy T. | WRITER | Devin † | #internal-teddy ‡ | TEDDY \| INTERNAL › CONTENT WRITING (`901524097226`) ✓ | active |
+| Josh D. | NONE | Devin | (Jeremiah left Josh D.'s channel) | JOSH D \| INTERNAL › CONTENT WRITING (`901525333226`) ✓ | not Jeremiah's — confirmed 2026-10-24 |
 
 ✓ = verified live in ClickUp on 2026-10-24 by task search. Folder and list IDs
 are real, not derived. Every client's list is named `CONTENT WRITING`; only the
@@ -79,8 +80,12 @@ holds no role for them and they can never produce a MINE task:
 
 - **Zarak A.** — listed in clients.md as a Kyle-pod longform client, and has rows
   in the Notion database. Not on his 2026-10-24 lists.
-- **Josh D.** — listed in clients.md as a Devin-pod longform client. Not on his
-  2026-10-24 lists.
+- **Josh D.** — now a NONE row in the table above. Jeremiah, 2026-10-24: "just
+  remember I am not tthe writer of Josh D." ClickUp still lists him as an
+  assignee on JOSH D | OCT WK4 | Longforms (`12439gnt7b7`), and he chose to
+  leave that as it is ("On ClickUp leave it be"). **A ClickUp assignment on a
+  Josh D. task is never evidence of ownership.** Items for Josh D. are NOT MINE
+  and are not raised as Needs review.
 
 clients.md has drifted from his current lists; it is the longform autopilot's
 registry, not this routine's. roster.md wins here. Flagged to Jeremiah

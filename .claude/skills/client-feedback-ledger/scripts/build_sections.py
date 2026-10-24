@@ -11,6 +11,7 @@ page.txt:   the log page's current text (to skip anything already logged)
 build writes nothing if every entry is already on the page.
 check exits 1 unless every line of out.md is on the page, in order, at the end.
 """
+import html
 import json
 import os
 import re
@@ -29,7 +30,14 @@ PASS_LINES = {
 MIN_TEXT_MATCH = 25  # shorter text ("ok", "approved") is too common to match safely
 
 
+def clean(text):
+    """Undo transport artifacts only: HTML entities the Docs API returns (&#39; -> ')
+    and Google's soft line break (vertical tab), which is a line break in the doc."""
+    return html.unescape(text).replace("\x0b", "\n")
+
+
 def cell(text):
+    text = clean(text)
     return text.replace("\r\n", "\n").replace("|", "\\|").replace("\n", "↵").replace("\t", "⇥")
 
 
@@ -111,9 +119,18 @@ def build(inp, page):
     return "\n".join(out) + "\n", dropped
 
 
+def _norm(s):
+    """Same normalization for both sides: ClickUp rewrites links, bold, escapes
+    and table separators when it saves, so compare the text underneath."""
+    s = re.sub(r"\[([^\]]*)\]\(([^)]*)\)", r"\1", s)
+    s = s.replace("**", "").replace("\\", "")
+    s = re.sub(r"\|\s*-{3,}\s*", "|", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
 def check(md, page_after):
     """Every non-blank line of md appears in page_after, in order. Returns missing lines."""
-    norm = lambda s: re.sub(r"\s+", " ", s.replace("\\|", "|").replace("\\", "")).strip()
+    norm = _norm
     page_n = norm(page_after)
     missing, pos = [], 0
     for line in md.splitlines():
@@ -121,7 +138,11 @@ def check(md, page_after):
             continue
         ln = norm(line)
         # tables and links render differently on read-back; compare the verbatim-bearing core
-        core = ln.strip("| ").split(" | ")[2] if ln.startswith("|") and ln.count(" | ") >= 3 else ln
+        if ln.startswith("|") and ln.count(" | ") >= 3:
+            cells = ln.strip("| ").split(" | ")
+            core = " | ".join(cells[2:4])  # verbatim + Ledger ID must both survive
+        else:
+            core = ln
         core = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", core)
         core = core.replace("**", "").lstrip("#").strip()
         if not core or set(core) <= set("-| "):

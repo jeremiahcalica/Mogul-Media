@@ -89,6 +89,15 @@ done = partial + "## MASON | OCT WK1 — main doc\nPass: browser, 2026-10-31.\n"
 check("complete after browser pass", ledger.last_complete_batch(done), (10, 1))
 check("complete on manual log", ledger.last_complete_batch(mason_page), (9, 5))
 
+import build_sections as bs  # noqa: E402
+check("cell soft break", bs.cell("scrappy\x0b- You can\u2019t"), "scrappy↵- You can\u2019t")
+check("cell entity", bs.cell("You&#39;re &amp; who&#39;s"), "You're & who's")
+check("cell pipe", bs.cell("a | b"), "a \\| b")
+md = "\n## X | OCT WK1 — main doc\nSource: [Doc](https://d/1) (writing) · Slack thread: https://s/2\n\n### LF 1\n\n**Comments** (including resolved and deleted)\n| Date | Anchored on (exact) | Client (verbatim) | ID |\n| --- | --- | --- | --- |\n| Oct 1 · Al | hook | \\[client side\\] ok | L-AAAAAAAAAA |\n"
+page_back = "old stuff\n## X | OCT WK1 — main doc\nSource: [Doc](https://d/1) (writing) · Slack thread: [https://s/2](https://s/2)\n\n### LF 1\n\n**Comments** (including resolved and deleted)\n\n| Date | Anchored on (exact) | Client (verbatim) | ID |\n| ---| ---| ---| --- |\n| Oct 1 · Al | hook | \\[client side\\] ok | L-AAAAAAAAAA |\n"
+check("check tolerates ClickUp rewrites", bs.check(md, page_back), [])
+check("check catches a real loss", len(bs.check(md, page_back.replace("L-AAAAAAAAAA", ""))) > 0, True)
+
 if failures:
     print("FAILED")
     for f in failures:

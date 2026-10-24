@@ -27,9 +27,9 @@ So:
 | Brian M. | SA-TOPICS | _TO FILL_ | #internal-brian-m ‡ | BRIAN M \| INTERNAL › CONTENT WRITING (`901509779186`) ✓ | active |
 | Caulen F. | BOTH | Kyle † | #internal-caulen ‡ | CAULEN \| INTERNAL › CONTENT WRITING (`901525335499`) ✓ | active |
 | Jason G. | BOTH | Kyle † | #internal-jason ‡ | JASON \| INTERNAL › CONTENT WRITING (`901523997807`) ✓ | active |
-| Joshua C. | BOTH | Kyle † | **UNRESOLVED — see below** | JOSH \| INTERNAL › CONTENT WRITING (`901514959348`) ✓ | active |
+| Joshua C. | BOTH | Kyle † | #internal-josh ✓ | JOSH \| INTERNAL › CONTENT WRITING (`901514959348`) ✓ | active |
 | Keval S. | BOTH | Kyle † | #internal-keval ‡ | KEVAL \| INTERNAL › CONTENT WRITING (`1200780000001967`) ✓ | active |
-| Laura P. | SA-TOPICS | Kyle ‡‡ | #internal-laura ‡ | LAURA \| INTERNAL › CONTENT WRITING (`1200780000001080`) ✓ | active |
+| Laura P. | SA-TOPICS | Kyle ✓ | #internal-laura ‡ | LAURA \| INTERNAL › CONTENT WRITING (`1200780000001080`) ✓ | active |
 | Lior P. | BOTH | Kyle † | #internal-lior-p ‡ | LIOR P \| INTERNAL › CONTENT WRITING (`901523580791`) ✓ | active |
 | Marco B. | WRITER | Devin † | #internal-marco ‡ | MARCO \| INTERNAL › CONTENT WRITING (`901524688017`) ✓ | active |
 | Mason L. | BOTH | Kyle † | #internal-mason ‡ | MASON \| INTERNAL › CONTENT WRITING (`901507747284`) ✓ | active |
@@ -43,9 +43,6 @@ So:
 ✓ = verified live in ClickUp on 2026-10-24 by task search. Folder and list IDs
 are real, not derived. Every client's list is named `CONTENT WRITING`; only the
 parent folder differs. Space `90152587982` ("Shared with me").
-
-‡‡ = inferred from a ClickUp assignee, weaker than ✓. Laura P.'s strategist is
-read off "LAURA | OCT WK5 | New Topics", assigned to Kyle Meng. Confirm it.
 
 ‡ = found in Slack on 2026-10-24 by channel search, not stated by Jeremiah.
 All 23 `#internal-*` channels are private; every one matching a roster client is
@@ -89,29 +86,28 @@ clients.md has drifted from his current lists; it is the longform autopilot's
 registry, not this routine's. roster.md wins here. Flagged to Jeremiah
 2026-10-24 because it may also affect the longform autopilot.
 
-## Joshua C. has no confirmed channel — do not guess one
+## #internal-josh is Joshua C. — resolved
 
-Slack holds exactly one Josh channel: **#internal-josh** (`C09DD4N69EJ`),
-created by **Devin Downs** on 2025-09-03.
+Jeremiah, 2026-10-24: "Joshua C. - i left Josh D.'s internal channel before".
 
-Joshua C. is in **Kyle's** pod. Josh D. is in **Devin's** pod. The channel was
-created by Devin, which points to it being **Josh D.'s** channel — a client
-Jeremiah holds no role for. Mapping it to Joshua C. would send every item in it
-straight into his list under the wrong owner.
+So **#internal-josh (`C09DD4N69EJ`) is Joshua C.'s channel** and Agent B scans
+it, even though Devin Downs created it. Josh D.'s channel still exists; Jeremiah
+is simply no longer in it, which is why a Slack search run as him returns only
+one Josh channel.
 
-So it stays unresolved. Until Jeremiah says which client #internal-josh belongs
-to:
-- Agent B does not scan #internal-josh.
-- Joshua C. work is still caught by Agent A (DMs and @-mentions of Jeremiah) and
-  Agent C (ClickUp list `JOSH | INTERNAL › CONTENT WRITING`).
-- Every run flags Joshua C.'s missing channel as a coverage gap at the top of
-  the summary.
+**The rule that follows:** a channel's absence from a Slack search is not
+evidence the channel does not exist. It can mean Jeremiah left it — which is
+itself a signal he holds no role there. Never conclude "no channel" from a
+search; conclude "no channel he is in".
+
+Laura P.'s strategist is **Kyle**, confirmed by Jeremiah the same day
+("Confirm - it's Kyle").
 
 ## Channels that exist but are NOT scanned
 
 These `#internal-*` channels have no roster client, so Agent B never reads them:
 #internal-zarak-sarah, #internal-toby, #internal-brian-c, #internal-apptics,
-#internal-dana, #internal-davie, and #internal-josh (above).
+#internal-dana, #internal-davie.
 
 Jeremiah, 2026-10-24, on the names not on his lists: "the ones that aren't on
 the list may be clients that have already left". "May be" is not confirmation,

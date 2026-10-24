@@ -20,25 +20,36 @@ So:
 
 ## Roles
 
-| Client | My role (WRITER / SA-TOPICS / BOTH / NONE) | Strategist | Slack channels | ClickUp list | Status |
+| Client | My role (WRITER / SA-TOPICS / BOTH / NONE) | Strategist | Slack channels | ClickUp folder › list | Status |
 | --- | --- | --- | --- | --- | --- |
-| Abdul F. | BOTH | Kyle † | _TO FILL_ | ABDUL \| INTERNAL › CONTENT WRITING † | active |
-| Ben K. | WRITER | Devin † | _TO FILL_ | BEN K \| INTERNAL › CONTENT WRITING † | active |
-| Brian M. | SA-TOPICS | _TO FILL_ | _TO FILL_ | _TO FILL_ | active |
-| Caulen F. | BOTH | Kyle † | _TO FILL_ | CAULEN \| INTERNAL › CONTENT WRITING † | active |
-| Jason G. | BOTH | Kyle † | _TO FILL_ | JASON \| INTERNAL › CONTENT WRITING † | active |
-| Joshua C. | BOTH | Kyle † | _TO FILL_ | JOSH \| INTERNAL › CONTENT WRITING † | active |
-| Keval S. | BOTH | Kyle † | _TO FILL_ | KEVAL \| INTERNAL › CONTENT WRITING † | active |
-| Laura P. | SA-TOPICS | _TO FILL_ | _TO FILL_ | _TO FILL_ | active |
-| Lior P. | BOTH | Kyle † | _TO FILL_ | LIOR P \| INTERNAL › CONTENT WRITING † | active |
-| Marco B. | WRITER | Devin † | _TO FILL_ | MARCO \| INTERNAL › CONTENT WRITING † | active |
-| Mason L. | BOTH | Kyle † | _TO FILL_ | MASON \| INTERNAL › CONTENT WRITING † | active |
-| Matt O. | SA-TOPICS | _TO FILL_ | _TO FILL_ | _TO FILL_ | active |
-| Michael K. | BOTH | Kyle † | _TO FILL_ | MICHAEL K \| INTERNAL › CONTENT WRITING † | active |
-| Nathan C. | WRITER | Devin † | _TO FILL_ | NATHAN C \| INTERNAL › CONTENT WRITING † | active |
-| Phil R. | SA-TOPICS | _TO FILL_ | _TO FILL_ | _TO FILL_ | active |
-| Shane H. | BOTH | Kyle † | _TO FILL_ | SHANE \| INTERNAL › CONTENT WRITING † | active |
-| Teddy T. | WRITER | Devin † | _TO FILL_ | TEDDY \| INTERNAL › CONTENT WRITING † | active |
+| Abdul F. | BOTH | Kyle † | #internal-abdul ‡ | ABDUL \| INTERNAL › CONTENT WRITING (`901525097685`) ✓ | active |
+| Ben K. | WRITER | Devin † | #internal-ben-k ‡ | BEN K \| INTERNAL › CONTENT WRITING (`901525335531`) ✓ | active |
+| Brian M. | SA-TOPICS | _TO FILL_ | #internal-brian-m ‡ | BRIAN M \| INTERNAL › CONTENT WRITING (`901509779186`) ✓ | active |
+| Caulen F. | BOTH | Kyle † | #internal-caulen ‡ | CAULEN \| INTERNAL › CONTENT WRITING (`901525335499`) ✓ | active |
+| Jason G. | BOTH | Kyle † | #internal-jason ‡ | JASON \| INTERNAL › CONTENT WRITING (`901523997807`) ✓ | active |
+| Joshua C. | BOTH | Kyle † | **UNRESOLVED — see below** | JOSH \| INTERNAL › CONTENT WRITING (`901514959348`) ✓ | active |
+| Keval S. | BOTH | Kyle † | #internal-keval ‡ | KEVAL \| INTERNAL › CONTENT WRITING (`1200780000001967`) ✓ | active |
+| Laura P. | SA-TOPICS | Kyle ‡‡ | #internal-laura ‡ | LAURA \| INTERNAL › CONTENT WRITING (`1200780000001080`) ✓ | active |
+| Lior P. | BOTH | Kyle † | #internal-lior-p ‡ | LIOR P \| INTERNAL › CONTENT WRITING (`901523580791`) ✓ | active |
+| Marco B. | WRITER | Devin † | #internal-marco ‡ | MARCO \| INTERNAL › CONTENT WRITING (`901524688017`) ✓ | active |
+| Mason L. | BOTH | Kyle † | #internal-mason ‡ | MASON \| INTERNAL › CONTENT WRITING (`901507747284`) ✓ | active |
+| Matt O. | SA-TOPICS | _TO FILL_ | #internal-matt ‡ | MATT O\| INTERNAL › CONTENT WRITING (`901513869537`) ✓ | active |
+| Michael K. | BOTH | Kyle † | #internal-michael-k ‡ | MICHAEL K \| INTERNAL › CONTENT WRITING (`901524922267`) ✓ | active |
+| Nathan C. | WRITER | Devin † | #internal-nathan-c ‡ | NATHAN C \| INTERNAL › CONTENT WRITING (`1200780000003023`) ✓ | active |
+| Phil R. | SA-TOPICS | _TO FILL_ | #internal-phil ‡ | PHIL \| INTERNAL › CONTENT WRITING (`1200780000001073`) ✓ | active |
+| Shane H. | BOTH | Kyle † | #internal-shane-hummus ‡ | SHANE \| INTERNAL › CONTENT WRITING (`901507172439`) ✓ | active |
+| Teddy T. | WRITER | Devin † | #internal-teddy ‡ | TEDDY \| INTERNAL › CONTENT WRITING (`901524097226`) ✓ | active |
+
+✓ = verified live in ClickUp on 2026-10-24 by task search. Folder and list IDs
+are real, not derived. Every client's list is named `CONTENT WRITING`; only the
+parent folder differs. Space `90152587982` ("Shared with me").
+
+‡‡ = inferred from a ClickUp assignee, weaker than ✓. Laura P.'s strategist is
+read off "LAURA | OCT WK5 | New Topics", assigned to Kyle Meng. Confirm it.
+
+‡ = found in Slack on 2026-10-24 by channel search, not stated by Jeremiah.
+All 23 `#internal-*` channels are private; every one matching a roster client is
+listed above. Confirm before the first real run.
 
 † = not from Jeremiah. Derived from
 `.claude/skills/longform-batch-autopilot/references/clients.md` (pod table, IDs
@@ -57,9 +68,12 @@ Counts: 17 clients — 9 BOTH, 4 WRITER, 4 SA-TOPICS.
   appear in clients.md at all, because that file is the *longform* registry and
   Jeremiah does no writing for them. A writing ask on any of these four is NOT
   MINE.
-- **Brian M.** is SA-TOPICS only today, but the Notion tasks database still holds
-  his old longform rows ("Brian M | JULY WK3 | Long-forms"). Past rows are not
-  evidence of current ownership. A writing ask for Brian M. is NOT MINE.
+- **Brian M.** is SA-TOPICS only today, confirmed by Jeremiah 2026-10-24:
+  "true, Brian M is now SA topics only". ClickUp shows the switch cleanly — his
+  last `Longforms` task is SEP WK3, and his current OCT WK4 task is
+  `New Topics`. The Notion database still holds his old longform rows
+  ("Brian M | JULY WK3 | Long-forms"). Past rows are not evidence of current
+  ownership. A writing ask for Brian M. is NOT MINE.
 
 ## Clients deliberately absent
 
@@ -74,6 +88,43 @@ holds no role for them and they can never produce a MINE task:
 clients.md has drifted from his current lists; it is the longform autopilot's
 registry, not this routine's. roster.md wins here. Flagged to Jeremiah
 2026-10-24 because it may also affect the longform autopilot.
+
+## Joshua C. has no confirmed channel — do not guess one
+
+Slack holds exactly one Josh channel: **#internal-josh** (`C09DD4N69EJ`),
+created by **Devin Downs** on 2025-09-03.
+
+Joshua C. is in **Kyle's** pod. Josh D. is in **Devin's** pod. The channel was
+created by Devin, which points to it being **Josh D.'s** channel — a client
+Jeremiah holds no role for. Mapping it to Joshua C. would send every item in it
+straight into his list under the wrong owner.
+
+So it stays unresolved. Until Jeremiah says which client #internal-josh belongs
+to:
+- Agent B does not scan #internal-josh.
+- Joshua C. work is still caught by Agent A (DMs and @-mentions of Jeremiah) and
+  Agent C (ClickUp list `JOSH | INTERNAL › CONTENT WRITING`).
+- Every run flags Joshua C.'s missing channel as a coverage gap at the top of
+  the summary.
+
+## Channels that exist but are NOT scanned
+
+These `#internal-*` channels have no roster client, so Agent B never reads them:
+#internal-zarak-sarah, #internal-toby, #internal-brian-c, #internal-apptics,
+#internal-dana, #internal-davie, and #internal-josh (above).
+
+Jeremiah, 2026-10-24, on the names not on his lists: "the ones that aren't on
+the list may be clients that have already left". "May be" is not confirmation,
+so nothing here is treated as a departure — they are simply clients he holds no
+role for, which produces the same result: never MINE.
+
+## The "Brian" rule
+
+Two Mogul clients are named Brian: **Brian M.** (SA-TOPICS, #internal-brian-m)
+and **Brian C.** (no role, #internal-brian-c, ClickUp folder
+`BRIAN C | INTERNAL`). Both have channels, both have ClickUp folders, and both
+have rows in the Notion database. A bare "Brian" with no M or C is NEEDS REVIEW,
+exactly like a bare "Josh".
 
 ## The "Josh" rule
 

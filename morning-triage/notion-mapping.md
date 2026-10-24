@@ -99,9 +99,16 @@ As of 2026-10-24 the database holds 292 rows, 25 of them open (1 In progress,
 
 A duplicate means no new row; it is noted in the run log instead.
 
-## Open flag: the database looks dormant
+## The database is dormant, and that is accepted
 
 No row has been created since 2026-07-16, three months before this was set up.
 The "All Tasks" view reads empty because it filters to open tasks with a due
-date in the surrounding week. Worth confirming this database is still where
-Jeremiah wants to work from before the first real run writes into it.
+date in the surrounding week.
+
+Live work moved to ClickUp: that space holds OCT WK3 and WK4 tasks updated this
+week, while Notion stops in July.
+
+Jeremiah decided to use Notion anyway, 2026-10-24: "we can still use Notion imo,
+i'll experiment with it anyway, see if i like it". So triage rows will be the
+only recent rows in the database. Treated as a trial, not a settled format —
+expect to be told to change it.

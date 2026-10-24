@@ -82,8 +82,20 @@ leaves.
 
 ## Version history in Chrome
 
-Never restore, name or change a version.
+Never restore, name or change a version. **Jeremiah opens nothing.** His
+words: "we ideally want the prompt to go the masterfile and find it instead of
+me opening it manually since it beats the point of handing this to claude".
+The agent finds and opens every doc itself.
 
+0. Find the doc. Use the doc IDs the Connector Collector found (plan.json),
+   or navigate in Chrome yourself:
+   - MASTER FILE: https://drive.google.com/drive/folders/13oJ5I0-1B2tJVEu6Oy3ybAtmkZj-gwf4
+   - → POD 2 (Kyle M Team) or POD 1 (Devin Team)
+   - → <Client> → CONTENT (the content folder IDs are in clients.md, so you can
+     also open https://drive.google.com/drive/folders/<content folder id>
+     directly)
+   - → the batch docs ("<Client> - <Mon> - Week <n>", "(Snipes)", "(Quick
+     response posts)"). Open every doc that matches the name.
 1. Open `docs.google.com/document/d/<id>/edit` → File → Version history → See
    version history.
 2. Tick **Show changes**. Expand each grouped version (▸) so every edit shows

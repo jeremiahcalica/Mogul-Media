@@ -29,6 +29,7 @@ in Chrome with his logins, and a cloud run has no browser.
 
 ```
 Run the client-feedback-ledger skill: the weekly Client Feedback Ledger for all 13 writing-roster clients.
+Find every batch doc yourself (ClickUp batch tasks, then Drive MASTER FILE > POD > client > CONTENT) and open each one in Chrome yourself. Don't ask me to open anything.
 Use this folder as the working folder.
 Use Claude in Chrome for version history, suggestions, Slack images, Loom and Krisp, one browser agent at a time.
 Run on your own, and never stop to ask. Put anything you couldn't settle under "Needs Jeremiah" in the run summary.

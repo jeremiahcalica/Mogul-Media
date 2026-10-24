@@ -1,0 +1,10 @@
+{
+  "last_run_utc": null,
+  "my_slack_user_id": "U0AB2DNQU01",
+  "my_clickup_user_id": "306644176",
+  "_notes": {
+    "last_run_utc": "Deliberately still null. The 2026-10-24 run was blocked at setup and scanned nothing, so the next run must still cover the full window rather than skipping forward.",
+    "my_slack_user_id": "Resolved from the Slack connector's authenticated-session metadata.",
+    "my_clickup_user_id": "Resolved from clickup_get_workspace_members, matched on jeremiah@jeremiahcalica.com."
+  }
+}

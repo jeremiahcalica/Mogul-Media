@@ -45,6 +45,27 @@ Watch for these:
 
 ## Attribution
 
+**Client-side reviewers count as the client.** Jeremiah, 2026-10-24: "they kind of
+represent the client as they're the reviewer of the content". Log them as
+the client, tagged `[client side: <name>]`, and don't raise a Needs Jeremiah
+question about them:
+
+| Client | Reviewer(s) |
+|---|---|
+| Shane H. | Kevin Tan |
+| Lior P. | Reut Amariyo (writes every comment; Lior rarely comments himself) |
+| Joshua C. | Sean Goh |
+| Teddy T. | Mohit Sharma (as well as Teddy Truong himself) |
+
+A new named account outside Mogul on a client's doc is still tagged
+`[client side: <name>]` and raised once under Needs Jeremiah. If he confirms
+it, add it to this table.
+
+**Anonymous "scheduled" replies are team, never logged.** Jeremiah, 2026-10-24:
+"Stay out". These are the anonymous "scheduled" / "schedule" / "x tagged"
+replies under Kyle's scheduling notes, which Claudia or the scheduler post
+signed out.
+
 Client: a comment or edit by the client's own named account, or by "All
 anonymous users", **with one exception**. An anonymous author whose words
 identify a team member is team, not client. Real case: on Mason's Sept Wk 5

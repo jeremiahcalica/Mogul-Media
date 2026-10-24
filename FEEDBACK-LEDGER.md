@@ -18,6 +18,11 @@ cd /mnt/skills/examples/skill-creator && python3 -m scripts.package_skill /home/
 |---|---|---|---|
 | 2026-10-24 | (his full prompt) | His prompt is the spec, kept word for word in SKILL.md. Additions are marked [Added] and never loosen a rule. | `SKILL.md` |
 | 2026-10-24 | "Ideally a main agent too with mini agents (dynamic workflow)" | A main agent coordinates and never collects. Connector Collectors run in parallel; one Browser Collector drives Chrome; separate Verifiers; one Logger. About 10 agents at a time. | `SKILL.md` § How the run is organised |
+| 2026-10-24 | "we were notified to start logging … the 13 writing clients" | A cloud connector pass ran at once for all 13 (comments, replies, Slack text): 142 entries logged. Its sections say "Browser pass pending" so the Saturday run goes back for version history. | `ledger-runs/2026-10-24.md` |
+| 2026-10-24 | "for josh maybe not all imo - important is september to october ish" | Joshua C. never goes earlier than SEP WK1. | `references/browser-pass-start.md` |
+| 2026-10-24 | "they kind of represent the client as they're the reviewer of the content" | Kevin Tan (Shane), Reut Amariyo (Lior), Sean Goh (Josh C), Mohit Sharma (Teddy) count as the client. | `references/sources.md` § Attribution |
+| 2026-10-24 | "Stay out" | Anonymous "scheduled" replies under scheduling notes are team and never logged. | `references/sources.md` § Attribution |
+| 2026-10-24 | "Sure yeah" | Add Jeremiah's Keval Oct Wk 2 ledger (posted in Slack Oct 10) and Mason's Sept Wk 5 Slack feedback (Oct 1) to their logs. | `ledger-runs/2026-10-24.md` |
 | 2026-10-24 | "I'm completely fine if I turn on my computer if it has a better output … every week on Saturdays" | Runs on his Mac, weekly on Saturday, as a Claude Desktop scheduled task, not a cloud routine. | `routines/client-feedback-ledger.md` |
 
 ## What testing showed (2026-10-24, Mason L. docs)

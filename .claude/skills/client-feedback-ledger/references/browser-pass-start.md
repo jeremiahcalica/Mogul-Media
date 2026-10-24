@@ -16,7 +16,7 @@ Wk 5 although the entries run through Sept Wk 4, and Caulen's read "Weeks 2 &
 | Ben K. | SEP WK4 | log ends Sept Wk 3 |
 | Caulen F. | SEP WK5 | log ends Sept Wk 4 (heading "Week 4, Sept 2026") |
 | Jason G. | SEP WK5 | log ends Sept Wk 4 |
-| Joshua C. | SEP WK4 | log has dated entries through Sept Wk 3 and no batch headings |
+| Joshua C. | SEP WK4 | log has dated entries through Sept Wk 3 and no batch headings. **Never go earlier than SEP WK1**: Jeremiah, 2026-10-24, "for josh maybe not all imo - important is september to october ish" |
 | Keval S. | OCT WK2 | log's Oct Wk 2 section covers only the Snipes doc |
 | Lior P. | OCT WK1 | log ends Sept Wk 5 |
 | Marco B. | SEP WK3 | headings stop at Aug Wk 4, but entries run through Sept Wk 2 |

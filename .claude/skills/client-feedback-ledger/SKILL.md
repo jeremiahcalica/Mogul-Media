@@ -159,7 +159,10 @@ through Sept Wk 5 in edit tables, so his first run starts at Oct Wk 1.
 notified to start logging in the client feedback logs"), a cloud run logged
 comments and Slack text for all 13 clients without a browser. Each of those
 sections carries a line containing "Browser pass pending". When Chrome is
-available, find the starting point with `last_complete_batch(page_text)`. It
+available, start at the batch in `references/browser-pass-start.md` while any
+pending section remains. That table is needed because several manual logs
+have headings that can't be read automatically. After that, find the starting
+point with `last_complete_batch(page_text)`. It
 ignores pending sections, so the browser pass goes back to them, however old
 they are. Ledger IDs stop the comments and Slack lines from being logged
 twice. When a pending batch is finished, append a section for it whose Pass

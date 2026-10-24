@@ -83,24 +83,28 @@ MONTHS = {
     "oct": 10, "october": 10, "nov": 11, "november": 11, "dec": 12, "december": 12,
 }
 _MONTH_NAMES = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
-_BATCH_RE = re.compile(
-    r"\b(?P<mon>jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?"
-    r"|sept(?:ember)?|sep|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
-    r"\s*(?:-\s*)?(?:wk|week)\s*(?P<wk>[1-5])\b",
-    re.I,
-)
+_MON = (r"(?P<mon>jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?"
+        r"|sept(?:ember)?|sep|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)")
+_WK = r"(?:wk|week)\s*(?P<wk>[1-5])(?:\s*/\s*(?P<wk2>[1-5]))?"
+# "Sept Wk 5", "SEP WK5", "Sept - Week 5", "September, Week 2", "Sept - Week 4/5"
+_BATCH_RE = re.compile(r"\b" + _MON + r"[\s,\-–—]*" + _WK + r"\b", re.I)
+# "Week 4 Aug", "Week 4, August"
+_BATCH_REV_RE = re.compile(r"\b" + _WK + r"[\s,\-–—]*" + _MON + r"\b", re.I)
 
 
 def parse_batch(label):
     """(month, week) from any of the formats in use, or None.
 
     'Sept Wk 5' (ledger), 'SEP WK5' / 'OCT WK3' (ClickUp, Slack bot),
-    'Mason L. - Sept - Week 5' (doc title), 'Oct - Week 2'.
+    'Mason L. - Sept - Week 5' (doc title), 'September, Week 2' and
+    'Week 4 Aug' (Michael K.'s manual log). A combined batch such as
+    'Sept - Week 4/5' counts as its later week, 5.
     """
-    m = _BATCH_RE.search(label)
+    m = _BATCH_RE.search(label) or _BATCH_REV_RE.search(label)
     if not m:
         return None
-    return MONTHS[m.group("mon").lower()], int(m.group("wk"))
+    week = int(m.group("wk2") or m.group("wk"))
+    return MONTHS[m.group("mon").lower()], week
 
 
 def next_batch(month, week):
